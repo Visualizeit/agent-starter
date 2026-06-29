@@ -11,6 +11,16 @@
 
 @import '@fontsource-variable/inter';
 
+@import 'katex/dist/katex.min.css';
+
+@import 'streamdown/styles.css';
+
+@source "../node_modules/streamdown/dist/*.js";
+@source "../node_modules/@streamdown/code/dist/*.js";
+@source "../node_modules/@streamdown/cjk/dist/*.js";
+@source "../node_modules/@streamdown/math/dist/*.js";
+@source "../node_modules/@streamdown/mermaid/dist/*.js";
+
 @custom-variant dark (&:where(
     [data-mantine-color-scheme="dark"],
     [data-mantine-color-scheme="dark"] *

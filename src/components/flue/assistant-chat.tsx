@@ -1,5 +1,5 @@
 import { useFlueAgent } from '@flue/react'
-import type { UIMessagePart } from '@flue/react'
+import type { UseFlueAgentResult } from '@flue/react'
 import {
     Alert,
     Button,
@@ -11,9 +11,11 @@ import {
 } from '@mantine/core'
 import { Send } from 'lucide-react'
 import { useState } from 'react'
-import type {  SubmitEventHandler } from 'react'
+import type { SubmitEventHandler } from 'react'
 
-const getMessageText = (parts: UIMessagePart[]) =>
+type FluePart = UseFlueAgentResult['messages'][number]['parts'][number]
+
+const getMessageText = (parts: FluePart[]) =>
     parts
         .filter((part) => part.type === 'text' || part.type === 'reasoning')
         .map((part) => part.text)
@@ -23,12 +25,9 @@ const AssistantChat = () => {
     const [message, setMessage] = useState('')
 
     const agent = useFlueAgent({
-        history: 'all',
         id: 'default',
         name: 'assistant',
     })
-
-
 
     const handleSubmit: SubmitEventHandler = async (event) => {
         event.preventDefault()

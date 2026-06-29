@@ -1,4 +1,5 @@
 import { createFlueClient } from '@flue/sdk'
+
 import { env } from '@/env'
 
 const flueClient = createFlueClient({

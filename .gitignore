@@ -13,7 +13,9 @@ dist-ssr
 .output
 .nitro
 .tanstack
+.flue-data
 *.local
+.env
 
 # Editor directories and files
 .idea

@@ -48,6 +48,7 @@ const mantineTheme = createTheme({
         Container: Container.extend({ defaultProps: { strategy: 'grid' } }),
         Switch: Switch.extend({ defaultProps: { withThumbIndicator: false } }),
     },
+    defaultRadius: 'lg',
     headings: {
         fontWeight: 'var(--mantine-font-weight-medium)',
     },

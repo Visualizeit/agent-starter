@@ -8,7 +8,4 @@ export const env = createEnv({
     clientPrefix: 'VITE_',
     emptyStringAsUndefined: true,
     runtimeEnv: process.env,
-    server: {
-        FLUE_MODEL: z.string().min(1),
-    },
 })

@@ -7,12 +7,20 @@ import type { PluginConfig } from 'streamdown'
 
 interface MessageResponseProps {
     markdown: string
+    streaming: boolean
 }
 
 const streamdownPlugins: PluginConfig = { cjk, code, math, mermaid }
 
-const MessageResponse = ({ markdown }: MessageResponseProps) => (
-    <Streamdown plugins={streamdownPlugins}>{markdown}</Streamdown>
+const MessageResponse = ({ markdown, streaming }: MessageResponseProps) => (
+    <Streamdown
+        isAnimating={streaming}
+        mode={streaming ? 'streaming' : 'static'}
+        plugins={streamdownPlugins}
+        animated
+    >
+        {markdown}
+    </Streamdown>
 )
 
 export default MessageResponse

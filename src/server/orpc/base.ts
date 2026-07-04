@@ -1,9 +1,14 @@
-import { os } from '@orpc/server'
+import { os } from "@orpc/server";
 
-interface ORPCContext {
-    request: Request
-}
+import type { ORPCContext } from "./context";
 
-const baseProcedure = os.$context<ORPCContext>()
+const base = os.$context<ORPCContext>().errors({
+  CONFLICT: {
+    message: "Conflict",
+  },
+  NOT_FOUND: {
+    message: "Not found",
+  },
+});
 
-export { baseProcedure }
+export default base;

@@ -1,13 +1,18 @@
-import { DatabaseSync } from 'node:sqlite'
+import { DatabaseSync } from "node:sqlite";
 
-import { drizzle } from 'drizzle-orm/node-sqlite'
+import { defineRelations } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/node-sqlite";
 
-import serverEnv from '@/server/server-env'
+import * as schema from "@/server/db/schema";
+import serverEnv from "@/server/server-env";
 
-const databaseClient = new DatabaseSync(serverEnv.DB_FILE_NAME)
+const client = new DatabaseSync(serverEnv.DB_FILE_NAME);
+
+const relations = defineRelations(schema);
 
 const database = drizzle({
-    client: databaseClient,
-})
+  client,
+  relations,
+});
 
-export default database
+export default database;

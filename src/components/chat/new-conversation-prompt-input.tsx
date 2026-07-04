@@ -1,29 +1,53 @@
-import type { UseFlueAgentResult } from "@flue/react";
 import { ActionIcon, Textarea, Group, Space, rem } from "@mantine/core";
 import { useInputState } from "@mantine/hooks";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { invariant } from "es-toolkit";
 import { ArrowUpIcon } from "lucide-react";
 import type { SubmitEventHandler } from "react";
 import { useChatSubmit } from "use-chat-submit";
 import { z } from "zod";
 
-interface PromptInputProps {
-  agent: UseFlueAgentResult;
-}
+import orpc from "@/lib/orpc";
 
 const messageSchema = z.string().trim().min(1);
 
-const PromptInput = ({ agent }: PromptInputProps) => {
+const NewConversationPromptInput = () => {
   const [message, setMessage] = useInputState("");
 
   const messageParseResult = messageSchema.safeParse(message);
 
+  const navigate = useNavigate();
+
+  const createConversationMutation = useMutation(
+    orpc.conversation.create.mutationOptions({
+      onSuccess: async (createdConversation, _variables, _onMutateResult, context) => {
+        await navigate({
+          params: { conversationId: createdConversation.id },
+          to: "/$conversationId",
+        });
+
+        await context.client.invalidateQueries(
+          orpc.conversation.list.queryOptions({
+            input: { status: "active" },
+          }),
+        );
+      },
+    }),
+  );
+
   const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
     mode: "mod-enter",
-    onSubmit: async (value) => {
+    onSubmit: async () => {
+      if (!messageParseResult.success) {
+        return;
+      }
+
       setMessage("");
 
-      await agent.sendMessage(value);
+      await createConversationMutation.mutateAsync({
+        message: messageParseResult.data,
+      });
     },
   });
 
@@ -39,7 +63,7 @@ const PromptInput = ({ agent }: PromptInputProps) => {
         autoFocus
         variant="filled"
         {...getTextareaProps({
-          disabled: agent.status === "submitted",
+          disabled: createConversationMutation.isPending,
           onChange: setMessage,
           value: message,
         })}
@@ -79,7 +103,7 @@ const PromptInput = ({ agent }: PromptInputProps) => {
           <Group className="justify-between w-full">
             <Space />
             <ActionIcon
-              disabled={!messageParseResult.success || agent.status === "submitted"}
+              disabled={!messageParseResult.success || createConversationMutation.isPending}
               variant="filled"
               size="lg"
               type="submit"
@@ -93,4 +117,4 @@ const PromptInput = ({ agent }: PromptInputProps) => {
   );
 };
 
-export default PromptInput;
+export default NewConversationPromptInput;

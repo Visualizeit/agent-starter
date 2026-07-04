@@ -1,186 +1,118 @@
-import { ORPCError } from '@orpc/server'
-import { and, desc, eq, isNull } from 'drizzle-orm'
-import { z } from 'zod'
+import { eq } from "drizzle-orm";
+import { isNil } from "es-toolkit/predicate";
+import { nanoid } from "nanoid";
+import { z } from "zod";
 
-import database from '@/server/db/client'
-import { conversations } from '@/server/db/schema'
-import { baseProcedure } from '@/server/orpc/base'
+import database from "@/server/db/client";
+import { conversations } from "@/server/db/schema";
 
-const idSchema = z.string().min(1)
-const titleSchema = z.string().max(200).nullable()
-const modelSchema = z.string().max(120).nullable()
-const metadataSchema = z.record(z.string(), z.json())
-const statusSchema = z.enum(['active', 'archived', 'deleted'])
+import base from "../base";
 
-interface GetConversationRecordByIdOptions {
-    includeDeleted?: boolean
-}
-
-const getConversationRecordById = async (
-    conversationId: string,
-    options: GetConversationRecordByIdOptions = {}
-) => {
-    const whereClause = options.includeDeleted
-        ? eq(conversations.id, conversationId)
-        : and(
-              eq(conversations.id, conversationId),
-              isNull(conversations.deletedAt)
-          )
-
-    const [conversationRecord] = await database
-        .select()
-        .from(conversations)
-        .where(whereClause)
-        .limit(1)
-
-    if (!conversationRecord) {
-        throw new ORPCError('NOT_FOUND')
-    }
-
-    return conversationRecord
-}
+const idSchema = z.string().min(1);
+const messageSchema = z.string().trim().min(1);
+const titleSchema = z.string().max(200).nullable();
+const modelSchema = z.string().max(120).nullable();
+const metadataSchema = z.record(z.string(), z.json());
+const statusSchema = z.enum(["active", "archived", "deleted"]);
 
 const conversationRouter = {
-    create: baseProcedure
-        .input(
-            z.object({
-                id: idSchema.max(255),
-                metadata: metadataSchema.default({}),
-                model: modelSchema.default(null),
-                title: titleSchema.default(null),
-            })
-        )
-        .handler(async ({ input }) => {
-            const [conversationRecord] = await database
-                .insert(conversations)
-                .values({
-                    id: input.id,
-                    metadata: input.metadata,
-                    model: input.model,
-                    title: input.title,
-                })
-                .onConflictDoNothing({ target: conversations.id })
-                .returning()
+  create: base
+    .input(z.object({ message: messageSchema }))
+    .handler(async ({ input, context, errors }) => {
+      const conversationId = nanoid();
 
-            if (!conversationRecord) {
-                throw new ORPCError('CONFLICT')
-            }
+      const [createdConversation] = await database
+        .insert(conversations)
+        .values({
+          id: conversationId,
+        })
+        .onConflictDoNothing({ target: conversations.id })
+        .returning();
 
-            return conversationRecord
-        }),
-    delete: baseProcedure
-        .input(z.object({ id: idSchema }))
-        .handler(async ({ input }) => {
-            const [deletedConversation] = await database
-                .update(conversations)
-                .set({
-                    deletedAt: new Date(),
-                    status: 'deleted',
-                })
-                .where(
-                    and(
-                        eq(conversations.id, input.id),
-                        isNull(conversations.deletedAt)
-                    )
-                )
-                .returning()
+      if (isNil(createdConversation)) {
+        throw errors.CONFLICT();
+      }
 
-            if (!deletedConversation) {
-                throw new ORPCError('NOT_FOUND')
-            }
+      await context.flue.agents.send("assistant", conversationId, {
+        message: input.message,
+      });
 
-            return deletedConversation
-        }),
-    find: baseProcedure
-        .input(z.object({ id: idSchema }))
-        .handler(async ({ input }) => {
-            const conversationRecord = await getConversationRecordById(input.id)
+      return createdConversation;
+    }),
+  delete: base.input(z.object({ id: idSchema })).handler(async ({ errors, input }) => {
+    const [deletedConversation] = await database
+      .update(conversations)
+      .set({
+        status: "deleted",
+      })
+      .where(eq(conversations.id, input.id))
+      .returning();
 
-            return conversationRecord
-        }),
-    list: baseProcedure
-        .input(
-            z.object({
-                includeDeleted: z.boolean().default(false),
-                limit: z.number().int().min(1).max(100).default(50),
-            })
-        )
-        .handler(({ input }) => {
-            if (input.includeDeleted) {
-                return database
-                    .select()
-                    .from(conversations)
-                    .orderBy(desc(conversations.updatedAt))
-                    .limit(input.limit)
-            }
+    if (isNil(deletedConversation)) {
+      throw errors.NOT_FOUND();
+    }
 
-            return database
-                .select()
-                .from(conversations)
-                .where(isNull(conversations.deletedAt))
-                .orderBy(desc(conversations.updatedAt))
-                .limit(input.limit)
-        }),
-    update: baseProcedure
-        .input(
-            z.object({
-                id: idSchema,
-                metadata: metadataSchema.optional(),
-                model: modelSchema.optional(),
-                status: statusSchema.exclude(['deleted']).optional(),
-                title: titleSchema.optional(),
-            })
-        )
-        .handler(async ({ input }) => {
-            const existingConversation = await getConversationRecordById(
-                input.id
-            )
+    return deletedConversation;
+  }),
+  find: base.input(z.object({ id: idSchema })).handler(async ({ errors, input }) => {
+    const conversationRecord = await database.query.conversations.findFirst({
+      where: {
+        id: input.id,
+      },
+    });
 
-            if (
-                input.metadata === undefined &&
-                input.model === undefined &&
-                input.status === undefined &&
-                input.title === undefined
-            ) {
-                return existingConversation
-            }
+    if (isNil(conversationRecord)) {
+      throw errors.NOT_FOUND();
+    }
 
-            let archivedAt: Date | null | undefined
+    return conversationRecord;
+  }),
+  list: base
+    .input(
+      z.object({
+        status: statusSchema,
+      }),
+    )
+    .handler(async ({ input }) => {
+      const records = await database.query.conversations.findMany({
+        orderBy: {
+          updatedAt: "desc",
+        },
+        where: {
+          status: input.status,
+        },
+      });
 
-            if (
-                input.status === 'archived' &&
-                existingConversation.status !== 'archived'
-            ) {
-                archivedAt = new Date()
-            }
+      return { list: records };
+    }),
+  update: base
+    .input(
+      z.object({
+        id: idSchema,
+        metadata: metadataSchema.optional(),
+        model: modelSchema.optional(),
+        status: statusSchema.exclude(["deleted"]).optional(),
+        title: titleSchema.optional(),
+      }),
+    )
+    .handler(async ({ input, errors }) => {
+      const [updatedConversation] = await database
+        .update(conversations)
+        .set({
+          metadata: input.metadata,
+          model: input.model,
+          status: input.status,
+          title: input.title,
+        })
+        .where(eq(conversations.id, input.id))
+        .returning();
 
-            if (input.status === 'active') {
-                archivedAt = null
-            }
+      if (isNil(updatedConversation)) {
+        throw errors.NOT_FOUND();
+      }
 
-            const [updatedConversation] = await database
-                .update(conversations)
-                .set({
-                    archivedAt,
-                    metadata: input.metadata,
-                    model: input.model,
-                    status: input.status,
-                    title: input.title,
-                })
-                .where(
-                    and(
-                        eq(conversations.id, input.id),
-                        isNull(conversations.deletedAt)
-                    )
-                )
-                .returning()
+      return updatedConversation;
+    }),
+};
 
-            if (!updatedConversation) {
-                throw new ORPCError('NOT_FOUND')
-            }
-
-            return updatedConversation
-        }),
-}
-
-export default conversationRouter
+export default conversationRouter;

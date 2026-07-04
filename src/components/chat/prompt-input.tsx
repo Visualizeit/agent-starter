@@ -38,7 +38,6 @@ const PromptInput = ({ agent }: PromptInputProps) => {
             <Textarea
                 autoFocus
                 {...getTextareaProps({
-                    disabled: agent.status === 'submitted',
                     onChange: setMessage,
                     value: message,
                 })}

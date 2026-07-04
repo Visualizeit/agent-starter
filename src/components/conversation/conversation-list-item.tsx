@@ -13,7 +13,7 @@ import {
     ArchiveIcon,
     MessageCircleIcon,
     MoreHorizontalIcon,
-    PencilIcon,
+    PencilLineIcon,
 } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
@@ -70,15 +70,13 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
             component="li"
             className={cn(
                 'group/menu-item relative list-none',
-                'rounded-(--mantine-radius-md)',
+                'overflow-hidden rounded-(--mantine-radius-md)',
                 'hover:bg-(--mantine-color-gray-light-hover) focus-within:bg-(--mantine-color-gray-light-hover)'
             )}
         >
             <UnstyledButton
-                data-sidebar="menu-button"
                 className={cn(
-                    'block w-full min-w-0',
-                    'rounded-(--mantine-radius-md) p-(--mantine-spacing-xxs)',
+                    'block w-full p-(--mantine-spacing-xxs)',
                     'aria-[current=page]:bg-(--mantine-color-gray-light-hover)',
                     'group-hover/menu-item:pr-[calc(var(--mantine-spacing-xxs)+1.75rem)] group-focus-within/menu-item:pr-[calc(var(--mantine-spacing-xxs)+1.75rem)]'
                 )}
@@ -100,14 +98,14 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
             <Menu position="bottom-start">
                 <Menu.Target>
                     <ActionIcon
-                        data-sidebar="menu-action"
-                        variant="transparent"
+                        variant="subtle"
+                        radius="sm"
                         color="gray"
                         size="sm"
                         aria-label="Conversation actions"
                         className={cn(
                             'invisible absolute right-(--mantine-spacing-xxs) top-1/2 -translate-y-1/2',
-                            'group-hover/menu-item:visible group-focus-within/menu-item:visible'
+                            'group-hover/menu-item:visible group-focus-within/menu-item:visible aria-expanded:visible'
                         )}
                     >
                         <MoreHorizontalIcon className="size-4" />
@@ -115,7 +113,7 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
                 </Menu.Target>
                 <Menu.Dropdown>
                     <Menu.Item
-                        leftSection={<PencilIcon className="size-4" />}
+                        leftSection={<PencilLineIcon className="size-4" />}
                         onClick={handleRename}
                     >
                         Rename

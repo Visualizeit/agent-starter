@@ -1,7 +1,8 @@
-import { AppShell, Box, ScrollArea } from '@mantine/core'
+import { AppShell, Box, ScrollArea, Stack, Title } from '@mantine/core'
 import { Link, Outlet } from '@tanstack/react-router'
 
 import ConversationList from '@/components/conversation/conversation-list'
+import NewChatButton from '@/components/conversation/new-chat-button'
 
 const MainLayout = () => (
     <AppShell
@@ -15,12 +16,20 @@ const MainLayout = () => (
                 <Outlet />
             </Box>
         </AppShell.Main>
-        <AppShell.Navbar p="xs">
+        <AppShell.Navbar p="xs" className="gap-(--mantine-spacing-sm)">
             <AppShell.Section>
-                <Link to="/">Logo</Link>
+                <Stack gap="xs">
+                    <Link to="/">Logo</Link>
+                    <NewChatButton />
+                </Stack>
             </AppShell.Section>
             <AppShell.Section component={ScrollArea} grow>
-                <ConversationList />
+                <Stack gap="xxs">
+                    <Title order={6} px="xxs" c="dimmed">
+                        Recents
+                    </Title>
+                    <ConversationList />
+                </Stack>
             </AppShell.Section>
             <AppShell.Section>Profile</AppShell.Section>
         </AppShell.Navbar>

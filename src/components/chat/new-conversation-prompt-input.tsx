@@ -67,7 +67,6 @@ const NewConversationPromptInput = () => {
             <Textarea
                 autoFocus
                 {...getTextareaProps({
-                    disabled: createConversationMutation.isPending,
                     onChange: setMessage,
                     value: message,
                 })}

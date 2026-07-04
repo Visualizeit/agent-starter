@@ -1,120 +1,127 @@
-import { ActionIcon, Textarea, Group, Space, rem } from "@mantine/core";
-import { useInputState } from "@mantine/hooks";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { invariant } from "es-toolkit";
-import { ArrowUpIcon } from "lucide-react";
-import type { SubmitEventHandler } from "react";
-import { useChatSubmit } from "use-chat-submit";
-import { z } from "zod";
+import { ActionIcon, Textarea, Group, Space, rem } from '@mantine/core'
+import { useInputState } from '@mantine/hooks'
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import { invariant } from 'es-toolkit'
+import { ArrowUpIcon } from 'lucide-react'
+import type { SubmitEventHandler } from 'react'
+import { useChatSubmit } from 'use-chat-submit'
+import { z } from 'zod'
 
-import orpc from "@/lib/orpc";
+import orpc from '@/lib/orpc'
 
-const messageSchema = z.string().trim().min(1);
+const messageSchema = z.string().trim().min(1)
 
 const NewConversationPromptInput = () => {
-  const [message, setMessage] = useInputState("");
+    const [message, setMessage] = useInputState('')
 
-  const messageParseResult = messageSchema.safeParse(message);
+    const messageParseResult = messageSchema.safeParse(message)
 
-  const navigate = useNavigate();
+    const navigate = useNavigate()
 
-  const createConversationMutation = useMutation(
-    orpc.conversation.create.mutationOptions({
-      onSuccess: async (createdConversation, _variables, _onMutateResult, context) => {
-        await navigate({
-          params: { conversationId: createdConversation.id },
-          to: "/$conversationId",
-        });
+    const createConversationMutation = useMutation(
+        orpc.conversation.create.mutationOptions({
+            onSuccess: async (
+                createdConversation,
+                _variables,
+                _onMutateResult,
+                context
+            ) => {
+                await navigate({
+                    params: { conversationId: createdConversation.id },
+                    to: '/$conversationId',
+                })
 
-        await context.client.invalidateQueries(
-          orpc.conversation.list.queryOptions({
-            input: { status: "active" },
-          }),
-        );
-      },
-    }),
-  );
+                await context.client.invalidateQueries(
+                    orpc.conversation.list.queryOptions({
+                        input: { status: 'active' },
+                    })
+                )
+            },
+        })
+    )
 
-  const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
-    mode: "mod-enter",
-    onSubmit: async () => {
-      if (!messageParseResult.success) {
-        return;
-      }
-
-      setMessage("");
-
-      await createConversationMutation.mutateAsync({
-        message: messageParseResult.data,
-      });
-    },
-  });
-
-  const handleSubmit: SubmitEventHandler = (event) => {
-    event.preventDefault();
-
-    triggerSubmit();
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <Textarea
-        autoFocus
-        variant="filled"
-        {...getTextareaProps({
-          disabled: createConversationMutation.isPending,
-          onChange: setMessage,
-          value: message,
-        })}
-        styles={{
-          bottomSection: {
-            alignItems: "flex-start",
-          },
-          wrapper: {
-            "--input-bottom-section-height": `calc(${rem(34)} + var(--mantine-spacing-sm))`,
-            "--input-padding-y-md": "var(--mantine-spacing-sm)",
-            "--input-radius": "var(--mantine-radius-xl)",
-            cursor: "text",
-          },
-        }}
-        wrapperProps={{
-          onClick: (event) => {
-            const target = event.target as HTMLElement;
-
-            if (target.closest("button")) {
-              return;
+    const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
+        mode: 'mod-enter',
+        onSubmit: async () => {
+            if (!messageParseResult.success) {
+                return
             }
 
-            const textarea = textareaRef.current;
+            setMessage('')
 
-            invariant(textarea, "Textarea ref is not set");
+            await createConversationMutation.mutateAsync({
+                message: messageParseResult.data,
+            })
+        },
+    })
 
-            textarea.focus();
-          },
-        }}
-        size="md"
-        autosize
-        minRows={1}
-        rows={1}
-        maxRows={10}
-        placeholder="Ask the assistant"
-        bottomSection={
-          <Group className="justify-between w-full">
-            <Space />
-            <ActionIcon
-              disabled={!messageParseResult.success || createConversationMutation.isPending}
-              variant="filled"
-              size="lg"
-              type="submit"
-            >
-              <ArrowUpIcon className="size-5" />
-            </ActionIcon>
-          </Group>
-        }
-      />
-    </form>
-  );
-};
+    const handleSubmit: SubmitEventHandler = (event) => {
+        event.preventDefault()
 
-export default NewConversationPromptInput;
+        triggerSubmit()
+    }
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <Textarea
+                autoFocus
+                {...getTextareaProps({
+                    disabled: createConversationMutation.isPending,
+                    onChange: setMessage,
+                    value: message,
+                })}
+                styles={{
+                    bottomSection: {
+                        alignItems: 'flex-start',
+                    },
+                    wrapper: {
+                        '--input-bottom-section-height': `calc(${rem(34)} + var(--mantine-spacing-sm))`,
+                        '--input-padding-y-md': 'var(--mantine-spacing-sm)',
+                        '--input-radius': 'var(--mantine-radius-xl)',
+                        cursor: 'text',
+                    },
+                }}
+                wrapperProps={{
+                    onClick: (event) => {
+                        const target = event.target as HTMLElement
+
+                        if (target.closest('button')) {
+                            return
+                        }
+
+                        const textarea = textareaRef.current
+
+                        invariant(textarea, 'Textarea ref is not set')
+
+                        textarea.focus()
+                    },
+                }}
+                size="md"
+                autosize
+                minRows={1}
+                rows={1}
+                maxRows={10}
+                placeholder="Ask the assistant"
+                bottomSection={
+                    <Group className="justify-between w-full">
+                        <Space />
+                        <ActionIcon
+                            disabled={
+                                !messageParseResult.success ||
+                                createConversationMutation.isPending
+                            }
+                            variant="filled"
+                            size="lg"
+                            type="submit"
+                        >
+                            <ArrowUpIcon className="size-5" />
+                        </ActionIcon>
+                    </Group>
+                }
+            />
+        </form>
+    )
+}
+
+export default NewConversationPromptInput

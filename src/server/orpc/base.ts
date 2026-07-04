@@ -1,14 +1,14 @@
-import { os } from "@orpc/server";
+import { os } from '@orpc/server'
 
-import type { ORPCContext } from "./context";
+import type { ORPCContext } from './context'
 
 const base = os.$context<ORPCContext>().errors({
-  CONFLICT: {
-    message: "Conflict",
-  },
-  NOT_FOUND: {
-    message: "Not found",
-  },
-});
+    CONFLICT: {
+        message: 'Conflict',
+    },
+    NOT_FOUND: {
+        message: 'Not found',
+    },
+})
 
-export default base;
+export default base

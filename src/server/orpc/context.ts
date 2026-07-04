@@ -1,18 +1,18 @@
-import { createFlueClient } from "@flue/sdk";
-import type { FlueClient } from "@flue/sdk";
+import { createFlueClient } from '@flue/sdk'
+import type { FlueClient } from '@flue/sdk'
 
-import serverEnv from "@/server/server-env";
+import serverEnv from '@/server/server-env'
 
 export interface ORPCContext {
-  flue: FlueClient;
+    flue: FlueClient
 }
 
 const flue = createFlueClient({
-  baseUrl: serverEnv.FLUE_BASE_URL,
-});
+    baseUrl: serverEnv.FLUE_BASE_URL,
+})
 
 const createORPCContext = (): ORPCContext => ({
-  flue,
-});
+    flue,
+})
 
-export default createORPCContext;
+export default createORPCContext

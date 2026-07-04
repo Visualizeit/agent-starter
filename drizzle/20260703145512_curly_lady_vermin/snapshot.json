@@ -1,120 +1,120 @@
 {
-  "version": "7",
-  "dialect": "sqlite",
-  "id": "820f340e-f685-4a6c-a76c-b04d6ed4c149",
-  "prevIds": ["ee1efe12-8fa6-4532-87f0-778a03a84120"],
-  "ddl": [
-    {
-      "name": "conversations",
-      "entityType": "tables"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(unixepoch() * 1000)",
-      "generated": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "table": "conversations"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "id",
-      "entityType": "columns",
-      "table": "conversations"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "'{}'",
-      "generated": null,
-      "name": "metadata",
-      "entityType": "columns",
-      "table": "conversations"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "model",
-      "entityType": "columns",
-      "table": "conversations"
-    },
-    {
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "'active'",
-      "generated": null,
-      "name": "status",
-      "entityType": "columns",
-      "table": "conversations"
-    },
-    {
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "name": "title",
-      "entityType": "columns",
-      "table": "conversations"
-    },
-    {
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "(unixepoch() * 1000)",
-      "generated": null,
-      "name": "updated_at",
-      "entityType": "columns",
-      "table": "conversations"
-    },
-    {
-      "columns": ["id"],
-      "nameExplicit": false,
-      "name": "conversations_pk",
-      "table": "conversations",
-      "entityType": "pks"
-    },
-    {
-      "columns": [
+    "version": "7",
+    "dialect": "sqlite",
+    "id": "820f340e-f685-4a6c-a76c-b04d6ed4c149",
+    "prevIds": ["ee1efe12-8fa6-4532-87f0-778a03a84120"],
+    "ddl": [
         {
-          "value": "status",
-          "isExpression": false
+            "name": "conversations",
+            "entityType": "tables"
         },
         {
-          "value": "updated_at",
-          "isExpression": false
+            "type": "integer",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "(unixepoch() * 1000)",
+            "generated": null,
+            "name": "created_at",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "id",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "'{}'",
+            "generated": null,
+            "name": "metadata",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "model",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "'active'",
+            "generated": null,
+            "name": "status",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "title",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "integer",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "(unixepoch() * 1000)",
+            "generated": null,
+            "name": "updated_at",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "columns": ["id"],
+            "nameExplicit": false,
+            "name": "conversations_pk",
+            "table": "conversations",
+            "entityType": "pks"
+        },
+        {
+            "columns": [
+                {
+                    "value": "status",
+                    "isExpression": false
+                },
+                {
+                    "value": "updated_at",
+                    "isExpression": false
+                }
+            ],
+            "isUnique": false,
+            "where": null,
+            "origin": "manual",
+            "name": "conversations_status_updated_at_idx",
+            "entityType": "indexes",
+            "table": "conversations"
+        },
+        {
+            "value": "\"status\" in ('active', 'archived', 'deleted')",
+            "name": "conversations_status_check",
+            "entityType": "checks",
+            "table": "conversations"
+        },
+        {
+            "value": "json_valid(\"metadata\")",
+            "name": "conversations_metadata_json_check",
+            "entityType": "checks",
+            "table": "conversations"
         }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "name": "conversations_status_updated_at_idx",
-      "entityType": "indexes",
-      "table": "conversations"
-    },
-    {
-      "value": "\"status\" in ('active', 'archived', 'deleted')",
-      "name": "conversations_status_check",
-      "entityType": "checks",
-      "table": "conversations"
-    },
-    {
-      "value": "json_valid(\"metadata\")",
-      "name": "conversations_metadata_json_check",
-      "entityType": "checks",
-      "table": "conversations"
-    }
-  ],
-  "renames": []
+    ],
+    "renames": []
 }

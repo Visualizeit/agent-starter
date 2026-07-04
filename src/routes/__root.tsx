@@ -4,6 +4,7 @@ import {
     MantineProvider,
     mantineHtmlProps,
 } from '@mantine/core'
+import { ModalsProvider } from '@mantine/modals'
 import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
 
 import MainLayout from '@/components/layout/main-layout'
@@ -20,9 +21,11 @@ const Component = () => (
         </head>
         <body>
             <MantineProvider deduplicateInlineStyles theme={mantineTheme}>
-                <FlueProvider client={flueClient}>
-                    <MainLayout />
-                </FlueProvider>
+                <ModalsProvider modalProps={{ centered: true }}>
+                    <FlueProvider client={flueClient}>
+                        <MainLayout />
+                    </FlueProvider>
+                </ModalsProvider>
             </MantineProvider>
             <Scripts />
         </body>

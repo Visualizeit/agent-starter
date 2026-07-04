@@ -1,18 +1,34 @@
-import { ActionIcon, Box, Menu, Text, UnstyledButton } from '@mantine/core'
+import {
+    ActionIcon,
+    Box,
+    Group,
+    Menu,
+    Text,
+    UnstyledButton,
+} from '@mantine/core'
+import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { ArchiveIcon, MoreHorizontalIcon } from 'lucide-react'
+import {
+    ArchiveIcon,
+    MessageCircleIcon,
+    MoreHorizontalIcon,
+    PencilIcon,
+} from 'lucide-react'
 
 import orpc from '@/lib/orpc'
 import { cn } from '@/lib/utils'
 import type { conversations } from '@/server/db/schema'
+
+import { NEW_CHAT_LABEL } from './conversation-constants'
+import RenameConversationForm from './rename-conversation-form'
 
 interface ConversationListItemProps {
     conversation: typeof conversations.$inferSelect
 }
 
 const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
-    const label = conversation.title ?? 'New Chat'
+    const label = conversation.title ?? NEW_CHAT_LABEL
 
     const navigate = useNavigate()
 
@@ -42,6 +58,13 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
         })
     }
 
+    const handleRename = () => {
+        modals.open({
+            children: <RenameConversationForm conversation={conversation} />,
+            title: 'Rename Conversation',
+        })
+    }
+
     return (
         <Box
             component="li"
@@ -65,9 +88,12 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
                         params={{ conversationId: conversation.id }}
                         {...props}
                     >
-                        <Text size="sm" truncate>
-                            {label}
-                        </Text>
+                        <Group gap="xs" wrap="nowrap">
+                            <MessageCircleIcon className="size-4 shrink-0 text-(--mantine-color-dimmed)" />
+                            <Text className="min-w-0" size="sm" truncate>
+                                {label}
+                            </Text>
+                        </Group>
                     </Link>
                 )}
             />
@@ -88,6 +114,12 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
                     </ActionIcon>
                 </Menu.Target>
                 <Menu.Dropdown>
+                    <Menu.Item
+                        leftSection={<PencilIcon className="size-4" />}
+                        onClick={handleRename}
+                    >
+                        Rename
+                    </Menu.Item>
                     <Menu.Item
                         disabled={archiveConversationMutation.isPending}
                         leftSection={<ArchiveIcon className="size-4" />}

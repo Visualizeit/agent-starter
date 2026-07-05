@@ -1,4 +1,5 @@
-import { eq } from 'drizzle-orm'
+import type { FlueClient } from '@flue/sdk'
+import { and, eq, isNull } from 'drizzle-orm'
 import { isNil } from 'es-toolkit/predicate'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
@@ -14,6 +15,44 @@ const titleSchema = z.string().max(200).nullable()
 const modelSchema = z.string().max(120).nullable()
 const metadataSchema = z.record(z.string(), z.json())
 const statusSchema = z.enum(['active', 'archived', 'deleted'])
+const generateTitleResultSchema = z.object({
+    title: z.string().trim().min(1).max(200),
+})
+
+interface GenerateAndUpdateConversationTitleOptions {
+    conversationId: string
+    flue: FlueClient
+    userMessage: string
+}
+
+const generateAndUpdateConversationTitle = async ({
+    conversationId,
+    flue,
+    userMessage,
+}: GenerateAndUpdateConversationTitleOptions) => {
+    try {
+        const run = await flue.workflows.invoke('generate-title', {
+            input: { userMessage },
+            wait: 'result',
+        })
+
+        const result = generateTitleResultSchema.parse(run.result)
+
+        await database
+            .update(conversations)
+            .set({
+                title: result.title,
+            })
+            .where(
+                and(
+                    eq(conversations.id, conversationId),
+                    isNull(conversations.title)
+                )
+            )
+    } catch (error) {
+        console.error('Failed to generate conversation title', error)
+    }
+}
 
 const conversationRouter = {
     create: base
@@ -35,6 +74,12 @@ const conversationRouter = {
 
             await context.flue.agents.send('assistant', conversationId, {
                 message: input.message,
+            })
+
+            void generateAndUpdateConversationTitle({
+                conversationId,
+                flue: context.flue,
+                userMessage: input.message,
             })
 
             return createdConversation

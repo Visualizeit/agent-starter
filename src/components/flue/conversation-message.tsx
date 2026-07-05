@@ -12,13 +12,9 @@ import { Message, MessageContent } from '@/components/ui/message'
 
 interface ConversationMessageProps {
     message: FlueConversationMessage
-    streaming: boolean
 }
 
-const ConversationMessage = ({
-    message,
-    streaming,
-}: ConversationMessageProps) => {
+const ConversationMessage = ({ message }: ConversationMessageProps) => {
     const align = message.role === 'user' ? 'end' : 'start'
 
     const bubbleVariant = message.role === 'user' ? 'muted' : 'ghost'
@@ -31,7 +27,12 @@ const ConversationMessage = ({
                         .with({ type: 'reasoning' }, (reasoningPart) => (
                             <Bubble align={align} key={index} variant="ghost">
                                 <BubbleContent>
-                                    <Reasoning defaultOpen={false}>
+                                    <Reasoning
+                                        defaultOpen={false}
+                                        isStreaming={
+                                            reasoningPart.state === 'streaming'
+                                        }
+                                    >
                                         <ReasoningTrigger />
                                         <ReasoningContent>
                                             {reasoningPart.text}
@@ -48,8 +49,10 @@ const ConversationMessage = ({
                             >
                                 <BubbleContent>
                                     <MessageResponse
+                                        isStreaming={
+                                            textPart.state === 'streaming'
+                                        }
                                         markdown={textPart.text}
-                                        streaming={streaming}
                                     />
                                 </BubbleContent>
                             </Bubble>

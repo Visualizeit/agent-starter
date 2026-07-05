@@ -18,10 +18,7 @@ const Component = () => {
     return (
         <Stack className="size-full absolute" gap={0}>
             <Box className="flex-1 overflow-hidden">
-                <MessageList
-                    messages={agent.messages}
-                    streaming={agent.status === 'streaming'}
-                />
+                <MessageList messages={agent.messages} />
             </Box>
             <Box className="container mx-auto max-w-3xl" pb="md">
                 <PromptInput agent={agent} />

@@ -1,4 +1,4 @@
-import { AppShell, Box, ScrollArea, Stack, Title } from '@mantine/core'
+import { AppShell, Box, ScrollArea, Stack } from '@mantine/core'
 import { Link, Outlet } from '@tanstack/react-router'
 
 import ConversationList from '@/components/conversation/conversation-list'
@@ -24,10 +24,8 @@ const MainLayout = () => (
                 </Stack>
             </AppShell.Section>
             <AppShell.Section component={ScrollArea} grow>
-                <Stack gap="xxs">
-                    <Title order={6} px="xxs" c="dimmed">
-                        Recents
-                    </Title>
+                <Stack gap="sm">
+                    <ConversationList isPinned />
                     <ConversationList />
                 </Stack>
             </AppShell.Section>

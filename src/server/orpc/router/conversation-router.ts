@@ -81,6 +81,7 @@ const conversationRouter = {
         .handler(async ({ input }) => {
             const records = await database.query.conversations.findMany({
                 orderBy: {
+                    isPinned: 'desc',
                     updatedAt: 'desc',
                 },
                 where: {
@@ -94,6 +95,7 @@ const conversationRouter = {
         .input(
             z.object({
                 id: idSchema,
+                isPinned: z.boolean().optional(),
                 metadata: metadataSchema.optional(),
                 model: modelSchema.optional(),
                 status: statusSchema.exclude(['deleted']).optional(),
@@ -104,6 +106,7 @@ const conversationRouter = {
             const [updatedConversation] = await database
                 .update(conversations)
                 .set({
+                    isPinned: input.isPinned,
                     metadata: input.metadata,
                     model: input.model,
                     status: input.status,

@@ -14,6 +14,8 @@ import {
     MessageCircleIcon,
     MoreHorizontalIcon,
     PencilLineIcon,
+    PinIcon,
+    PinOffIcon,
 } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
@@ -51,10 +53,29 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
         })
     )
 
+    const pinConversationMutation = useMutation(
+        orpc.conversation.update.mutationOptions({
+            onSuccess: async (_data, _variables, _onMutateResult, context) => {
+                await context.client.invalidateQueries(
+                    orpc.conversation.list.queryOptions({
+                        input: { status: 'active' },
+                    })
+                )
+            },
+        })
+    )
+
     const handleArchive = async () => {
         await archiveConversationMutation.mutateAsync({
             id: conversation.id,
             status: 'archived',
+        })
+    }
+
+    const handlePin = async () => {
+        await pinConversationMutation.mutateAsync({
+            id: conversation.id,
+            isPinned: !conversation.isPinned,
         })
     }
 
@@ -117,6 +138,19 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
                         onClick={handleRename}
                     >
                         Rename
+                    </Menu.Item>
+                    <Menu.Item
+                        disabled={pinConversationMutation.isPending}
+                        leftSection={
+                            conversation.isPinned ? (
+                                <PinOffIcon className="size-4" />
+                            ) : (
+                                <PinIcon className="size-4" />
+                            )
+                        }
+                        onClick={handlePin}
+                    >
+                        {conversation.isPinned ? 'Unpin' : 'Pin'}
                     </Menu.Item>
                     <Menu.Item
                         disabled={archiveConversationMutation.isPending}

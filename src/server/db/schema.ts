@@ -16,6 +16,9 @@ export const conversations = sqliteTable(
             .notNull()
             .default(sql`(unixepoch() * 1000)`),
         id: text('id').primaryKey(),
+        isPinned: integer('is_pinned', { mode: 'boolean' })
+            .notNull()
+            .default(false),
         metadata: text('metadata', { mode: 'json' })
             .notNull()
             .default(sql`'{}'`),

@@ -1,11 +1,12 @@
 import type { FlueClient } from '@flue/sdk'
 import { and, eq, isNull } from 'drizzle-orm'
-import { isNil } from 'es-toolkit/predicate'
+import { isNil, isNotNil } from 'es-toolkit/predicate'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
 import database from '@/server/db/client'
 import { conversations } from '@/server/db/schema'
+import publisher from '@/server/orpc/publisher'
 
 import base from '../base'
 
@@ -38,7 +39,7 @@ const generateAndUpdateConversationTitle = async ({
 
         const result = generateTitleResultSchema.parse(run.result)
 
-        await database
+        const [updatedConversation] = await database
             .update(conversations)
             .set({
                 title: result.title,
@@ -49,6 +50,14 @@ const generateAndUpdateConversationTitle = async ({
                     isNull(conversations.title)
                 )
             )
+            .returning()
+
+        if (isNotNil(updatedConversation)) {
+            await publisher.publish('conversation.title.generated', {
+                conversationId: updatedConversation.id,
+                type: 'conversation.title.generated',
+            })
+        }
     } catch (error) {
         console.error('Failed to generate conversation title', error)
     }

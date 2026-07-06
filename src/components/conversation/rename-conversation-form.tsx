@@ -2,6 +2,7 @@ import { Button, Group, Stack, TextInput } from '@mantine/core'
 import { useForm, schemaResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
 import { z } from 'zod'
 
 import orpc from '@/lib/orpc'
@@ -20,6 +21,8 @@ interface RenameConversationFormProps {
 const RenameConversationForm = ({
     conversation,
 }: RenameConversationFormProps) => {
+    const router = useRouter()
+
     const form = useForm({
         initialValues: {
             title: conversation.title ?? NEW_CHAT_LABEL,
@@ -30,11 +33,20 @@ const RenameConversationForm = ({
     const renameMutation = useMutation(
         orpc.conversation.update.mutationOptions({
             onSuccess: async (_data, _variables, _onMutateResult, context) => {
-                await context.client.invalidateQueries(
-                    orpc.conversation.list.queryOptions({
-                        input: { status: 'active' },
-                    })
-                )
+                await Promise.all([
+                    context.client.invalidateQueries(
+                        orpc.conversation.find.queryOptions({
+                            input: { id: conversation.id },
+                        })
+                    ),
+                    context.client.invalidateQueries(
+                        orpc.conversation.list.queryOptions({
+                            input: { status: 'active' },
+                        })
+                    ),
+                ])
+
+                await router.invalidate()
 
                 closeAllModals()
             },

@@ -5,11 +5,16 @@ import {
     mantineHtmlProps,
 } from '@mantine/core'
 import { ModalsProvider } from '@mantine/modals'
-import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
+import {
+    createRootRouteWithContext,
+    HeadContent,
+    Scripts,
+} from '@tanstack/react-router'
 
 import MainLayout from '@/components/layout/main-layout'
 import flueClient from '@/configs/flue-client'
 import mantineTheme from '@/configs/mantine-theme'
+import type { RouterContext } from '@/router'
 
 import appCSSURL from '@/app.css?url'
 
@@ -32,7 +37,7 @@ const Component = () => (
     </html>
 )
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
     component: Component,
     head: () => ({
         links: [

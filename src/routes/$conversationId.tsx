@@ -3,7 +3,9 @@ import { Box, Stack } from '@mantine/core'
 import { createFileRoute, getRouteApi } from '@tanstack/react-router'
 
 import PromptInput from '@/components/chat/prompt-input'
+import { NEW_CHAT_LABEL } from '@/components/conversation/conversation-constants'
 import MessageList from '@/components/flue/message-list'
+import orpc from '@/lib/orpc'
 
 const conversationRouteApi = getRouteApi('/$conversationId')
 
@@ -27,6 +29,32 @@ const Component = () => {
     )
 }
 
+// oxlint-disable-next-line sort-keys
 export const Route = createFileRoute('/$conversationId')({
     component: Component,
+    loader: {
+        handler: async ({ context, params }) => {
+            const conversationRecord = await context.queryClient.fetchQuery(
+                orpc.conversation.find.queryOptions({
+                    input: { id: params.conversationId },
+                })
+            )
+
+            return {
+                title: conversationRecord.title ?? NEW_CHAT_LABEL,
+            }
+        },
+        staleReloadMode: 'blocking',
+    },
+    head: ({ loaderData }) => {
+        const title = loaderData ? loaderData.title : NEW_CHAT_LABEL
+
+        return {
+            meta: [
+                {
+                    title,
+                },
+            ],
+        }
+    },
 })

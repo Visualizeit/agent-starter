@@ -1,5 +1,6 @@
 import { consumeEventIterator } from '@orpc/client'
 import { useQueryClient } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { match } from 'ts-pattern'
 
@@ -7,6 +8,8 @@ import orpc from '@/lib/orpc'
 
 const useConversationEvents = () => {
     const queryClient = useQueryClient()
+
+    const router = useRouter()
 
     useEffect(() => {
         const unsubscribe = consumeEventIterator(
@@ -22,12 +25,21 @@ const useConversationEvents = () => {
                     match(event)
                         .with(
                             { type: 'conversation.title.generated' },
-                            async () => {
-                                await queryClient.invalidateQueries(
-                                    orpc.conversation.list.queryOptions({
-                                        input: { status: 'active' },
-                                    })
-                                )
+                            async ({ conversationId }) => {
+                                await Promise.all([
+                                    queryClient.invalidateQueries(
+                                        orpc.conversation.find.queryOptions({
+                                            input: { id: conversationId },
+                                        })
+                                    ),
+                                    queryClient.invalidateQueries(
+                                        orpc.conversation.list.queryOptions({
+                                            input: { status: 'active' },
+                                        })
+                                    ),
+                                ])
+
+                                await router.invalidate()
                             }
                         )
                         .exhaustive()
@@ -38,7 +50,7 @@ const useConversationEvents = () => {
         return () => {
             unsubscribe()
         }
-    }, [queryClient])
+    }, [queryClient, router])
 }
 
 export default useConversationEvents

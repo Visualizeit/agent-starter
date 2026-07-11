@@ -10,7 +10,7 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         tanstackStart(),
-        nitro(),
+        nitro({ plugins: ['./src/server/flue/nitro-plugin.ts'] }),
         viteReact(),
         babel({ presets: [reactCompilerPreset()] }),
     ],

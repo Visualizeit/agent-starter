@@ -13,8 +13,8 @@ dist-ssr
 .output
 .nitro
 .tanstack
-.flue-data
 app.db*
+flue.db*
 *.local
 .env
 

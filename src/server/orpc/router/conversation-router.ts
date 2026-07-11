@@ -1,4 +1,3 @@
-import type { FlueClient } from '@flue/sdk'
 import { and, eq, isNull } from 'drizzle-orm'
 import { createSelectSchema, createUpdateSchema } from 'drizzle-orm/zod'
 import { isNil, isNotNil } from 'es-toolkit/predicate'
@@ -7,6 +6,10 @@ import { z } from 'zod'
 
 import database from '@/server/db/client'
 import { conversations } from '@/server/db/schema'
+import {
+    generateConversationTitle,
+    sendAssistantMessage,
+} from '@/server/flue/actions'
 import publisher from '@/server/orpc/publisher'
 
 import base from '../base'
@@ -29,22 +32,20 @@ const generateTitleResultSchema = z.object({
 
 interface GenerateAndUpdateConversationTitleOptions {
     conversationId: string
-    flue: FlueClient
     userMessage: string
 }
 
 const generateAndUpdateConversationTitle = async ({
     conversationId,
-    flue,
     userMessage,
 }: GenerateAndUpdateConversationTitleOptions) => {
     try {
-        const run = await flue.workflows.invoke('generate-title', {
-            input: { userMessage },
-            wait: 'result',
+        const result = generateTitleResultSchema.parse({
+            title: await generateConversationTitle({
+                conversationId,
+                userMessage,
+            }),
         })
-
-        const result = generateTitleResultSchema.parse(run.result)
 
         const [updatedConversation] = await database
             .update(conversations)
@@ -78,10 +79,14 @@ const conversationRouter = {
                 projectId: idSchema.optional(),
             })
         )
-        .handler(async ({ input, context, errors }) => {
+        .handler(async ({ input, errors }) => {
             const conversationId = nanoid()
 
-            if (isNotNil(input.projectId)) {
+            const projectPath = await (async () => {
+                if (isNil(input.projectId)) {
+                    return null
+                }
+
                 const projectRecord = await database.query.projects.findFirst({
                     where: {
                         id: input.projectId,
@@ -92,7 +97,9 @@ const conversationRouter = {
                 if (isNil(projectRecord)) {
                     throw errors.NOT_FOUND()
                 }
-            }
+
+                return projectRecord.path
+            })()
 
             const [createdConversation] = await database
                 .insert(conversations)
@@ -107,13 +114,14 @@ const conversationRouter = {
                 throw errors.CONFLICT()
             }
 
-            await context.flue.agents.send('assistant', conversationId, {
+            await sendAssistantMessage({
+                conversationId,
                 message: input.message,
+                projectPath,
             })
 
             void generateAndUpdateConversationTitle({
                 conversationId,
-                flue: context.flue,
                 userMessage: input.message,
             })
 

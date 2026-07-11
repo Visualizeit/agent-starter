@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ConversationIdRouteImport } from './routes/$conversationId'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
+import { Route as ApiAgentsSplatRouteImport } from './routes/api/agents.$'
 
 const ConversationIdRoute = ConversationIdRouteImport.update({
   id: '/$conversationId',
@@ -28,34 +29,43 @@ const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAgentsSplatRoute = ApiAgentsSplatRouteImport.update({
+  id: '/api/agents/$',
+  path: '/api/agents/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$conversationId': typeof ConversationIdRoute
+  '/api/agents/$': typeof ApiAgentsSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$conversationId': typeof ConversationIdRoute
+  '/api/agents/$': typeof ApiAgentsSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$conversationId': typeof ConversationIdRoute
+  '/api/agents/$': typeof ApiAgentsSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$conversationId' | '/api/rpc/$'
+  fullPaths: '/' | '/$conversationId' | '/api/agents/$' | '/api/rpc/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$conversationId' | '/api/rpc/$'
-  id: '__root__' | '/' | '/$conversationId' | '/api/rpc/$'
+  to: '/' | '/$conversationId' | '/api/agents/$' | '/api/rpc/$'
+  id: '__root__' | '/' | '/$conversationId' | '/api/agents/$' | '/api/rpc/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConversationIdRoute: typeof ConversationIdRoute
+  ApiAgentsSplatRoute: typeof ApiAgentsSplatRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
 
@@ -82,12 +92,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/agents/$': {
+      id: '/api/agents/$'
+      path: '/api/agents/$'
+      fullPath: '/api/agents/$'
+      preLoaderRoute: typeof ApiAgentsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConversationIdRoute: ConversationIdRoute,
+  ApiAgentsSplatRoute: ApiAgentsSplatRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
 }
 export const routeTree = rootRouteImport

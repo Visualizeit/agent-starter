@@ -1,4 +1,3 @@
-import { FlueProvider } from '@flue/react'
 import {
     ColorSchemeScript,
     MantineProvider,
@@ -12,7 +11,6 @@ import {
 } from '@tanstack/react-router'
 
 import MainLayout from '@/components/layout/main-layout'
-import flueClient from '@/configs/flue-client'
 import mantineTheme from '@/configs/mantine-theme'
 import type { RouterContext } from '@/router'
 
@@ -27,9 +25,7 @@ const Component = () => (
         <body>
             <MantineProvider deduplicateInlineStyles theme={mantineTheme}>
                 <ModalsProvider modalProps={{ centered: true }}>
-                    <FlueProvider client={flueClient}>
-                        <MainLayout />
-                    </FlueProvider>
+                    <MainLayout />
                 </ModalsProvider>
             </MantineProvider>
             <Scripts />

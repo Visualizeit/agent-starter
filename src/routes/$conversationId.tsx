@@ -13,8 +13,7 @@ const Component = () => {
     const { conversationId } = conversationRouteApi.useParams()
 
     const agent = useFlueAgent({
-        id: conversationId,
-        name: 'assistant',
+        url: `/api/agents/assistant/${conversationId}`,
     })
 
     return (

@@ -1,8 +1,6 @@
 import { os } from '@orpc/server'
 
-import type { ORPCContext } from './context'
-
-const base = os.$context<ORPCContext>().errors({
+const base = os.errors({
     BAD_REQUEST: {
         message: 'Bad request',
     },

@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/sqlite-core'
 
 const conversationStatusValues = ['active', 'archived', 'deleted'] as const
-const projectStatusValues = ['active', 'deleted'] as const
+const projectStatusValues = ['active', 'removed'] as const
 
 export const projects = snakeCase.table(
     'projects',
@@ -40,7 +40,7 @@ export const projects = snakeCase.table(
         check('projects_path_check', sql`length(${table.path}) > 0`),
         check(
             'projects_status_check',
-            sql`${table.status} in ('active', 'deleted')`
+            sql`${table.status} in ('active', 'removed')`
         ),
     ]
 )

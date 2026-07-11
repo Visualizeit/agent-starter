@@ -4,6 +4,7 @@ import { Link, Outlet } from '@tanstack/react-router'
 import ConversationList from '@/components/conversation/conversation-list'
 import NewChatButton from '@/components/conversation/new-chat-button'
 import useConversationEvents from '@/components/conversation/use-conversation-events'
+import ProjectList from '@/components/project/project-list'
 
 const MainLayout = () => {
     useConversationEvents()
@@ -30,6 +31,7 @@ const MainLayout = () => {
                 <AppShell.Section component={ScrollArea} grow>
                     <Stack gap="sm">
                         <ConversationList isPinned />
+                        <ProjectList />
                         <ConversationList />
                     </Stack>
                 </AppShell.Section>

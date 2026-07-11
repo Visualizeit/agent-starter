@@ -1,6 +1,10 @@
 import { useFlueAgent } from '@flue/react'
 import { Box, Stack } from '@mantine/core'
-import { createFileRoute, getRouteApi } from '@tanstack/react-router'
+import {
+    ClientOnly,
+    createFileRoute,
+    getRouteApi,
+} from '@tanstack/react-router'
 
 import PromptInput from '@/components/chat/prompt-input'
 import { NEW_CHAT_LABEL } from '@/components/conversation/conversation-constants'
@@ -9,7 +13,7 @@ import orpc from '@/lib/orpc'
 
 const conversationRouteApi = getRouteApi('/$conversationId')
 
-const Component = () => {
+const Conversation = () => {
     const { conversationId } = conversationRouteApi.useParams()
 
     const agent = useFlueAgent({
@@ -27,6 +31,12 @@ const Component = () => {
         </Stack>
     )
 }
+
+const Component = () => (
+    <ClientOnly>
+        <Conversation />
+    </ClientOnly>
+)
 
 // oxlint-disable-next-line sort-keys
 export const Route = createFileRoute('/$conversationId')({

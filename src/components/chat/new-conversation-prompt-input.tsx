@@ -1,7 +1,7 @@
 import { ActionIcon, Textarea, Group, Space, rem } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { useMutation } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { invariant } from 'es-toolkit'
 import { ArrowUpIcon } from 'lucide-react'
 import type { SubmitEventHandler } from 'react'
@@ -14,6 +14,7 @@ const messageSchema = z.string().trim().min(1)
 
 const NewConversationPromptInput = () => {
     const [message, setMessage] = useInputState('')
+    const { projectId } = useSearch({ from: '/' })
 
     const messageParseResult = messageSchema.safeParse(message)
 
@@ -23,7 +24,7 @@ const NewConversationPromptInput = () => {
         orpc.conversation.create.mutationOptions({
             onSuccess: async (
                 createdConversation,
-                _variables,
+                variables,
                 _onMutateResult,
                 context
             ) => {
@@ -34,7 +35,10 @@ const NewConversationPromptInput = () => {
 
                 await context.client.invalidateQueries(
                     orpc.conversation.list.queryOptions({
-                        input: { status: 'active' },
+                        input: {
+                            projectId: variables.projectId,
+                            status: 'active',
+                        },
                     })
                 )
             },
@@ -52,6 +56,7 @@ const NewConversationPromptInput = () => {
 
             await createConversationMutation.mutateAsync({
                 message: messageParseResult.data,
+                projectId,
             })
         },
     })

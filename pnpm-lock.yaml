@@ -86,6 +86,9 @@ importers:
       es-toolkit:
         specifier: ^1.49.0
         version: 1.49.0
+      execa:
+        specifier: ^9.6.1
+        version: 9.6.1
       hono:
         specifier: ^4.12.29
         version: 4.12.29

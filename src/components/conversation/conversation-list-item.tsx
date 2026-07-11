@@ -92,7 +92,8 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
             className={cn(
                 'group/menu-item relative list-none',
                 'overflow-hidden rounded-(--mantine-radius-md)',
-                'hover:bg-(--mantine-color-gray-light-hover) focus-within:bg-(--mantine-color-gray-light-hover)'
+                'hover:bg-(--mantine-color-gray-light-hover) focus-within:bg-(--mantine-color-gray-light-hover)',
+                'has-[[aria-haspopup=menu][aria-expanded=true]]:bg-(--mantine-color-gray-light-hover)'
             )}
         >
             <UnstyledButton

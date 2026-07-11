@@ -176,7 +176,7 @@ const conversationRouter = {
                 where: {
                     ...(isNotNil(input.projectId)
                         ? { projectId: input.projectId }
-                        : {}),
+                        : { projectId: { isNull: true } }),
                     status: input.status,
                 },
             })

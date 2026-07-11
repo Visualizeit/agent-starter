@@ -41,7 +41,7 @@ const ConversationList = ({ isPinned = false }: ConversationListProps) => {
     return (
         <Stack gap="xxs" className="group/conversation-list">
             <UnstyledButton
-                w="100%"
+                className="w-full"
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? 'Collapse list' : 'Expand list'}
                 onClick={toggle}
@@ -68,7 +68,7 @@ const ConversationList = ({ isPinned = false }: ConversationListProps) => {
                     </ThemeIcon>
                 </Group>
             </UnstyledButton>
-            <Collapse expanded={isExpanded}>
+            <Collapse expanded={isExpanded} keepMounted={false}>
                 <Box component="ul">
                     {conversations.map((conversation) => (
                         <ConversationListItem

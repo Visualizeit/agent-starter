@@ -22,6 +22,7 @@ const CollapsibleTrigger = React.forwardRef<
         {children}
     </CollapsiblePrimitive.Trigger>
 ))
+CollapsibleTrigger.displayName = 'CollapsibleTrigger'
 
 const CollapsibleContent = React.forwardRef<
     React.ComponentRef<typeof CollapsiblePrimitive.Panel>,
@@ -38,5 +39,6 @@ const CollapsibleContent = React.forwardRef<
         {children}
     </CollapsiblePrimitive.Panel>
 ))
+CollapsibleContent.displayName = 'CollapsibleContent'
 
 export { Collapsible, CollapsibleContent, CollapsibleTrigger }

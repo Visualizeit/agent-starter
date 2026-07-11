@@ -1,9 +1,6 @@
-import {
-    MessageScroller as MessageScrollerPrimitive,
-    useMessageScroller,
-    useMessageScrollerScrollable,
-    useMessageScrollerVisibility,
-} from '@shadcn/react/message-scroller'
+'use client'
+
+import { MessageScroller as MessageScrollerPrimitive } from '@shadcn/react/message-scroller'
 import { ArrowDownIcon } from 'lucide-react'
 import * as React from 'react'
 
@@ -48,7 +45,7 @@ const MessageScrollerContent = ({
 }: React.ComponentProps<typeof MessageScrollerPrimitive.Content>) => (
     <MessageScrollerPrimitive.Content
         data-slot="message-scroller-content"
-        className={cn('flex h-max min-h-full flex-col gap-8', className)}
+        className={cn('flex h-max min-h-full flex-col gap-6', className)}
         {...props}
     />
 )
@@ -110,7 +107,9 @@ export {
     MessageScrollerContent,
     MessageScrollerItem,
     MessageScrollerButton,
+}
+export {
     useMessageScroller,
     useMessageScrollerScrollable,
     useMessageScrollerVisibility,
-}
+} from '@shadcn/react/message-scroller'

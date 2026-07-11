@@ -16,7 +16,7 @@ export const projects = snakeCase.table(
     {
         createdAt: integer({ mode: 'timestamp_ms' })
             .notNull()
-            .default(sql`(unixepoch() * 1000)`),
+            .default(sql`(cast(unixepoch('subsec') * 1000 as integer))`),
         id: text().primaryKey(),
         name: text().notNull(),
         path: text().notNull(),
@@ -27,7 +27,7 @@ export const projects = snakeCase.table(
             .default('active'),
         updatedAt: integer({ mode: 'timestamp_ms' })
             .notNull()
-            .default(sql`(unixepoch() * 1000)`)
+            .default(sql`(cast(unixepoch('subsec') * 1000 as integer))`)
             .$onUpdate(() => new Date()),
     },
     (table) => [
@@ -50,7 +50,7 @@ export const conversations = snakeCase.table(
     {
         createdAt: integer({ mode: 'timestamp_ms' })
             .notNull()
-            .default(sql`(unixepoch() * 1000)`),
+            .default(sql`(cast(unixepoch('subsec') * 1000 as integer))`),
         id: text().primaryKey(),
         isPinned: integer({ mode: 'boolean' }).notNull().default(false),
         metadata: text({ mode: 'json' })
@@ -66,17 +66,19 @@ export const conversations = snakeCase.table(
         title: text(),
         updatedAt: integer({ mode: 'timestamp_ms' })
             .notNull()
-            .default(sql`(unixepoch() * 1000)`)
+            .default(sql`(cast(unixepoch('subsec') * 1000 as integer))`)
             .$onUpdate(() => new Date()),
     },
     (table) => [
-        index('conversations_status_updated_at_idx').on(
+        index('conversations_status_is_pinned_updated_at_idx').on(
             table.status,
+            table.isPinned,
             table.updatedAt
         ),
-        index('conversations_project_id_status_updated_at_idx').on(
+        index('conversations_project_id_status_is_pinned_updated_at_idx').on(
             table.projectId,
             table.status,
+            table.isPinned,
             table.updatedAt
         ),
         check(
@@ -85,7 +87,7 @@ export const conversations = snakeCase.table(
         ),
         check(
             'conversations_metadata_json_check',
-            sql`json_valid(${table.metadata})`
+            sql`json_valid(${table.metadata}) and json_type(${table.metadata}) = 'object'`
         ),
     ]
 )

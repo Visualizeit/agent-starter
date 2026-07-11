@@ -1,8 +1,19 @@
-import { Box, Stack, Title } from '@mantine/core'
+import {
+    Box,
+    Collapse,
+    Group,
+    Stack,
+    ThemeIcon,
+    Title,
+    UnstyledButton,
+} from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { isEmpty } from 'es-toolkit/compat'
+import { ChevronRightIcon } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
+import { cn } from '@/lib/utils'
 
 import ConversationListItem from './conversation-list-item'
 
@@ -11,6 +22,8 @@ interface ConversationListProps {
 }
 
 const ConversationList = ({ isPinned = false }: ConversationListProps) => {
+    const [isExpanded, { toggle }] = useDisclosure(true)
+
     const { data: conversations } = useSuspenseQuery(
         orpc.conversation.list.queryOptions({
             input: { status: 'active' },
@@ -26,18 +39,45 @@ const ConversationList = ({ isPinned = false }: ConversationListProps) => {
     }
 
     return (
-        <Stack gap="xxs">
-            <Title order={6} px="xxs" c="dimmed">
-                {isPinned ? 'Pinned' : 'Recents'}
-            </Title>
-            <Box component="ul">
-                {conversations.map((conversation) => (
-                    <ConversationListItem
-                        conversation={conversation}
-                        key={conversation.id}
-                    />
-                ))}
-            </Box>
+        <Stack gap="xxs" className="group/conversation-list">
+            <UnstyledButton
+                w="100%"
+                aria-expanded={isExpanded}
+                aria-label={isExpanded ? 'Collapse list' : 'Expand list'}
+                onClick={toggle}
+            >
+                <Group gap="xxxs" px="xxs">
+                    <Title order={6} c="dimmed">
+                        {isPinned ? 'Pinned' : 'Recents'}
+                    </Title>
+                    <ThemeIcon
+                        variant="transparent"
+                        c="dimmed"
+                        size="sm"
+                        className={cn(
+                            isExpanded &&
+                                'invisible group-hover/conversation-list:visible group-focus-within/conversation-list:visible'
+                        )}
+                    >
+                        <ChevronRightIcon
+                            className={cn(
+                                'size-4 transition-transform',
+                                isExpanded && 'rotate-90'
+                            )}
+                        />
+                    </ThemeIcon>
+                </Group>
+            </UnstyledButton>
+            <Collapse expanded={isExpanded}>
+                <Box component="ul">
+                    {conversations.map((conversation) => (
+                        <ConversationListItem
+                            conversation={conversation}
+                            key={conversation.id}
+                        />
+                    ))}
+                </Box>
+            </Collapse>
         </Stack>
     )
 }

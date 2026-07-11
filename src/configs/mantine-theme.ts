@@ -7,7 +7,7 @@ import type {
 
 type ExtendedCustomColors = 'brand' | DefaultMantineColor
 
-type ExtendedCustomSpacing = 'xxs' | DefaultMantineSize
+type ExtendedCustomSpacing = 'xxs' | 'xxxs' | DefaultMantineSize
 
 type ExtendedCustomRadius = 'full' | DefaultMantineSize
 
@@ -59,6 +59,7 @@ const mantineTheme = createTheme({
     spacing: {
         full: 'calc(infinity * 1px)',
         xxs: 'calc(0.5rem * var(--mantine-scale))',
+        xxxs: 'calc(0.25rem * var(--mantine-scale))',
     },
 })
 

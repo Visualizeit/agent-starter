@@ -32,19 +32,16 @@ const Component = () => {
 // oxlint-disable-next-line sort-keys
 export const Route = createFileRoute('/$conversationId')({
     component: Component,
-    loader: {
-        handler: async ({ context, params }) => {
-            const conversationRecord = await context.queryClient.fetchQuery(
-                orpc.conversation.find.queryOptions({
-                    input: { id: params.conversationId },
-                })
-            )
+    loader: async ({ context, params }) => {
+        const conversationRecord = await context.queryClient.fetchQuery(
+            orpc.conversation.find.queryOptions({
+                input: { id: params.conversationId },
+            })
+        )
 
-            return {
-                title: conversationRecord.title ?? NEW_CHAT_LABEL,
-            }
-        },
-        staleReloadMode: 'blocking',
+        return {
+            title: conversationRecord.title ?? NEW_CHAT_LABEL,
+        }
     },
     head: ({ loaderData }) => {
         const title = loaderData ? loaderData.title : NEW_CHAT_LABEL

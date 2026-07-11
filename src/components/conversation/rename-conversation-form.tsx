@@ -46,7 +46,7 @@ const RenameConversationForm = ({
                     ),
                 ])
 
-                await router.invalidate()
+                await router.invalidate({ sync: true })
 
                 closeAllModals()
             },

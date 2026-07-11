@@ -39,7 +39,7 @@ const useConversationEvents = () => {
                                     ),
                                 ])
 
-                                await router.invalidate()
+                                await router.invalidate({ sync: true })
                             }
                         )
                         .exhaustive()

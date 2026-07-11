@@ -2,6 +2,7 @@ import { stat } from 'node:fs/promises'
 import path from 'node:path'
 
 import { and, eq } from 'drizzle-orm'
+import { createInsertSchema, createSelectSchema } from 'drizzle-orm/zod'
 import { isNil } from 'es-toolkit/predicate'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
@@ -12,9 +13,12 @@ import { projects } from '@/server/db/schema'
 import base from '../base'
 
 const idSchema = z.string().min(1)
-const nameSchema = z.string().trim().min(1).max(200)
-const pathSchema = z.string().trim().min(1)
-const statusSchema = z.enum(['active', 'deleted'])
+const projectInsertSchema = createInsertSchema(projects, {
+    name: (schema) => schema.trim().min(1).max(200),
+    path: (schema) => schema.trim().min(1),
+})
+const projectSelectSchema = createSelectSchema(projects)
+const projectStatusSchema = projectSelectSchema.shape.status
 
 const resolveProjectPath = async (projectPath: string) => {
     const resolvedPath = path.resolve(projectPath)
@@ -34,7 +38,7 @@ const resolveProjectPath = async (projectPath: string) => {
 
 const projectRouter = {
     create: base
-        .input(z.object({ path: pathSchema }))
+        .input(projectInsertSchema.pick({ path: true }))
         .handler(async ({ input, errors }) => {
             const resolvedPath = await resolveProjectPath(input.path)
 
@@ -104,7 +108,7 @@ const projectRouter = {
     list: base
         .input(
             z.object({
-                status: statusSchema,
+                status: projectStatusSchema,
             })
         )
         .handler(async ({ input }) => {
@@ -121,9 +125,8 @@ const projectRouter = {
         }),
     update: base
         .input(
-            z.object({
+            projectInsertSchema.pick({ name: true }).extend({
                 id: idSchema,
-                name: nameSchema,
             })
         )
         .handler(async ({ input, errors }) => {

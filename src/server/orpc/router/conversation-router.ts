@@ -1,5 +1,6 @@
 import type { FlueClient } from '@flue/sdk'
 import { and, eq, isNull } from 'drizzle-orm'
+import { createSelectSchema, createUpdateSchema } from 'drizzle-orm/zod'
 import { isNil, isNotNil } from 'es-toolkit/predicate'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
@@ -12,10 +13,16 @@ import base from '../base'
 
 const idSchema = z.string().min(1)
 const messageSchema = z.string().trim().min(1)
-const titleSchema = z.string().max(200).nullable()
-const modelSchema = z.string().max(120).nullable()
 const metadataSchema = z.record(z.string(), z.json())
-const statusSchema = z.enum(['active', 'archived', 'deleted'])
+const conversationSelectSchema = createSelectSchema(conversations, {
+    metadata: metadataSchema,
+})
+const conversationStatusSchema = conversationSelectSchema.shape.status
+const conversationUpdateSchema = createUpdateSchema(conversations, {
+    metadata: metadataSchema.optional(),
+    model: (schema) => schema.max(120),
+    title: (schema) => schema.max(200),
+})
 const generateTitleResultSchema = z.object({
     title: z.string().trim().min(1).max(200),
 })
@@ -149,7 +156,7 @@ const conversationRouter = {
         .input(
             z.object({
                 projectId: idSchema.optional(),
-                status: statusSchema,
+                status: conversationStatusSchema,
             })
         )
         .handler(async ({ input }) => {
@@ -170,14 +177,19 @@ const conversationRouter = {
         }),
     update: base
         .input(
-            z.object({
-                id: idSchema,
-                isPinned: z.boolean().optional(),
-                metadata: metadataSchema.optional(),
-                model: modelSchema.optional(),
-                status: statusSchema.exclude(['deleted']).optional(),
-                title: titleSchema.optional(),
-            })
+            conversationUpdateSchema
+                .pick({
+                    isPinned: true,
+                    metadata: true,
+                    model: true,
+                    title: true,
+                })
+                .extend({
+                    id: idSchema,
+                    status: conversationStatusSchema
+                        .exclude(['deleted'])
+                        .optional(),
+                })
         )
         .handler(async ({ input, errors }) => {
             const [updatedConversation] = await database

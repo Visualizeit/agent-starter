@@ -16,7 +16,6 @@ const titleSchema = z.string().max(200).nullable()
 const modelSchema = z.string().max(120).nullable()
 const metadataSchema = z.record(z.string(), z.json())
 const statusSchema = z.enum(['active', 'archived', 'deleted'])
-const projectIdSchema = z.string().min(1).nullable()
 const generateTitleResultSchema = z.object({
     title: z.string().trim().min(1).max(200),
 })
@@ -176,32 +175,17 @@ const conversationRouter = {
                 isPinned: z.boolean().optional(),
                 metadata: metadataSchema.optional(),
                 model: modelSchema.optional(),
-                projectId: projectIdSchema.optional(),
                 status: statusSchema.exclude(['deleted']).optional(),
                 title: titleSchema.optional(),
             })
         )
         .handler(async ({ input, errors }) => {
-            if (isNotNil(input.projectId)) {
-                const projectRecord = await database.query.projects.findFirst({
-                    where: {
-                        id: input.projectId,
-                        status: 'active',
-                    },
-                })
-
-                if (isNil(projectRecord)) {
-                    throw errors.NOT_FOUND()
-                }
-            }
-
             const [updatedConversation] = await database
                 .update(conversations)
                 .set({
                     isPinned: input.isPinned,
                     metadata: input.metadata,
                     model: input.model,
-                    projectId: input.projectId,
                     status: input.status,
                     title: input.title,
                 })

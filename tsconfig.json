@@ -1,6 +1,6 @@
 {
     "extends": ["@total-typescript/tsconfig/bundler/dom/app"],
-    "include": ["**/*"],
+    "include": ["**/*", ".flue/**/*"],
     "compilerOptions": {
         "types": ["node", "vite/client"],
         "jsx": "react-jsx",

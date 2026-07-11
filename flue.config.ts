@@ -5,4 +5,6 @@ export default defineConfig({
     target: 'node',
 })
 
-export const vite = defineViteConfig({})
+export const vite = defineViteConfig({
+    resolve: { tsconfigPaths: true },
+})

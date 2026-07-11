@@ -3,7 +3,7 @@ import {
     check,
     index,
     integer,
-    sqliteTable,
+    snakeCase,
     text,
     uniqueIndex,
 } from 'drizzle-orm/sqlite-core'
@@ -11,21 +11,21 @@ import {
 const conversationStatusValues = ['active', 'archived', 'deleted'] as const
 const projectStatusValues = ['active', 'deleted'] as const
 
-export const projects = sqliteTable(
+export const projects = snakeCase.table(
     'projects',
     {
-        createdAt: integer('created_at', { mode: 'timestamp_ms' })
+        createdAt: integer({ mode: 'timestamp_ms' })
             .notNull()
             .default(sql`(unixepoch() * 1000)`),
-        id: text('id').primaryKey(),
-        name: text('name').notNull(),
-        path: text('path').notNull(),
-        status: text('status', {
+        id: text().primaryKey(),
+        name: text().notNull(),
+        path: text().notNull(),
+        status: text({
             enum: projectStatusValues,
         })
             .notNull()
             .default('active'),
-        updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+        updatedAt: integer({ mode: 'timestamp_ms' })
             .notNull()
             .default(sql`(unixepoch() * 1000)`)
             .$onUpdate(() => new Date()),
@@ -45,28 +45,26 @@ export const projects = sqliteTable(
     ]
 )
 
-export const conversations = sqliteTable(
+export const conversations = snakeCase.table(
     'conversations',
     {
-        createdAt: integer('created_at', { mode: 'timestamp_ms' })
+        createdAt: integer({ mode: 'timestamp_ms' })
             .notNull()
             .default(sql`(unixepoch() * 1000)`),
-        id: text('id').primaryKey(),
-        isPinned: integer('is_pinned', { mode: 'boolean' })
-            .notNull()
-            .default(false),
-        metadata: text('metadata', { mode: 'json' })
+        id: text().primaryKey(),
+        isPinned: integer({ mode: 'boolean' }).notNull().default(false),
+        metadata: text({ mode: 'json' })
             .notNull()
             .default(sql`'{}'`),
-        model: text('model'),
-        projectId: text('project_id').references(() => projects.id),
-        status: text('status', {
+        model: text(),
+        projectId: text().references(() => projects.id),
+        status: text({
             enum: conversationStatusValues,
         })
             .notNull()
             .default('active'),
-        title: text('title'),
-        updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+        title: text(),
+        updatedAt: integer({ mode: 'timestamp_ms' })
             .notNull()
             .default(sql`(unixepoch() * 1000)`)
             .$onUpdate(() => new Date()),

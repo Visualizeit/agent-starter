@@ -41,6 +41,11 @@ const NewConversationPromptInput = () => {
                         },
                     })
                 )
+                await context.client.invalidateQueries(
+                    orpc.project.list.queryOptions({
+                        input: { status: 'active' },
+                    })
+                )
             },
         })
     )

@@ -8,7 +8,20 @@ import serverEnv from '@/server/server-env'
 
 const client = new DatabaseSync(serverEnv.DB_FILE_NAME)
 
-const relations = defineRelations(schema)
+const relations = defineRelations(schema, (relation) => ({
+    conversations: {
+        project: relation.one.projects({
+            from: relation.conversations.projectId,
+            to: relation.projects.id,
+        }),
+    },
+    projects: {
+        conversations: relation.many.conversations({
+            from: relation.projects.id,
+            to: relation.conversations.projectId,
+        }),
+    },
+}))
 
 const database = drizzle({
     client,

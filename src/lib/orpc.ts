@@ -1,4 +1,5 @@
 import { createORPCClient } from '@orpc/client'
+import type { InferClientOutputs } from '@orpc/client'
 import { RPCLink } from '@orpc/client/fetch'
 import { createRouterClient } from '@orpc/server'
 import type { RouterClient } from '@orpc/server'
@@ -18,6 +19,8 @@ const getORPCClient = createIsomorphicFn()
     })
 
 const client: RouterClient<typeof router> = getORPCClient()
+
+export type ORPCOutputs = InferClientOutputs<typeof client>
 
 const orpc = createTanstackQueryUtils(client)
 

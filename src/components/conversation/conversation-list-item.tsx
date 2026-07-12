@@ -44,11 +44,18 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
             ) => {
                 await navigate({ to: '/' })
 
-                await context.client.invalidateQueries(
-                    orpc.conversation.list.queryOptions({
-                        input: { status: 'active' },
-                    })
-                )
+                await Promise.all([
+                    context.client.invalidateQueries(
+                        orpc.conversation.list.queryOptions({
+                            input: { status: 'active' },
+                        })
+                    ),
+                    context.client.invalidateQueries(
+                        orpc.project.list.queryOptions({
+                            input: { status: 'active' },
+                        })
+                    ),
+                ])
             },
         })
     )
@@ -56,11 +63,18 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
     const pinConversationMutation = useMutation(
         orpc.conversation.update.mutationOptions({
             onSuccess: async (_data, _variables, _onMutateResult, context) => {
-                await context.client.invalidateQueries(
-                    orpc.conversation.list.queryOptions({
-                        input: { status: 'active' },
-                    })
-                )
+                await Promise.all([
+                    context.client.invalidateQueries(
+                        orpc.conversation.list.queryOptions({
+                            input: { status: 'active' },
+                        })
+                    ),
+                    context.client.invalidateQueries(
+                        orpc.project.list.queryOptions({
+                            input: { status: 'active' },
+                        })
+                    ),
+                ])
             },
         })
     )

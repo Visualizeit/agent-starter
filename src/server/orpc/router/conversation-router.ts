@@ -152,6 +152,9 @@ const conversationRouter = {
                     where: {
                         id: input.id,
                     },
+                    with: {
+                        project: true,
+                    },
                 })
 
             if (isNil(conversationRecord)) {

@@ -10,7 +10,7 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { isEmpty } from 'es-toolkit/compat'
 import {
@@ -24,29 +24,25 @@ import {
 
 import ConversationListItem from '@/components/conversation/conversation-list-item'
 import orpc from '@/lib/orpc'
+import type { ORPCOutputs } from '@/lib/orpc'
 import { cn } from '@/lib/utils'
-import type { projects } from '@/server/db/schema'
 
 import RenameProjectForm from './rename-project-form'
 
+type Project = ORPCOutputs['project']['list']['list'][number]
+type ProjectConversations = Project['conversations']
+
 interface ProjectListItemProps {
-    project: typeof projects.$inferSelect
+    project: Project
 }
 
 interface ProjectConversationListProps {
-    projectId: string
+    conversations: ProjectConversations
 }
 
 const ProjectConversationList = ({
-    projectId,
+    conversations,
 }: ProjectConversationListProps) => {
-    const { data: conversations } = useSuspenseQuery(
-        orpc.conversation.list.queryOptions({
-            input: { projectId, status: 'active' },
-            select: (data) => data.list,
-        })
-    )
-
     if (isEmpty(conversations)) {
         return (
             <Text c="dimmed" size="sm" px="xxs">
@@ -194,7 +190,9 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                 </Group>
             </Box>
             <Collapse expanded={isExpanded} keepMounted={false}>
-                <ProjectConversationList projectId={project.id} />
+                <ProjectConversationList
+                    conversations={project.conversations}
+                />
             </Collapse>
         </Stack>
     )

@@ -96,7 +96,6 @@ const projectRouter = {
         const selectedPathParseResult =
             selectedPathSchema.safeParse(selectedPath)
 
-        // selectedPathParseResult.
         if (!selectedPathParseResult.success) {
             return { status: 'cancelled' as const }
         }
@@ -159,6 +158,17 @@ const projectRouter = {
                 },
                 where: {
                     status: input.status,
+                },
+                with: {
+                    conversations: {
+                        orderBy: {
+                            isPinned: 'desc',
+                            updatedAt: 'desc',
+                        },
+                        where: {
+                            status: 'active',
+                        },
+                    },
                 },
             })
 

@@ -44,6 +44,11 @@ const RenameConversationForm = ({
                             input: { status: 'active' },
                         })
                     ),
+                    context.client.invalidateQueries(
+                        orpc.project.list.queryOptions({
+                            input: { status: 'active' },
+                        })
+                    ),
                 ])
 
                 await router.invalidate({ sync: true })

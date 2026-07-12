@@ -37,6 +37,11 @@ const useConversationEvents = () => {
                                             input: { status: 'active' },
                                         })
                                     ),
+                                    queryClient.invalidateQueries(
+                                        orpc.project.list.queryOptions({
+                                            input: { status: 'active' },
+                                        })
+                                    ),
                                 ])
 
                                 await router.invalidate({ sync: true })

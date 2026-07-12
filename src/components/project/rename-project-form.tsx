@@ -49,8 +49,6 @@ const RenameProjectForm = ({ project }: RenameProjectFormProps) => {
             <Stack>
                 <TextInput
                     data-autofocus
-                    required
-                    label="Name"
                     placeholder="Enter project name"
                     {...form.getInputProps('name')}
                 />

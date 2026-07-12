@@ -8,7 +8,7 @@ const NewChatButton = () => (
     <UnstyledButton
         className={cn(
             'block w-full',
-            'rounded-(--mantine-radius-md) p-(--mantine-spacing-xxs)',
+            'rounded-(--mantine-radius-md) px-(--mantine-spacing-xxs) py-(--mantine-spacing-sidebar-menu-item-y)',
             'hover:bg-(--mantine-color-gray-light-hover) focus-visible:bg-(--mantine-color-gray-light-hover)'
         )}
         renderRoot={(props) => (

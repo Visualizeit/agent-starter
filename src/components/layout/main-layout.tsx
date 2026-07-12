@@ -21,7 +21,7 @@ const MainLayout = () => {
                     <Outlet />
                 </Box>
             </AppShell.Main>
-            <AppShell.Navbar p="xs" className="gap-(--mantine-spacing-sm)">
+            <AppShell.Navbar p="xxs" className="gap-(--mantine-spacing-sm)">
                 <AppShell.Section>
                     <Stack gap="xs">
                         <Link to="/">Logo</Link>

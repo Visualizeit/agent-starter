@@ -39,7 +39,7 @@ const ConversationList = ({ isPinned = false }: ConversationListProps) => {
     }
 
     return (
-        <Stack gap="xxs" className="group/conversation-list">
+        <Stack gap="xxxs" className="group/conversation-list">
             <UnstyledButton
                 className="w-full"
                 aria-expanded={isExpanded}

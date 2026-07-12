@@ -7,7 +7,11 @@ import type {
 
 type ExtendedCustomColors = 'brand' | DefaultMantineColor
 
-type ExtendedCustomSpacing = 'xxs' | 'xxxs' | DefaultMantineSize
+type ExtendedCustomSpacing =
+    | 'sidebar-menu-item-y'
+    | 'xxs'
+    | 'xxxs'
+    | DefaultMantineSize
 
 type ExtendedCustomRadius = 'full' | DefaultMantineSize
 
@@ -58,6 +62,7 @@ const mantineTheme = createTheme({
     },
     spacing: {
         full: 'calc(infinity * 1px)',
+        'sidebar-menu-item-y': 'calc(0.375rem * var(--mantine-scale))',
         xxs: 'calc(0.5rem * var(--mantine-scale))',
         xxxs: 'calc(0.25rem * var(--mantine-scale))',
     },

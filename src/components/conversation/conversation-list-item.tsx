@@ -1,17 +1,9 @@
-import {
-    ActionIcon,
-    Box,
-    Group,
-    Menu,
-    Text,
-    UnstyledButton,
-} from '@mantine/core'
+import { ActionIcon, Box, Menu, Text, UnstyledButton } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import {
     ArchiveIcon,
-    MessageCircleIcon,
     MoreHorizontalIcon,
     PencilLineIcon,
     PinIcon,
@@ -27,9 +19,13 @@ import RenameConversationForm from './rename-conversation-form'
 
 interface ConversationListItemProps {
     conversation: typeof conversations.$inferSelect
+    isNested?: boolean
 }
 
-const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
+const ConversationListItem = ({
+    conversation,
+    isNested = false,
+}: ConversationListItemProps) => {
     const label = conversation.title ?? NEW_CHAT_LABEL
 
     const navigate = useNavigate()
@@ -112,7 +108,7 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
         >
             <UnstyledButton
                 className={cn(
-                    'block w-full p-(--mantine-spacing-xxs)',
+                    'block w-full px-(--mantine-spacing-xxs) py-(--mantine-spacing-sidebar-menu-item-y)',
                     'aria-[current=page]:bg-(--mantine-color-gray-light-hover)',
                     'group-hover/menu-item:pr-[calc(var(--mantine-spacing-xxs)+1.75rem)] group-focus-within/menu-item:pr-[calc(var(--mantine-spacing-xxs)+1.75rem)]'
                 )}
@@ -122,12 +118,17 @@ const ConversationListItem = ({ conversation }: ConversationListItemProps) => {
                         params={{ conversationId: conversation.id }}
                         {...props}
                     >
-                        <Group gap="xs" wrap="nowrap">
-                            <MessageCircleIcon className="size-4 shrink-0 text-(--mantine-color-dimmed)" />
-                            <Text className="min-w-0" size="sm" truncate>
-                                {label}
-                            </Text>
-                        </Group>
+                        <Text
+                            className={cn(
+                                'min-w-0',
+                                isNested &&
+                                    'pl-[calc(var(--mantine-spacing-md)+var(--mantine-spacing-xs))]'
+                            )}
+                            size="sm"
+                            truncate
+                        >
+                            {label}
+                        </Text>
                     </Link>
                 )}
             />

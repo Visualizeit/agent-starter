@@ -42,26 +42,30 @@ interface ProjectConversationListProps {
 
 const ProjectConversationList = ({
     conversations,
-}: ProjectConversationListProps) => {
-    if (isEmpty(conversations)) {
-        return (
-            <Text c="dimmed" size="sm" px="xxs">
+}: ProjectConversationListProps) => (
+    <Box>
+        {isEmpty(conversations) ? (
+            <Text
+                c="dimmed"
+                size="sm"
+                pl="calc(var(--mantine-spacing-xxs) + var(--mantine-spacing-md) + var(--mantine-spacing-xs))"
+                pr="xxs"
+            >
                 No conversations
             </Text>
-        )
-    }
-
-    return (
-        <Box component="ul" pl="md">
-            {conversations.map((conversation) => (
-                <ConversationListItem
-                    conversation={conversation}
-                    key={conversation.id}
-                />
-            ))}
-        </Box>
-    )
-}
+        ) : (
+            <Box component="ul">
+                {conversations.map((conversation) => (
+                    <ConversationListItem
+                        conversation={conversation}
+                        isNested
+                        key={conversation.id}
+                    />
+                ))}
+            </Box>
+        )}
+    </Box>
+)
 
 const ProjectListItem = ({ project }: ProjectListItemProps) => {
     const { conversationId } = useParams({ strict: false })
@@ -118,7 +122,10 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                 )}
             >
                 <UnstyledButton
-                    className="w-full group-hover/project-menu-item:pr-14 group-focus-within/project-menu-item:pr-14"
+                    className={cn(
+                        'w-full px-(--mantine-spacing-xxs) py-(--mantine-spacing-sidebar-menu-item-y)',
+                        'group-hover/project-menu-item:pr-14 group-focus-within/project-menu-item:pr-14'
+                    )}
                     aria-expanded={isExpanded}
                     aria-label={
                         isExpanded
@@ -127,7 +134,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                     }
                     onClick={toggle}
                 >
-                    <Group gap="xs" wrap="nowrap" p="xxs">
+                    <Group gap="xxs" wrap="nowrap">
                         {isExpanded ? (
                             <FolderOpenIcon className="size-4 shrink-0 text-(--mantine-color-dimmed)" />
                         ) : (

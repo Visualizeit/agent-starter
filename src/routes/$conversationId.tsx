@@ -48,8 +48,12 @@ export const Route = createFileRoute('/$conversationId')({
             })
         )
 
+        const conversationTitle = conversationRecord.title ?? NEW_CHAT_LABEL
+
         return {
-            title: conversationRecord.title ?? NEW_CHAT_LABEL,
+            title: conversationRecord.project
+                ? `${conversationTitle} · ${conversationRecord.project.name}`
+                : conversationTitle,
         }
     },
     head: ({ loaderData }) => {

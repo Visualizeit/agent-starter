@@ -11,7 +11,7 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import { isEmpty } from 'es-toolkit/compat'
 import {
     FolderIcon,
@@ -64,7 +64,13 @@ const ProjectConversationList = ({
 }
 
 const ProjectListItem = ({ project }: ProjectListItemProps) => {
-    const [isExpanded, { open, toggle }] = useDisclosure(false)
+    const { conversationId } = useParams({ strict: false })
+    const isCurrentProjectConversation = project.conversations.some(
+        (conversation) => conversation.id === conversationId
+    )
+    const [isExpanded, { open, toggle }] = useDisclosure(
+        isCurrentProjectConversation
+    )
 
     const removeProjectMutation = useMutation(
         orpc.project.remove.mutationOptions({

@@ -18,7 +18,7 @@ interface MessageListProps {
 }
 
 const MessageList = ({ messages }: MessageListProps) => (
-    <MessageScrollerProvider defaultScrollPosition="end">
+    <MessageScrollerProvider autoScroll defaultScrollPosition="last-anchor">
         <Box className="relative h-full">
             <MessageScroller className="h-full">
                 <MessageScrollerViewport>

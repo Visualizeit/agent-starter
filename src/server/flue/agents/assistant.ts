@@ -1,7 +1,6 @@
 'use agent'
 
 import {
-    defineAgent,
     useInitialData,
     useModel,
     useResponseFinish,
@@ -13,9 +12,7 @@ import * as v from 'valibot'
 
 import serverEnv from '@/server/server-env'
 
-export const name = 'assistant'
-export const description = 'General project assistant.'
-export const initialDataSchema = v.object({
+const initialDataSchema = v.object({
     projectPath: v.nullable(v.string()),
 })
 
@@ -24,7 +21,7 @@ interface AssistantInitialData {
 }
 
 const sandbox = local()
-const agentMetricsStartSchema = v.object({
+const responseMetricsStartSchema = v.object({
     startedAt: v.number(),
 })
 
@@ -34,21 +31,21 @@ const Assistant = () => {
     useModel(serverEnv.FLUE_MODEL)
 
     useResponseStart(() => ({
-        agentMetrics: {
+        responseMetrics: {
             startedAt: Date.now(),
         },
     }))
 
     useResponseFinish(({ metadata, response }) => {
-        const agentMetrics = v.parse(
-            agentMetricsStartSchema,
-            metadata.agentMetrics
+        const responseMetrics = v.parse(
+            responseMetricsStartSchema,
+            metadata.responseMetrics
         )
 
         return {
-            agentMetrics: {
+            responseMetrics: {
                 completedAt: Date.now(),
-                startedAt: agentMetrics.startedAt,
+                startedAt: responseMetrics.startedAt,
                 usage: response.usage,
             },
         }
@@ -57,4 +54,7 @@ const Assistant = () => {
     useSandbox(sandbox, { cwd: initialData.projectPath ?? undefined })
 }
 
-export default defineAgent(Assistant)
+Assistant.agentName = 'assistant'
+Assistant.initialData = initialDataSchema
+
+export default Assistant

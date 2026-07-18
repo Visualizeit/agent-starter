@@ -1,11 +1,12 @@
 import { sqlite, start } from '@flue/runtime/node'
 import type { Flue } from '@flue/runtime/node'
+import { createAgentRouter } from '@flue/runtime/routing'
 import { Hono } from 'hono'
 
 import serverEnv from '@/server/server-env'
 
-import * as assistantAgent from './agents/assistant'
-import * as generateTitleAgent from './agents/generate-title'
+import assistantAgent from './agents/assistant'
+import generateTitleAgent from './agents/generate-title'
 
 let flueRuntimePromise: Promise<Flue> | undefined
 let flueAppPromise: Promise<Hono> | undefined
@@ -31,7 +32,7 @@ export const getFlueApp = () => {
     flueAppPromise = getFlueRuntime().then(() => {
         const app = new Hono()
 
-        app.route('/api/agents/assistant', assistantAgent.default.route())
+        app.route('/api/agents/assistant', createAgentRouter(assistantAgent))
 
         return app
     })

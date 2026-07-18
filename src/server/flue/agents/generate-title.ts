@@ -1,11 +1,8 @@
 'use agent'
 
-import { defineAgent, useModel } from '@flue/runtime'
+import { useModel } from '@flue/runtime'
 
 import serverEnv from '@/server/server-env'
-
-export const name = 'generate-title'
-export const description = 'Generate a concise conversation title.'
 
 const instructions = `You will generate a short title based on the first message a user begins a conversation with.
 
@@ -25,4 +22,6 @@ const GenerateTitle = () => {
     return instructions
 }
 
-export default defineAgent(GenerateTitle)
+GenerateTitle.agentName = 'generate-title'
+
+export default GenerateTitle

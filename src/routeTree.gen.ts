@@ -9,29 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ConversationIdRouteImport } from './routes/$conversationId'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
+import { Route as ConversationIdRouteImport } from './routes/$conversationId'
 import { Route as ApiAgentsSplatRouteImport } from './routes/api/agents.$'
+import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 
-const ConversationIdRoute = ConversationIdRouteImport.update({
-  id: '/$conversationId',
-  path: '/$conversationId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
-  id: '/api/rpc/$',
-  path: '/api/rpc/$',
+const ConversationIdRoute = ConversationIdRouteImport.update({
+  id: '/$conversationId',
+  path: '/$conversationId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAgentsSplatRoute = ApiAgentsSplatRouteImport.update({
   id: '/api/agents/$',
   path: '/api/agents/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
+  id: '/api/rpc/$',
+  path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -71,13 +71,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/$conversationId': {
-      id: '/$conversationId'
-      path: '/$conversationId'
-      fullPath: '/$conversationId'
-      preLoaderRoute: typeof ConversationIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -85,11 +78,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/rpc/$': {
-      id: '/api/rpc/$'
-      path: '/api/rpc/$'
-      fullPath: '/api/rpc/$'
-      preLoaderRoute: typeof ApiRpcSplatRouteImport
+    '/$conversationId': {
+      id: '/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/$conversationId'
+      preLoaderRoute: typeof ConversationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/agents/$': {
@@ -97,6 +90,13 @@ declare module '@tanstack/react-router' {
       path: '/api/agents/$'
       fullPath: '/api/agents/$'
       preLoaderRoute: typeof ApiAgentsSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/rpc/$': {
+      id: '/api/rpc/$'
+      path: '/api/rpc/$'
+      fullPath: '/api/rpc/$'
+      preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

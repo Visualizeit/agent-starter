@@ -72,7 +72,7 @@
         "drizzle-kit": "1.0.0-rc.4",
         "oxfmt": "^0.59.0",
         "oxlint": "^1.74.0",
-        "postcss": "^8.5.19",
+        "postcss": "^8.5.23",
         "postcss-preset-mantine": "^1.18.0",
         "postcss-simple-vars": "^7.0.1",
         "tailwindcss": "^4.3.3",

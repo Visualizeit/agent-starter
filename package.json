@@ -79,6 +79,6 @@
         "typescript": "^7.0.2",
         "ultracite": "7.9.4",
         "vite": "^8.1.5",
-        "vite-plus": "0.2.5"
+        "vite-plus": "0.2.6"
     }
 }

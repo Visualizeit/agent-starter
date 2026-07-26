@@ -13,7 +13,7 @@ const MainLayout = () => {
         <AppShell
             navbar={{
                 breakpoint: 0,
-                width: 232,
+                width: 240,
             }}
         >
             <AppShell.Main className="flex">

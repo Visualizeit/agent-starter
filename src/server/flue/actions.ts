@@ -36,9 +36,10 @@ export const generateConversationTitle = async ({
     await getFlueRuntime()
 
     const titleAgent = init(generateTitle, { id: conversationId })
-    const reply = await titleAgent.dispatch(
+    const receipt = await titleAgent.dispatch(
         `Generate a concise title for the following content:\n\n${userMessage}`
     )
+    const reply = await titleAgent.read(receipt)
 
     return reply.text
 }

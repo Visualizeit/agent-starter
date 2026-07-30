@@ -46,6 +46,7 @@ const Reasoning = ({ children, isStreaming = false }: ReasoningProps) => {
             <Collapse
                 className="text-muted-foreground text-sm"
                 expanded={isOpen}
+                keepMounted={false}
             >
                 <Streamdown plugins={streamdownPlugins}>{children}</Streamdown>
             </Collapse>

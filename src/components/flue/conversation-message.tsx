@@ -2,11 +2,7 @@ import type { FlueConversationMessage } from '@flue/react'
 import { flatMap } from 'es-toolkit'
 import { match } from 'ts-pattern'
 
-import {
-    Reasoning,
-    ReasoningContent,
-    ReasoningTrigger,
-} from '@/components/ai-elements/reasoning'
+import Reasoning from '@/components/ai-elements/reasoning'
 import MessageCopyButton from '@/components/flue/message-copy-button'
 import MessageResponse from '@/components/flue/message-response'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
@@ -39,15 +35,11 @@ const ConversationMessage = ({ message }: ConversationMessageProps) => {
                             <Bubble align={align} key={index} variant="ghost">
                                 <BubbleContent>
                                     <Reasoning
-                                        defaultOpen={false}
                                         isStreaming={
                                             reasoningPart.state === 'streaming'
                                         }
                                     >
-                                        <ReasoningTrigger />
-                                        <ReasoningContent>
-                                            {reasoningPart.text}
-                                        </ReasoningContent>
+                                        {reasoningPart.text}
                                     </Reasoning>
                                 </BubbleContent>
                             </Bubble>

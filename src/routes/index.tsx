@@ -11,7 +11,7 @@ const searchSchema = z.object({
 const Component = () => (
     <Stack className="size-full absolute" gap={0}>
         <Box className="flex-1 overflow-hidden" />
-        <Box className="container mx-auto max-w-3xl" pb="md">
+        <Box className="container mx-auto max-w-3xl px-(--mantine-spacing-md) pb-(--mantine-spacing-md)">
             <NewConversationPromptInput />
         </Box>
     </Stack>

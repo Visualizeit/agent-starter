@@ -25,7 +25,7 @@ const Conversation = () => {
             <Box className="flex-1 overflow-hidden">
                 <MessageList messages={agent.messages} />
             </Box>
-            <Box className="container mx-auto max-w-3xl" pb="md">
+            <Box className="container mx-auto max-w-3xl px-(--mantine-spacing-md) pb-(--mantine-spacing-md)">
                 <PromptInput agent={agent} />
             </Box>
         </Stack>

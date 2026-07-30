@@ -4,7 +4,7 @@ import {
     Group,
     Stack,
     ThemeIcon,
-    Title,
+    Text,
     UnstyledButton,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
@@ -47,9 +47,9 @@ const ConversationList = ({ isPinned = false }: ConversationListProps) => {
                 onClick={toggle}
             >
                 <Group gap="xxxs" px="xxs">
-                    <Title order={6} c="dimmed">
+                    <Text size="sm" c="dimmed">
                         {isPinned ? 'Pinned' : 'Recents'}
-                    </Title>
+                    </Text>
                     <ThemeIcon
                         variant="transparent"
                         c="dimmed"

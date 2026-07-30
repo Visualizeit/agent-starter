@@ -5,13 +5,13 @@ import {
     Group,
     Stack,
     ThemeIcon,
-    Title,
+    Text,
     Tooltip,
     UnstyledButton,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
-import { ChevronRightIcon, FolderPlusIcon } from 'lucide-react'
+import { ChevronRightIcon, PlusIcon } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
 import { cn } from '@/lib/utils'
@@ -63,9 +63,9 @@ const ProjectList = () => {
                     onClick={toggle}
                 >
                     <Group gap="xxxs" px="xxs">
-                        <Title order={6} c="dimmed">
+                        <Text c="dimmed" size="sm">
                             Projects
-                        </Title>
+                        </Text>
                         <ThemeIcon
                             variant="transparent"
                             c="dimmed"
@@ -95,7 +95,7 @@ const ProjectList = () => {
                         loading={addProjectMutation.isPending}
                         onClick={handleAddProject}
                     >
-                        <FolderPlusIcon className="size-4" />
+                        <PlusIcon className="size-4" />
                     </ActionIcon>
                 </Tooltip>
             </Group>

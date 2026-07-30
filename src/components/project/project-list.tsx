@@ -5,9 +5,9 @@ import {
     Group,
     Stack,
     ThemeIcon,
-    Text,
     Tooltip,
     UnstyledButton,
+    Text,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
@@ -63,12 +63,10 @@ const ProjectList = () => {
                     onClick={toggle}
                 >
                     <Group gap="xxxs" px="xxs">
-                        <Text c="dimmed" size="sm">
-                            Projects
-                        </Text>
+                        <Text size="sm">Projects</Text>
                         <ThemeIcon
                             variant="transparent"
-                            c="dimmed"
+                            c="gray"
                             size="sm"
                             className={cn(
                                 isExpanded &&
@@ -87,7 +85,7 @@ const ProjectList = () => {
                 <Tooltip label="Add project">
                     <ActionIcon
                         variant="subtle"
-                        color="gray"
+                        c="gray"
                         size="sm"
                         radius="md"
                         aria-label="Add project"

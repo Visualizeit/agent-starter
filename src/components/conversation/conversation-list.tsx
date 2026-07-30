@@ -4,8 +4,8 @@ import {
     Group,
     Stack,
     ThemeIcon,
-    Text,
     UnstyledButton,
+    Text,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
@@ -47,12 +47,10 @@ const ConversationList = ({ isPinned = false }: ConversationListProps) => {
                 onClick={toggle}
             >
                 <Group gap="xxxs" px="xxs">
-                    <Text size="sm" c="dimmed">
-                        {isPinned ? 'Pinned' : 'Recents'}
-                    </Text>
+                    <Text size="sm">{isPinned ? 'Pinned' : 'Recents'}</Text>
                     <ThemeIcon
                         variant="transparent"
-                        c="dimmed"
+                        c="gray"
                         size="sm"
                         className={cn(
                             isExpanded &&

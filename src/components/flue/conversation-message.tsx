@@ -1,4 +1,5 @@
 import type { FlueConversationMessage } from '@flue/react'
+import { flatMap } from 'es-toolkit'
 import { match } from 'ts-pattern'
 
 import {
@@ -6,18 +7,28 @@ import {
     ReasoningContent,
     ReasoningTrigger,
 } from '@/components/ai-elements/reasoning'
+import MessageCopyButton from '@/components/flue/message-copy-button'
 import MessageResponse from '@/components/flue/message-response'
 import { Bubble, BubbleContent } from '@/components/ui/bubble'
-import { Message, MessageContent } from '@/components/ui/message'
+import { Message, MessageContent, MessageFooter } from '@/components/ui/message'
 
 interface ConversationMessageProps {
     message: FlueConversationMessage
 }
 
+const getMessageCopyText = (message: FlueConversationMessage) =>
+    flatMap(message.parts, (part) =>
+        match(part)
+            .with({ type: 'text' }, (textPart) => [textPart.text])
+            .otherwise(() => [])
+    ).join('\n\n')
+
 const ConversationMessage = ({ message }: ConversationMessageProps) => {
     const align = message.role === 'user' ? 'end' : 'start'
 
     const bubbleVariant = message.role === 'user' ? 'muted' : 'ghost'
+
+    const copyText = getMessageCopyText(message)
 
     return (
         <Message align={align}>
@@ -59,6 +70,9 @@ const ConversationMessage = ({ message }: ConversationMessageProps) => {
                         ))
                         .otherwise(() => null)
                 )}
+                <MessageFooter>
+                    <MessageCopyButton value={copyText} />
+                </MessageFooter>
             </MessageContent>
         </Message>
     )

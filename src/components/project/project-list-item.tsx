@@ -116,14 +116,14 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
         <Stack component="li" gap="xxxs">
             <Box
                 className={cn(
-                    'group/project-menu-item relative overflow-hidden rounded-(--mantine-radius-md)',
-                    'hover:bg-(--mantine-color-gray-light-hover)',
+                    'group/project-menu-item relative rounded-(--mantine-radius-md)',
+                    'hover:bg-(--mantine-color-gray-light-hover) focus-within:bg-(--mantine-color-gray-light-hover)',
                     'has-[[aria-haspopup=menu][aria-expanded=true]]:bg-(--mantine-color-gray-light-hover)'
                 )}
             >
                 <UnstyledButton
                     className={cn(
-                        'w-full px-(--mantine-spacing-xxs) py-(--mantine-spacing-sidebar-menu-item-y)',
+                        'w-full rounded-[inherit] px-(--mantine-spacing-xxs) py-(--mantine-spacing-sidebar-menu-item-y)',
                         'group-hover/project-menu-item:pr-14 group-focus-within/project-menu-item:pr-14'
                     )}
                     aria-expanded={isExpanded}

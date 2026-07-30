@@ -101,14 +101,14 @@ const ConversationListItem = ({
             component="li"
             className={cn(
                 'group/menu-item relative list-none',
-                'overflow-hidden rounded-(--mantine-radius-md)',
+                'rounded-(--mantine-radius-md)',
                 'hover:bg-(--mantine-color-gray-light-hover) focus-within:bg-(--mantine-color-gray-light-hover)',
                 'has-[[aria-haspopup=menu][aria-expanded=true]]:bg-(--mantine-color-gray-light-hover)'
             )}
         >
             <UnstyledButton
                 className={cn(
-                    'block w-full px-(--mantine-spacing-xxs) py-(--mantine-spacing-sidebar-menu-item-y)',
+                    'block w-full rounded-[inherit] px-(--mantine-spacing-xxs) py-(--mantine-spacing-sidebar-menu-item-y)',
                     'aria-[current=page]:bg-(--mantine-color-gray-light-hover)',
                     'group-hover/menu-item:pr-[calc(var(--mantine-spacing-xxs)+1.75rem)] group-focus-within/menu-item:pr-[calc(var(--mantine-spacing-xxs)+1.75rem)]'
                 )}

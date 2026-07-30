@@ -86,6 +86,7 @@ const ProjectList = () => {
                     <ActionIcon
                         variant="subtle"
                         c="gray"
+                        color="gray"
                         size="sm"
                         radius="md"
                         aria-label="Add project"

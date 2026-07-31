@@ -94,19 +94,23 @@
 
     --color-background: var(--background);
 
-    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-xs: var(--mantine-radius-xs);
 
-    --radius-md: calc(var(--radius) * 0.8);
+    --radius-sm: var(--mantine-radius-sm);
 
-    --radius-lg: var(--radius);
+    --radius-md: var(--mantine-radius-md);
 
-    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-lg: var(--mantine-radius-lg);
 
-    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-xl: var(--mantine-radius-xl);
 
-    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-2xl: var(--mantine-radius-2xl);
 
-    --radius-4xl: calc(var(--radius) * 2.6);
+    --radius-3xl: var(--mantine-radius-3xl);
+
+    --radius-4xl: var(--mantine-radius-4xl);
+
+    --radius-full: var(--mantine-radius-full);
 }
 
 :root {
@@ -155,8 +159,6 @@
     --chart-4: oklch(0.371 0 0);
 
     --chart-5: oklch(0.269 0 0);
-
-    --radius: 0.625rem;
 
     --sidebar: oklch(0.985 0 0);
 
@@ -241,12 +243,6 @@
 
 @layer base {
     * {
-        @apply border-border outline-ring/50;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
-    html {
-        @apply font-sans;
+        @apply border-border;
     }
 }

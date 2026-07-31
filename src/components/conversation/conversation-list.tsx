@@ -9,11 +9,11 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { cn } from 'cnfast'
 import { isEmpty } from 'es-toolkit/compat'
 import { ChevronRightIcon } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
-import { cn } from '@/lib/utils'
 
 import ConversationListItem from './conversation-list-item'
 

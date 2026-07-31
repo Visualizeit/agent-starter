@@ -1,9 +1,8 @@
 'use client'
 
 import { Select as SelectPrimitive } from '@base-ui/react/select'
+import { cn } from 'cnfast'
 import * as React from 'react'
-
-import { cn } from '@/lib/utils'
 
 const Select = SelectPrimitive.Root
 

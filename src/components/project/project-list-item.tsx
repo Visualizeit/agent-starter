@@ -12,6 +12,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useParams } from '@tanstack/react-router'
+import { cn } from 'cnfast'
 import { isEmpty } from 'es-toolkit/compat'
 import {
     FolderIcon,
@@ -25,7 +26,6 @@ import {
 import ConversationListItem from '@/components/conversation/conversation-list-item'
 import orpc from '@/lib/orpc'
 import type { ORPCOutputs } from '@/lib/orpc'
-import { cn } from '@/lib/utils'
 
 import RenameProjectForm from './rename-project-form'
 

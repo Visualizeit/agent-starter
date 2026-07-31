@@ -2,6 +2,7 @@ import { ActionIcon, Box, Menu, Text, UnstyledButton } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { cn } from 'cnfast'
 import {
     ArchiveIcon,
     MoreHorizontalIcon,
@@ -11,7 +12,6 @@ import {
 } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
-import { cn } from '@/lib/utils'
 import type { conversations } from '@/server/db/schema'
 
 import { NEW_CHAT_LABEL } from './conversation-constants'

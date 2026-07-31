@@ -11,10 +11,10 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
+import { cn } from 'cnfast'
 import { ChevronRightIcon, PlusIcon } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
-import { cn } from '@/lib/utils'
 
 import ProjectListItem from './project-list-item'
 

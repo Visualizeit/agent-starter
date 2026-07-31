@@ -1,6 +1,7 @@
 'use client'
 
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
+import { cn } from 'cnfast'
 import type { LucideIcon } from 'lucide-react'
 import { BrainIcon, ChevronDownIcon, DotIcon } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
@@ -12,7 +13,6 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { cn } from '@/lib/utils'
 
 interface ChainOfThoughtContextValue {
     isOpen: boolean

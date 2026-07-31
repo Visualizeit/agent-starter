@@ -1,6 +1,5 @@
+import { cn } from 'cnfast'
 import * as React from 'react'
-
-import { cn } from '@/lib/utils'
 
 const MessageGroup = ({ className, ...props }: React.ComponentProps<'div'>) => (
     <div

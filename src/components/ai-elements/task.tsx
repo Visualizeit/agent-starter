@@ -1,5 +1,6 @@
 'use client'
 
+import { cn } from 'cnfast'
 import { ChevronDownIcon, SearchIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 
@@ -8,7 +9,6 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { cn } from '@/lib/utils'
 
 export type TaskItemFileProps = ComponentProps<'div'>
 

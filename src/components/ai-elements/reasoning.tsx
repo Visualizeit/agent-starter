@@ -6,11 +6,10 @@ import { cjk } from '@streamdown/cjk'
 import { code } from '@streamdown/code'
 import { math } from '@streamdown/math'
 import { mermaid } from '@streamdown/mermaid'
+import { cn } from 'cnfast'
 import { ChevronDownIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { Streamdown } from 'streamdown'
-
-import { cn } from '@/lib/utils'
 
 interface ReasoningProps {
     children: ComponentProps<typeof Streamdown>['children']

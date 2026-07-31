@@ -1,8 +1,7 @@
 import { Group, Text, UnstyledButton } from '@mantine/core'
 import { Link } from '@tanstack/react-router'
+import { cn } from 'cnfast'
 import { PlusIcon } from 'lucide-react'
-
-import { cn } from '@/lib/utils'
 
 const NewChatButton = () => (
     <UnstyledButton

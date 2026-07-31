@@ -1,4 +1,11 @@
-import { Badge, Button, Container, createTheme, Switch } from '@mantine/core'
+import {
+    Badge,
+    Button,
+    Container,
+    createTheme,
+    rem,
+    Switch,
+} from '@mantine/core'
 import type {
     DefaultMantineColor,
     DefaultMantineSize,
@@ -10,7 +17,9 @@ type ExtendedCustomColors = 'brand' | DefaultMantineColor
 type ExtendedCustomSpacing =
     | 'sidebar-menu-item-y'
     | 'xxs'
-    | 'xxxs'
+    | '2xl'
+    | '3xl'
+    | '4xl'
     | DefaultMantineSize
 
 type ExtendedCustomRadius = '2xl' | '3xl' | '4xl' | 'full' | DefaultMantineSize
@@ -52,7 +61,7 @@ const mantineTheme = createTheme({
         Container: Container.extend({ defaultProps: { strategy: 'grid' } }),
         Switch: Switch.extend({ defaultProps: { withThumbIndicator: false } }),
     },
-    defaultRadius: 'lg',
+    defaultRadius: 'xl',
     headings: {
         fontWeight: 'var(--mantine-font-weight-medium)',
     },
@@ -69,9 +78,16 @@ const mantineTheme = createTheme({
         xs: 'calc(var(--radius) * 0.4)',
     },
     spacing: {
-        'sidebar-menu-item-y': 'calc(0.375rem * var(--mantine-scale))',
-        xxs: 'calc(0.5rem * var(--mantine-scale))',
-        xxxs: 'calc(0.25rem * var(--mantine-scale))',
+        '2xl': rem(48),
+        '3xl': rem(64),
+        '4xl': rem(96),
+        lg: rem(24),
+        md: rem(16),
+        'sidebar-menu-item-y': rem(6),
+        sm: rem(12),
+        xl: rem(32),
+        xs: rem(8),
+        xxs: rem(4),
     },
 })
 

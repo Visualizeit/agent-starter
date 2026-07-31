@@ -48,8 +48,8 @@ const ProjectConversationList = ({
             <Text
                 c="dimmed"
                 size="sm"
-                pl="calc(var(--mantine-spacing-xxs) + var(--mantine-spacing-md) + var(--mantine-spacing-xs))"
-                pr="xxs"
+                pl="calc(var(--mantine-spacing-xs) + var(--mantine-spacing-md) + var(--mantine-spacing-xs))"
+                pr="xs"
             >
                 No conversations
             </Text>
@@ -113,7 +113,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
     }
 
     return (
-        <Stack component="li" gap="xxxs">
+        <Stack component="li" gap="xxs">
             <Box
                 className={cn(
                     'group/project-menu-item relative rounded-(--mantine-radius-md)',
@@ -123,7 +123,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
             >
                 <UnstyledButton
                     className={cn(
-                        'w-full rounded-[inherit] px-(--mantine-spacing-xxs) py-(--mantine-spacing-sidebar-menu-item-y)',
+                        'w-full rounded-[inherit] px-(--mantine-spacing-xs) py-(--mantine-spacing-sidebar-menu-item-y)',
                         'group-hover/project-menu-item:pr-14 group-focus-within/project-menu-item:pr-14'
                     )}
                     aria-expanded={isExpanded}
@@ -134,7 +134,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                     }
                     onClick={toggle}
                 >
-                    <Group gap="xxs" wrap="nowrap">
+                    <Group gap="xs" wrap="nowrap">
                         {isExpanded ? (
                             <FolderOpenIcon className="size-4 shrink-0 text-(--mantine-color-dimmed)" />
                         ) : (
@@ -146,10 +146,10 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                     </Group>
                 </UnstyledButton>
                 <Group
-                    gap="xxxs"
+                    gap="xxs"
                     wrap="nowrap"
                     className={cn(
-                        'invisible absolute right-(--mantine-spacing-xxs) top-1/2 -translate-y-1/2',
+                        'invisible absolute right-(--mantine-spacing-xs) top-1/2 -translate-y-1/2',
                         'group-hover/project-menu-item:visible group-focus-within/project-menu-item:visible has-aria-expanded:visible'
                     )}
                 >

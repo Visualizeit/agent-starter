@@ -48,9 +48,9 @@ const ProjectList = () => {
     }
 
     return (
-        <Stack gap="xxs" className="group/project-list">
+        <Stack gap="xs" className="group/project-list">
             <Group
-                gap="xxxs"
+                gap="xxs"
                 wrap="nowrap"
                 className="group/project-list-header"
             >
@@ -62,7 +62,7 @@ const ProjectList = () => {
                     }
                     onClick={toggle}
                 >
-                    <Group gap="xxxs" px="xxs">
+                    <Group gap="xxs" px="xs">
                         <Text size="sm">Projects</Text>
                         <ThemeIcon
                             variant="transparent"

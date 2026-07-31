@@ -12,7 +12,7 @@ const MessageCopyButton = ({ value }: MessageCopyButtonProps) => {
 
     return (
         <Group
-            gap="xxs"
+            gap="xs"
             className="invisible group-hover/message:visible group-focus-within/message:visible"
         >
             <CopyButton value={value}>

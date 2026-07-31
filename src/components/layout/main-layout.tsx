@@ -22,20 +22,20 @@ const MainLayout = () => {
                 </Box>
             </AppShell.Main>
             <AppShell.Navbar className="gap-(--mantine-spacing-sm)">
-                <AppShell.Section p="xxs">
+                <AppShell.Section p="xs">
                     <Stack gap="xs">
                         <Link to="/">Logo</Link>
                         <NewChatButton />
                     </Stack>
                 </AppShell.Section>
                 <AppShell.Section component={ScrollArea} grow>
-                    <Stack gap="sm" p="xxs">
+                    <Stack gap="sm" p="xs">
                         <ConversationList isPinned />
                         <ProjectList />
                         <ConversationList />
                     </Stack>
                 </AppShell.Section>
-                <AppShell.Section p="xxs">Profile</AppShell.Section>
+                <AppShell.Section p="xs">Profile</AppShell.Section>
             </AppShell.Navbar>
         </AppShell>
     )

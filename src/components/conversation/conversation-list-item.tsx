@@ -108,9 +108,9 @@ const ConversationListItem = ({
         >
             <UnstyledButton
                 className={cn(
-                    'block w-full rounded-[inherit] px-(--mantine-spacing-xxs) py-(--mantine-spacing-sidebar-menu-item-y)',
+                    'block w-full rounded-[inherit] px-(--mantine-spacing-xs) py-(--mantine-spacing-sidebar-menu-item-y)',
                     'aria-[current=page]:bg-(--mantine-color-gray-light-hover)',
-                    'group-hover/menu-item:pr-[calc(var(--mantine-spacing-xxs)+1.75rem)] group-focus-within/menu-item:pr-[calc(var(--mantine-spacing-xxs)+1.75rem)]'
+                    'group-hover/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)] group-focus-within/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)]'
                 )}
                 renderRoot={(props) => (
                     <Link
@@ -141,7 +141,7 @@ const ConversationListItem = ({
                         size="sm"
                         aria-label="Conversation actions"
                         className={cn(
-                            'invisible absolute right-(--mantine-spacing-xxs) top-1/2 -translate-y-1/2',
+                            'invisible absolute right-(--mantine-spacing-xs) top-1/2 -translate-y-1/2',
                             'group-hover/menu-item:visible group-focus-within/menu-item:visible aria-expanded:visible'
                         )}
                     >

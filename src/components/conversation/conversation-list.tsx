@@ -39,14 +39,14 @@ const ConversationList = ({ isPinned = false }: ConversationListProps) => {
     }
 
     return (
-        <Stack gap="xxxs" className="group/conversation-list">
+        <Stack gap="xxs" className="group/conversation-list">
             <UnstyledButton
                 className="w-full"
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? 'Collapse list' : 'Expand list'}
                 onClick={toggle}
             >
-                <Group gap="xxxs" px="xxs">
+                <Group gap="xxs" px="xs">
                     <Text size="sm">{isPinned ? 'Pinned' : 'Recents'}</Text>
                     <ThemeIcon
                         variant="transparent"

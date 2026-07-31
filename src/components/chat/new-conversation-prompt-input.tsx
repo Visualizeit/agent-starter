@@ -87,7 +87,7 @@ const NewConversationPromptInput = () => {
                     wrapper: {
                         '--input-bottom-section-height': `calc(${rem(34)} + var(--mantine-spacing-sm))`,
                         '--input-padding-y-md': 'var(--mantine-spacing-sm)',
-                        '--input-radius': 'var(--mantine-radius-xl)',
+                        '--input-radius': 'var(--mantine-radius-4xl)',
                         cursor: 'text',
                     },
                 }}
@@ -123,6 +123,7 @@ const NewConversationPromptInput = () => {
                             variant="filled"
                             size="lg"
                             type="submit"
+                            radius="full"
                         >
                             <ArrowUpIcon className="size-5" />
                         </ActionIcon>

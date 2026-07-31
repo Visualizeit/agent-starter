@@ -13,7 +13,7 @@ type ExtendedCustomSpacing =
     | 'xxxs'
     | DefaultMantineSize
 
-type ExtendedCustomRadius = 'full' | DefaultMantineSize
+type ExtendedCustomRadius = '2xl' | '3xl' | '4xl' | 'full' | DefaultMantineSize
 
 declare module '@mantine/core' {
     export interface MantineThemeColorsOverride {
@@ -58,10 +58,17 @@ const mantineTheme = createTheme({
     },
     primaryColor: 'brand',
     radius: {
+        '2xl': 'calc(var(--radius) * 1.8)',
+        '3xl': 'calc(var(--radius) * 2.2)',
+        '4xl': 'calc(var(--radius) * 2.6)',
         full: 'calc(infinity * 1px)',
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) * 0.8)',
+        sm: 'calc(var(--radius) * 0.6)',
+        xl: 'calc(var(--radius) * 1.4)',
+        xs: 'calc(var(--radius) * 0.4)',
     },
     spacing: {
-        full: 'calc(infinity * 1px)',
         'sidebar-menu-item-y': 'calc(0.375rem * var(--mantine-scale))',
         xxs: 'calc(0.5rem * var(--mantine-scale))',
         xxxs: 'calc(0.25rem * var(--mantine-scale))',

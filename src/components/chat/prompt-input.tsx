@@ -48,7 +48,7 @@ const PromptInput = ({ agent }: PromptInputProps) => {
                     wrapper: {
                         '--input-bottom-section-height': `calc(${rem(34)} + var(--mantine-spacing-sm))`,
                         '--input-padding-y-md': 'var(--mantine-spacing-sm)',
-                        '--input-radius': 'var(--mantine-radius-xl)',
+                        '--input-radius': 'var(--mantine-radius-4xl)',
                         cursor: 'text',
                     },
                 }}
@@ -82,6 +82,7 @@ const PromptInput = ({ agent }: PromptInputProps) => {
                                 agent.status === 'submitted'
                             }
                             variant="filled"
+                            radius="full"
                             size="lg"
                             type="submit"
                         >

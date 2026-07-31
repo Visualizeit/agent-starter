@@ -5,8 +5,9 @@ import { match } from 'ts-pattern'
 import Reasoning from '@/components/ai-elements/reasoning'
 import MessageCopyButton from '@/components/flue/message-copy-button'
 import MessageResponse from '@/components/flue/message-response'
-import { Bubble, BubbleContent } from '@/components/ui/bubble'
+import AssistantMessageBody from '@/components/ui/assistant-message-body'
 import { Message, MessageContent, MessageFooter } from '@/components/ui/message'
+import UserMessageBody from '@/components/ui/user-message-body'
 
 interface ConversationMessageProps {
     message: FlueConversationMessage
@@ -22,8 +23,6 @@ const getMessageCopyText = (message: FlueConversationMessage) =>
 const ConversationMessage = ({ message }: ConversationMessageProps) => {
     const align = message.role === 'user' ? 'end' : 'start'
 
-    const bubbleVariant = message.role === 'user' ? 'muted' : 'ghost'
-
     const copyText = getMessageCopyText(message)
 
     return (
@@ -32,37 +31,44 @@ const ConversationMessage = ({ message }: ConversationMessageProps) => {
                 {message.parts.map((part, index) =>
                     match(part)
                         .with({ type: 'reasoning' }, (reasoningPart) => (
-                            <Bubble align={align} key={index} variant="ghost">
-                                <BubbleContent>
-                                    <Reasoning
-                                        isStreaming={
-                                            reasoningPart.state === 'streaming'
-                                        }
-                                    >
-                                        {reasoningPart.text}
-                                    </Reasoning>
-                                </BubbleContent>
-                            </Bubble>
+                            <AssistantMessageBody key={index}>
+                                <Reasoning
+                                    isStreaming={
+                                        reasoningPart.state === 'streaming'
+                                    }
+                                >
+                                    {reasoningPart.text}
+                                </Reasoning>
+                            </AssistantMessageBody>
                         ))
-                        .with({ type: 'text' }, (textPart) => (
-                            <Bubble
-                                align={align}
-                                key={index}
-                                variant={bubbleVariant}
-                            >
-                                <BubbleContent>
+                        .with({ type: 'text' }, (textPart) =>
+                            message.role === 'user' ? (
+                                <UserMessageBody key={index}>
                                     <MessageResponse
                                         isStreaming={
                                             textPart.state === 'streaming'
                                         }
                                         markdown={textPart.text}
                                     />
-                                </BubbleContent>
-                            </Bubble>
-                        ))
+                                </UserMessageBody>
+                            ) : (
+                                <AssistantMessageBody key={index}>
+                                    <MessageResponse
+                                        isStreaming={
+                                            textPart.state === 'streaming'
+                                        }
+                                        markdown={textPart.text}
+                                    />
+                                </AssistantMessageBody>
+                            )
+                        )
                         .otherwise(() => null)
                 )}
-                <MessageFooter>
+                <MessageFooter
+                    className={
+                        message.role === 'assistant' ? 'px-0' : undefined
+                    }
+                >
                     <MessageCopyButton value={copyText} />
                 </MessageFooter>
             </MessageContent>

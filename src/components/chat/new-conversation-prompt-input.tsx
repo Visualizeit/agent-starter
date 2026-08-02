@@ -101,6 +101,8 @@ const NewConversationPromptInput = () => {
                         paddingInline: 'var(--mantine-spacing-sm)',
                     },
                     wrapper: {
+                        '--input-bd-focus':
+                            'var(--mantine-color-default-border)',
                         '--input-bottom-section-height': `calc(${rem(34)} + var(--mantine-spacing-sm))`,
                         '--input-padding-y-md': 'var(--mantine-spacing-sm)',
                         '--input-radius': 'var(--mantine-radius-3xl)',

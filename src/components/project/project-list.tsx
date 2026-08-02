@@ -7,6 +7,7 @@ import {
     Tooltip,
     UnstyledButton,
     Text,
+    Title,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
@@ -51,9 +52,9 @@ const ProjectList = () => {
                     onClick={toggle}
                 >
                     <Group gap="xxs" px="xs">
-                        <Text c="dimmed" size="sm">
+                        <Title order={6} c="dimmed">
                             Projects
-                        </Text>
+                        </Title>
                         <ThemeIcon
                             variant="transparent"
                             c="dimmed"
@@ -89,7 +90,7 @@ const ProjectList = () => {
             </Group>
             <Collapse expanded={isExpanded} keepMounted={false}>
                 {isEmpty(projects) ? (
-                    <Text c="dimmed" size="sm" px="xs">
+                    <Text c="dimmed" size="sm" py="xxs" className="text-center">
                         No projects
                     </Text>
                 ) : (

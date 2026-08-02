@@ -7,6 +7,7 @@ import {
     Tooltip,
     UnstyledButton,
     Text,
+    Title,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
@@ -20,8 +21,6 @@ import orpc from '@/lib/orpc'
 import ConversationListItem from './conversation-list-item'
 
 const RecentConversationList = () => {
-    const [isExpanded, { toggle }] = useDisclosure(true)
-
     const { data: conversations } = useSuspenseQuery(
         orpc.conversation.list.queryOptions({
             input: { status: 'active' },
@@ -29,6 +28,8 @@ const RecentConversationList = () => {
                 data.list.filter((conversation) => !conversation.isPinned),
         })
     )
+
+    const [isExpanded, { toggle }] = useDisclosure(!isEmpty(conversations))
 
     return (
         <Stack gap="xxs" className="group/recent-conversation-list">
@@ -46,9 +47,9 @@ const RecentConversationList = () => {
                     onClick={toggle}
                 >
                     <Group gap="xxs" px="xs">
-                        <Text c="dimmed" size="sm">
+                        <Title order={6} c="dimmed">
                             Recents
-                        </Text>
+                        </Title>
                         <ThemeIcon
                             variant="transparent"
                             c="dimmed"
@@ -84,7 +85,7 @@ const RecentConversationList = () => {
             </Group>
             <Collapse expanded={isExpanded} keepMounted={false}>
                 {isEmpty(conversations) ? (
-                    <Text c="dimmed" size="sm" px="xs">
+                    <Text c="dimmed" size="sm" py="xxs" className="text-center">
                         No conversations
                     </Text>
                 ) : (

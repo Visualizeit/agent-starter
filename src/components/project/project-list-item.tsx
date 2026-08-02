@@ -45,12 +45,7 @@ const ProjectConversationList = ({
 }: ProjectConversationListProps) => (
     <Box>
         {isEmpty(conversations) ? (
-            <Text
-                c="dimmed"
-                size="xs"
-                pl="calc(var(--mantine-spacing-xs) + var(--mantine-spacing-md) + var(--mantine-spacing-xs))"
-                pr="xs"
-            >
+            <Text c="dimmed" size="sm" py="xxs" className="text-center">
                 No conversations
             </Text>
         ) : (

@@ -4,7 +4,7 @@ import {
     Stack,
     ThemeIcon,
     UnstyledButton,
-    Text,
+    Title,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
@@ -40,9 +40,9 @@ const PinnedConversationList = () => {
                 onClick={toggle}
             >
                 <Group gap="xxs" px="xs">
-                    <Text c="dimmed" size="sm">
+                    <Title order={6} c="dimmed">
                         Pinned
-                    </Text>
+                    </Title>
                     <ThemeIcon
                         variant="transparent"
                         c="dimmed"

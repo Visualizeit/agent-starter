@@ -54,11 +54,12 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
                 styles={{
                     bottomSection: {
                         alignItems: 'flex-start',
+                        paddingInline: 'var(--mantine-spacing-sm)',
                     },
                     wrapper: {
                         '--input-bottom-section-height': `calc(${rem(34)} + var(--mantine-spacing-sm))`,
                         '--input-padding-y-md': 'var(--mantine-spacing-sm)',
-                        '--input-radius': 'var(--mantine-radius-4xl)',
+                        '--input-radius': 'var(--mantine-radius-3xl)',
                         cursor: 'text',
                     },
                 }}

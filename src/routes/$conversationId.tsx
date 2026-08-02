@@ -1,10 +1,12 @@
 import { useFlueAgent } from '@flue/react'
+import { createFlueClient } from '@flue/sdk'
 import { Box, Stack } from '@mantine/core'
 import {
     ClientOnly,
     createFileRoute,
     getRouteApi,
 } from '@tanstack/react-router'
+import { useMemo } from 'react'
 
 import PromptInput from '@/components/chat/prompt-input'
 import { NEW_CHAT_LABEL } from '@/components/conversation/conversation-constants'
@@ -16,9 +18,15 @@ const conversationRouteApi = getRouteApi('/$conversationId')
 const Conversation = () => {
     const { conversationId } = conversationRouteApi.useParams()
 
-    const agent = useFlueAgent({
-        url: `/api/agents/assistant/${conversationId}`,
-    })
+    const client = useMemo(
+        () =>
+            createFlueClient({
+                url: `/api/agents/assistant/${conversationId}`,
+            }),
+        [conversationId]
+    )
+
+    const agent = useFlueAgent({ client })
 
     return (
         <Stack className="size-full absolute" gap={0}>
@@ -26,7 +34,7 @@ const Conversation = () => {
                 <MessageList messages={agent.messages} />
             </Box>
             <Box className="container mx-auto max-w-3xl px-(--mantine-spacing-md) pb-(--mantine-spacing-md)">
-                <PromptInput agent={agent} />
+                <PromptInput agent={agent} client={client} />
             </Box>
         </Stack>
     )

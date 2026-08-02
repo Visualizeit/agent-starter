@@ -82,24 +82,17 @@ const conversationRouter = {
         .handler(async ({ input, errors }) => {
             const conversationId = nanoid()
 
-            const projectPath = await (async () => {
-                if (isNil(input.projectId)) {
-                    return null
-                }
-
+            if (isNotNil(input.projectId)) {
                 const projectRecord = await database.query.projects.findFirst({
                     where: {
                         id: input.projectId,
-                        status: 'active',
                     },
                 })
 
                 if (isNil(projectRecord)) {
                     throw errors.NOT_FOUND()
                 }
-
-                return projectRecord.path
-            })()
+            }
 
             const [createdConversation] = await database
                 .insert(conversations)
@@ -117,7 +110,6 @@ const conversationRouter = {
             await sendAssistantMessage({
                 conversationId,
                 message: input.message,
-                projectPath,
             })
 
             void generateAndUpdateConversationTitle({

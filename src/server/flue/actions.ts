@@ -7,19 +7,16 @@ import { getFlueRuntime } from './runtime'
 interface SendAssistantMessageOptions {
     conversationId: string
     message: string
-    projectPath: string | null
 }
 
 export const sendAssistantMessage = async ({
     conversationId,
     message,
-    projectPath,
 }: SendAssistantMessageOptions) => {
     await getFlueRuntime()
 
     return dispatch(assistant, {
         id: conversationId,
-        initialData: { projectPath },
         message,
     })
 }

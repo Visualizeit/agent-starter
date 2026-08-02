@@ -1,32 +1,46 @@
 'use agent'
 
 import {
-    useInitialData,
+    useAgentStart,
     useModel,
+    usePersistentState,
     useResponseFinish,
     useResponseStart,
-    useSandbox,
 } from '@flue/runtime'
-import { local } from '@flue/runtime/node'
+import type { AgentProps } from '@flue/runtime'
+import { isEmpty } from 'es-toolkit/compat'
+import { isNotNil } from 'es-toolkit/predicate'
 import * as v from 'valibot'
 
+import database from '@/server/db/client'
 import serverEnv from '@/server/server-env'
 
-const initialDataSchema = v.object({
-    projectPath: v.nullable(v.string()),
-})
-
-interface AssistantInitialData {
-    projectPath: string | null
-}
-
-const sandbox = local()
 const responseMetricsStartSchema = v.object({
     startedAt: v.number(),
 })
 
-const Assistant = () => {
-    const initialData = useInitialData<AssistantInitialData>()
+const Assistant = ({ id }: AgentProps) => {
+    const [projectInstructions, setProjectInstructions] = usePersistentState(
+        'projectInstructions',
+        ''
+    )
+
+    useAgentStart(async () => {
+        const conversationRecord = await database.query.conversations.findFirst(
+            {
+                columns: {},
+                where: { id },
+                with: {
+                    project: {
+                        columns: { instructions: true },
+                    },
+                },
+            }
+        )
+        const project = conversationRecord && conversationRecord.project
+
+        setProjectInstructions(isNotNil(project) ? project.instructions : '')
+    })
 
     useModel(serverEnv.FLUE_MODEL)
 
@@ -51,10 +65,11 @@ const Assistant = () => {
         }
     })
 
-    useSandbox(sandbox, { cwd: initialData.projectPath ?? undefined })
+    return isEmpty(projectInstructions)
+        ? undefined
+        : `<project_instructions>\n${projectInstructions}\n</project_instructions>`
 }
 
 Assistant.agentName = 'assistant'
-Assistant.initialData = initialDataSchema
 
 export default Assistant

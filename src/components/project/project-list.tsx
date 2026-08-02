@@ -9,42 +9,31 @@ import {
     Text,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
+import { modals } from '@mantine/modals'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { cn } from 'cnfast'
 import { ChevronRightIcon, PlusIcon } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
 
+import ProjectForm from './project-form'
 import ProjectListItem from './project-list-item'
+
+const handleAddProject = () => {
+    modals.open({
+        children: <ProjectForm />,
+        title: 'Create project',
+    })
+}
 
 const ProjectList = () => {
     const [isExpanded, { toggle }] = useDisclosure(true)
 
     const { data: projects } = useSuspenseQuery(
         orpc.project.list.queryOptions({
-            input: { status: 'active' },
             select: (data) => data.list,
         })
     )
-
-    const addProjectMutation = useMutation({
-        mutationFn: () => orpc.project.add.call(),
-        onSuccess: async (result, _variables, _onMutateResult, context) => {
-            if (result.status === 'cancelled') {
-                return
-            }
-
-            await context.client.invalidateQueries(
-                orpc.project.list.queryOptions({
-                    input: { status: 'active' },
-                })
-            )
-        },
-    })
-
-    const handleAddProject = async () => {
-        await addProjectMutation.mutateAsync()
-    }
 
     return (
         <Stack gap="xxs" className="group/project-list">
@@ -90,7 +79,6 @@ const ProjectList = () => {
                         radius="md"
                         aria-label="Add project"
                         className="invisible group-hover/project-list-header:visible group-focus-within/project-list-header:visible"
-                        loading={addProjectMutation.isPending}
                         onClick={handleAddProject}
                     >
                         <PlusIcon className="size-4" />

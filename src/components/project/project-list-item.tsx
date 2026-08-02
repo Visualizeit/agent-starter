@@ -11,7 +11,7 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
-import { Link, useParams } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { cn } from 'cnfast'
 import { isEmpty } from 'es-toolkit/compat'
 import {
@@ -27,7 +27,7 @@ import ConversationListItem from '@/components/conversation/conversation-list-it
 import orpc from '@/lib/orpc'
 import type { ORPCOutputs } from '@/lib/orpc'
 
-import RenameProjectForm from './rename-project-form'
+import ProjectForm from './project-form'
 
 type Project = ORPCOutputs['project']['list']['list'][number]
 type ProjectConversations = Project['conversations']
@@ -68,6 +68,7 @@ const ProjectConversationList = ({
 )
 
 const ProjectListItem = ({ project }: ProjectListItemProps) => {
+    const navigate = useNavigate()
     const { conversationId } = useParams({ strict: false })
     const isCurrentProjectConversation = project.conversations.some(
         (conversation) => conversation.id === conversationId
@@ -76,39 +77,41 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
         isCurrentProjectConversation
     )
 
-    const removeProjectMutation = useMutation(
-        orpc.project.remove.mutationOptions({
+    const deleteProjectMutation = useMutation(
+        orpc.project.delete.mutationOptions({
             onSuccess: async (_data, _variables, _onMutateResult, context) => {
                 await context.client.invalidateQueries(
-                    orpc.project.list.queryOptions({
-                        input: { status: 'active' },
-                    })
+                    orpc.project.list.queryOptions()
                 )
             },
         })
     )
 
-    const handleRename = () => {
+    const handleEdit = () => {
         modals.open({
-            children: <RenameProjectForm project={project} />,
-            title: 'Rename Project',
+            children: <ProjectForm project={project} />,
+            title: 'Edit project',
         })
     }
 
-    const handleRemove = () => {
+    const handleDelete = () => {
         modals.openConfirmModal({
             children: (
                 <Text size="sm">
-                    Remove {project.name} from the project list? This will not
-                    delete the local folder.
+                    Delete {project.name} and all its conversations? This cannot
+                    be undone.
                 </Text>
             ),
             confirmProps: { color: 'red' },
-            labels: { cancel: 'Cancel', confirm: 'Remove' },
+            labels: { cancel: 'Cancel', confirm: 'Delete' },
             onConfirm: async () => {
-                await removeProjectMutation.mutateAsync({ id: project.id })
+                await deleteProjectMutation.mutateAsync({ id: project.id })
+
+                if (isCurrentProjectConversation) {
+                    await navigate({ to: '/' })
+                }
             },
-            title: 'Remove Project',
+            title: 'Delete project',
         })
     }
 
@@ -170,16 +173,17 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                                 leftSection={
                                     <PencilLineIcon className="size-4" />
                                 }
-                                onClick={handleRename}
+                                onClick={handleEdit}
                             >
-                                Rename
+                                Edit
                             </Menu.Item>
                             <Menu.Item
-                                disabled={removeProjectMutation.isPending}
+                                color="red"
+                                disabled={deleteProjectMutation.isPending}
                                 leftSection={<XIcon className="size-4" />}
-                                onClick={handleRemove}
+                                onClick={handleDelete}
                             >
-                                Remove
+                                Delete
                             </Menu.Item>
                         </Menu.Dropdown>
                     </Menu>

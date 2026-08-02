@@ -1,15 +1,7 @@
 import { sql } from 'drizzle-orm'
-import {
-    check,
-    index,
-    integer,
-    snakeCase,
-    text,
-    uniqueIndex,
-} from 'drizzle-orm/sqlite-core'
+import { check, index, integer, snakeCase, text } from 'drizzle-orm/sqlite-core'
 
 const conversationStatusValues = ['active', 'archived', 'deleted'] as const
-const projectStatusValues = ['active', 'removed'] as const
 
 export const projects = snakeCase.table(
     'projects',
@@ -18,29 +10,22 @@ export const projects = snakeCase.table(
             .notNull()
             .default(sql`(cast(unixepoch('subsec') * 1000 as integer))`),
         id: text().primaryKey(),
+        instructions: text().notNull().default(''),
         name: text().notNull(),
-        path: text().notNull(),
-        status: text({
-            enum: projectStatusValues,
-        })
-            .notNull()
-            .default('active'),
         updatedAt: integer({ mode: 'timestamp_ms' })
             .notNull()
             .default(sql`(cast(unixepoch('subsec') * 1000 as integer))`)
             .$onUpdate(() => new Date()),
     },
     (table) => [
-        index('projects_status_updated_at_idx').on(
-            table.status,
-            table.updatedAt
-        ),
-        uniqueIndex('projects_path_unique_idx').on(table.path),
-        check('projects_name_check', sql`length(${table.name}) > 0`),
-        check('projects_path_check', sql`length(${table.path}) > 0`),
+        index('projects_updated_at_idx').on(table.updatedAt),
         check(
-            'projects_status_check',
-            sql`${table.status} in ('active', 'removed')`
+            'projects_instructions_check',
+            sql`length(${table.instructions}) <= 20000`
+        ),
+        check(
+            'projects_name_check',
+            sql`length(${table.name}) between 1 and 200`
         ),
     ]
 )
@@ -57,7 +42,9 @@ export const conversations = snakeCase.table(
             .notNull()
             .default(sql`'{}'`),
         model: text(),
-        projectId: text().references(() => projects.id),
+        projectId: text().references(() => projects.id, {
+            onDelete: 'cascade',
+        }),
         status: text({
             enum: conversationStatusValues,
         })

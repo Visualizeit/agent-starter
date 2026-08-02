@@ -45,7 +45,6 @@
         "cnfast": "^0.1.0",
         "drizzle-orm": "1.0.0-rc.4",
         "es-toolkit": "^1.50.0",
-        "execa": "^10.0.1",
         "hono": "^4.12.33",
         "lucide-react": "^1.28.0",
         "nanoid": "^6.0.0",

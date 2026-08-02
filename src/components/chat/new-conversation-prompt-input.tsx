@@ -14,7 +14,11 @@ const messageSchema = z.string().trim().min(1)
 
 const NewConversationPromptInput = () => {
     const [message, setMessage] = useInputState('')
-    const { projectId } = useSearch({ from: '/' })
+
+    const projectId = useSearch({
+        from: '/',
+        select: (search) => search.projectId,
+    })
 
     const messageParseResult = messageSchema.safeParse(message)
 

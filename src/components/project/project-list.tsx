@@ -12,9 +12,11 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSearch } from '@tanstack/react-router'
 import { cn } from 'cnfast'
 import { isEmpty } from 'es-toolkit/compat'
 import { ChevronRightIcon, PlusIcon } from 'lucide-react'
+import { useEffect } from 'react'
 
 import orpc from '@/lib/orpc'
 
@@ -34,7 +36,17 @@ const ProjectList = () => {
             select: (data) => data.list,
         })
     )
-    const [isExpanded, { toggle }] = useDisclosure(!isEmpty(projects))
+    const projectId = useSearch({
+        select: (search) => search.projectId,
+        strict: false,
+    })
+    const [isExpanded, { open, toggle }] = useDisclosure(!isEmpty(projects))
+
+    useEffect(() => {
+        if (projectId) {
+            open()
+        }
+    }, [open, projectId])
 
     return (
         <Stack gap="xxs" className="group/project-list">

@@ -47,7 +47,7 @@ const ProjectList = () => {
     }
 
     return (
-        <Stack gap="xs" className="group/project-list">
+        <Stack gap="xxs" className="group/project-list">
             <Group
                 gap="xxs"
                 wrap="nowrap"

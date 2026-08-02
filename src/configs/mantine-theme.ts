@@ -16,6 +16,7 @@ type ExtendedCustomColors = 'brand' | DefaultMantineColor
 
 type ExtendedCustomSpacing =
     | 'sidebar-menu-item-y'
+    | 'xxxs'
     | 'xxs'
     | '2xl'
     | '3xl'
@@ -88,6 +89,7 @@ const mantineTheme = createTheme({
         xl: rem(32),
         xs: rem(8),
         xxs: rem(4),
+        xxxs: rem(2),
     },
 })
 

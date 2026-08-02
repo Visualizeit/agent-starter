@@ -1,5 +1,4 @@
 import {
-    Box,
     Collapse,
     Group,
     Stack,
@@ -61,14 +60,14 @@ const PinnedConversationList = () => {
                 </Group>
             </UnstyledButton>
             <Collapse expanded={isExpanded} keepMounted={false}>
-                <Box component="ul">
+                <Stack component="ul" gap="xxxs">
                     {conversations.map((conversation) => (
                         <ConversationListItem
                             conversation={conversation}
                             key={conversation.id}
                         />
                     ))}
-                </Box>
+                </Stack>
             </Collapse>
         </Stack>
     )

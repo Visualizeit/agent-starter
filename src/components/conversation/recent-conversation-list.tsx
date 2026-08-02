@@ -1,6 +1,5 @@
 import {
     ActionIcon,
-    Box,
     Collapse,
     Group,
     Stack,
@@ -87,14 +86,14 @@ const RecentConversationList = () => {
                         No conversations
                     </Text>
                 ) : (
-                    <Box component="ul">
+                    <Stack component="ul" gap="xxxs">
                         {conversations.map((conversation) => (
                             <ConversationListItem
                                 conversation={conversation}
                                 key={conversation.id}
                             />
                         ))}
-                    </Box>
+                    </Stack>
                 )}
             </Collapse>
         </Stack>

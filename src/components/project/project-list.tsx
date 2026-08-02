@@ -1,6 +1,5 @@
 import {
     ActionIcon,
-    Box,
     Collapse,
     Group,
     Stack,
@@ -99,11 +98,11 @@ const ProjectList = () => {
                 </Tooltip>
             </Group>
             <Collapse expanded={isExpanded} keepMounted={false}>
-                <Box component="ul">
+                <Stack component="ul" gap="xxxs">
                     {projects.map((project) => (
                         <ProjectListItem project={project} key={project.id} />
                     ))}
-                </Box>
+                </Stack>
             </Collapse>
         </Stack>
     )

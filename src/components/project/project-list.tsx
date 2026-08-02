@@ -12,6 +12,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { modals } from '@mantine/modals'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { cn } from 'cnfast'
+import { isEmpty } from 'es-toolkit/compat'
 import { ChevronRightIcon, PlusIcon } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
@@ -27,13 +28,12 @@ const handleAddProject = () => {
 }
 
 const ProjectList = () => {
-    const [isExpanded, { toggle }] = useDisclosure(true)
-
     const { data: projects } = useSuspenseQuery(
         orpc.project.list.queryOptions({
             select: (data) => data.list,
         })
     )
+    const [isExpanded, { toggle }] = useDisclosure(!isEmpty(projects))
 
     return (
         <Stack gap="xxs" className="group/project-list">
@@ -43,7 +43,7 @@ const ProjectList = () => {
                 className="group/project-list-header"
             >
                 <UnstyledButton
-                    className="w-full"
+                    className="group/project-list-toggle w-full"
                     aria-expanded={isExpanded}
                     aria-label={
                         isExpanded ? 'Collapse projects' : 'Expand projects'
@@ -58,7 +58,7 @@ const ProjectList = () => {
                             size="sm"
                             className={cn(
                                 isExpanded &&
-                                    'invisible group-hover/project-list:visible group-focus-within/project-list:visible'
+                                    'invisible group-hover/project-list:visible group-focus-visible/project-list-toggle:visible'
                             )}
                         >
                             <ChevronRightIcon
@@ -78,7 +78,7 @@ const ProjectList = () => {
                         size="sm"
                         radius="md"
                         aria-label="Add project"
-                        className="invisible group-hover/project-list-header:visible group-focus-within/project-list-header:visible"
+                        className="invisible group-hover/project-list-header:visible focus-visible:visible"
                         onClick={handleAddProject}
                     >
                         <PlusIcon className="size-4" />
@@ -86,11 +86,20 @@ const ProjectList = () => {
                 </Tooltip>
             </Group>
             <Collapse expanded={isExpanded} keepMounted={false}>
-                <Stack component="ul" gap="xxxs">
-                    {projects.map((project) => (
-                        <ProjectListItem project={project} key={project.id} />
-                    ))}
-                </Stack>
+                {isEmpty(projects) ? (
+                    <Text c="dimmed" size="sm" px="xs">
+                        No projects
+                    </Text>
+                ) : (
+                    <Stack component="ul" gap="xxxs">
+                        {projects.map((project) => (
+                            <ProjectListItem
+                                project={project}
+                                key={project.id}
+                            />
+                        ))}
+                    </Stack>
+                )}
             </Collapse>
         </Stack>
     )

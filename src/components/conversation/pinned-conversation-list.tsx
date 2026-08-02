@@ -34,7 +34,7 @@ const PinnedConversationList = () => {
     return (
         <Stack gap="xxs" className="group/pinned-conversation-list">
             <UnstyledButton
-                className="w-full"
+                className="group/pinned-conversation-list-toggle w-full"
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? 'Collapse pinned' : 'Expand pinned'}
                 onClick={toggle}
@@ -47,7 +47,7 @@ const PinnedConversationList = () => {
                         size="sm"
                         className={cn(
                             isExpanded &&
-                                'invisible group-hover/pinned-conversation-list:visible group-focus-within/pinned-conversation-list:visible'
+                                'invisible group-hover/pinned-conversation-list:visible group-focus-visible/pinned-conversation-list-toggle:visible'
                         )}
                     >
                         <ChevronRightIcon

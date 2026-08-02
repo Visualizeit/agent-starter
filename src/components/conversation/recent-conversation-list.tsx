@@ -38,7 +38,7 @@ const RecentConversationList = () => {
                 className="group/recent-conversation-list-header"
             >
                 <UnstyledButton
-                    className="w-full"
+                    className="group/recent-conversation-list-toggle w-full"
                     aria-expanded={isExpanded}
                     aria-label={
                         isExpanded ? 'Collapse recents' : 'Expand recents'
@@ -53,7 +53,7 @@ const RecentConversationList = () => {
                             size="sm"
                             className={cn(
                                 isExpanded &&
-                                    'invisible group-hover/recent-conversation-list:visible group-focus-within/recent-conversation-list:visible'
+                                    'invisible group-hover/recent-conversation-list:visible group-focus-visible/recent-conversation-list-toggle:visible'
                             )}
                         >
                             <ChevronRightIcon
@@ -73,7 +73,7 @@ const RecentConversationList = () => {
                         size="sm"
                         radius="md"
                         aria-label="New chat"
-                        className="invisible group-hover/recent-conversation-list-header:visible group-focus-within/recent-conversation-list-header:visible"
+                        className="invisible group-hover/recent-conversation-list-header:visible focus-visible:visible"
                         renderRoot={(props) => <Link to="/" {...props} />}
                     >
                         <PlusIcon className="size-4" />

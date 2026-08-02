@@ -17,20 +17,14 @@ import orpc from '@/lib/orpc'
 
 import ConversationListItem from './conversation-list-item'
 
-interface ConversationListProps {
-    isPinned?: boolean
-}
-
-const ConversationList = ({ isPinned = false }: ConversationListProps) => {
+const PinnedConversationList = () => {
     const [isExpanded, { toggle }] = useDisclosure(true)
 
     const { data: conversations } = useSuspenseQuery(
         orpc.conversation.list.queryOptions({
             input: { status: 'active' },
             select: (data) =>
-                data.list.filter(
-                    (conversation) => conversation.isPinned === isPinned
-                ),
+                data.list.filter((conversation) => conversation.isPinned),
         })
     )
 
@@ -39,22 +33,22 @@ const ConversationList = ({ isPinned = false }: ConversationListProps) => {
     }
 
     return (
-        <Stack gap="xxs" className="group/conversation-list">
+        <Stack gap="xxs" className="group/pinned-conversation-list">
             <UnstyledButton
                 className="w-full"
                 aria-expanded={isExpanded}
-                aria-label={isExpanded ? 'Collapse list' : 'Expand list'}
+                aria-label={isExpanded ? 'Collapse pinned' : 'Expand pinned'}
                 onClick={toggle}
             >
                 <Group gap="xxs" px="xs">
-                    <Text size="sm">{isPinned ? 'Pinned' : 'Recents'}</Text>
+                    <Text size="sm">Pinned</Text>
                     <ThemeIcon
                         variant="transparent"
                         c="gray"
                         size="sm"
                         className={cn(
                             isExpanded &&
-                                'invisible group-hover/conversation-list:visible group-focus-within/conversation-list:visible'
+                                'invisible group-hover/pinned-conversation-list:visible group-focus-within/pinned-conversation-list:visible'
                         )}
                     >
                         <ChevronRightIcon
@@ -80,4 +74,4 @@ const ConversationList = ({ isPinned = false }: ConversationListProps) => {
     )
 }
 
-export default ConversationList
+export default PinnedConversationList

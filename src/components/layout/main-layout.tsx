@@ -1,8 +1,9 @@
 import { AppShell, Box, ScrollArea, Stack } from '@mantine/core'
 import { Link, Outlet } from '@tanstack/react-router'
 
-import ConversationList from '@/components/conversation/conversation-list'
 import NewChatButton from '@/components/conversation/new-chat-button'
+import PinnedConversationList from '@/components/conversation/pinned-conversation-list'
+import RecentConversationList from '@/components/conversation/recent-conversation-list'
 import useConversationEvents from '@/components/conversation/use-conversation-events'
 import ProjectList from '@/components/project/project-list'
 
@@ -30,9 +31,9 @@ const MainLayout = () => {
                 </AppShell.Section>
                 <AppShell.Section component={ScrollArea} grow>
                     <Stack gap="sm" p="xs">
-                        <ConversationList isPinned />
+                        <PinnedConversationList />
                         <ProjectList />
-                        <ConversationList />
+                        <RecentConversationList />
                     </Stack>
                 </AppShell.Section>
                 <AppShell.Section p="xs">Profile</AppShell.Section>

@@ -28,22 +28,24 @@ const NewConversationPromptInput = () => {
                 _onMutateResult,
                 context
             ) => {
+                await Promise.all([
+                    context.client.invalidateQueries(
+                        orpc.conversation.list.queryOptions({
+                            input: {
+                                projectId: variables.projectId,
+                                status: 'active',
+                            },
+                        })
+                    ),
+                    context.client.invalidateQueries(
+                        orpc.project.list.queryOptions()
+                    ),
+                ])
+
                 await navigate({
                     params: { conversationId: createdConversation.id },
                     to: '/$conversationId',
                 })
-
-                await context.client.invalidateQueries(
-                    orpc.conversation.list.queryOptions({
-                        input: {
-                            projectId: variables.projectId,
-                            status: 'active',
-                        },
-                    })
-                )
-                await context.client.invalidateQueries(
-                    orpc.project.list.queryOptions()
-                )
             },
         })
     )

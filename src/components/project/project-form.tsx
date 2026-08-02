@@ -2,6 +2,7 @@ import { Button, Group, Stack, Textarea, TextInput } from '@mantine/core'
 import { schemaResolver, useForm } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { isNotNil } from 'es-toolkit/predicate'
 import { z } from 'zod'
 
@@ -19,6 +20,9 @@ interface ProjectFormProps {
 
 const ProjectForm = ({ project }: ProjectFormProps) => {
     const isEditing = isNotNil(project)
+
+    const navigate = useNavigate()
+
     const form = useForm({
         initialValues: {
             instructions: isEditing ? project.instructions : '',
@@ -29,12 +33,22 @@ const ProjectForm = ({ project }: ProjectFormProps) => {
 
     const addMutation = useMutation(
         orpc.project.add.mutationOptions({
-            onSuccess: async (_data, _variables, _onMutateResult, context) => {
+            onSuccess: async (
+                createdProject,
+                _variables,
+                _onMutateResult,
+                context
+            ) => {
                 await context.client.invalidateQueries(
                     orpc.project.list.queryOptions()
                 )
 
                 closeAllModals()
+
+                await navigate({
+                    search: { projectId: createdProject.id },
+                    to: '/',
+                })
             },
         })
     )

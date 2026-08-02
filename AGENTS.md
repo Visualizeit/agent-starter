@@ -55,3 +55,7 @@ Prefer utility library es-toolkit over native implementations to simplify logic.
 ### Assertions
 
 Use **es-toolkit's invariant** (`import { invariant } from 'es-toolkit/util'`) for asserting nullable values.
+
+### Mutation Success
+
+In `onSuccess`: await cache refreshes → close overlays → navigate. Run independent refreshes in parallel. For destructive actions, navigate only if the affected entity is open.

@@ -1,7 +1,7 @@
 import { ActionIcon, Box, Menu, Text, UnstyledButton } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { cn } from 'cnfast'
 import {
     ArchiveIcon,
@@ -30,6 +30,8 @@ const ConversationListItem = ({
 
     const navigate = useNavigate()
 
+    const { conversationId } = useParams({ strict: false })
+
     const archiveConversationMutation = useMutation(
         orpc.conversation.update.mutationOptions({
             onSuccess: async (
@@ -38,8 +40,6 @@ const ConversationListItem = ({
                 _onMutateResult,
                 context
             ) => {
-                await navigate({ to: '/' })
-
                 await Promise.all([
                     context.client.invalidateQueries(
                         orpc.conversation.list.queryOptions({
@@ -50,6 +50,10 @@ const ConversationListItem = ({
                         orpc.project.list.queryOptions()
                     ),
                 ])
+
+                if (conversation.id === conversationId) {
+                    await navigate({ to: '/' })
+                }
             },
         })
     )

@@ -1,11 +1,16 @@
 import type { FlueClient, UseFlueAgentResult } from '@flue/react'
-import { Textarea, Group, Space, rem } from '@mantine/core'
+import { Textarea, Group, rem } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
+import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
 import { invariant } from 'es-toolkit'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 import { z } from 'zod'
 
+import orpc from '@/lib/orpc'
+
+import ModelSelector from './model-selector'
 import SendButton from './send-button'
 import StopButton from './stop-button'
 
@@ -14,26 +19,63 @@ interface PromptInputProps {
     client: FlueClient
 }
 
-const messageSchema = z.string().trim().min(1)
+const submissionSchema = z.object({
+    message: z.string().trim().min(1),
+    model: z.string().trim().min(1),
+})
 
 const PromptInput = ({ agent, client }: PromptInputProps) => {
+    const { conversationId } = useParams({ from: '/$conversationId' })
+
+    const { data: conversation } = useSuspenseQuery(
+        orpc.conversation.find.queryOptions({
+            input: { id: conversationId },
+            select: (data) => ({ model: data.model }),
+        })
+    )
+
     const [message, setMessage] = useInputState('')
+
+    const [selectedModel, setSelectedModel] = useInputState(conversation.model)
+
+    const updateModelMutation = useMutation(
+        orpc.conversation.update.mutationOptions({
+            onSuccess: async (_data, _variables, _onMutateResult, context) => {
+                await context.client.invalidateQueries(
+                    orpc.conversation.find.queryOptions({
+                        input: { id: conversationId },
+                    })
+                )
+            },
+        })
+    )
 
     const isResponding =
         agent.status === 'submitted' || agent.status === 'streaming'
 
-    const messageParseResult = messageSchema.safeParse(message)
+    const submissionParseResult = submissionSchema.safeParse({
+        message,
+        model: selectedModel,
+    })
 
     const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
         mode: 'mod-enter',
-        onSubmit: async (value) => {
-            if (isResponding) {
+        onSubmit: async () => {
+            if (
+                isResponding ||
+                updateModelMutation.isPending ||
+                !submissionParseResult.success
+            ) {
                 return
             }
 
-            setMessage('')
+            await updateModelMutation.mutateAsync({
+                id: conversationId,
+                model: submissionParseResult.data.model,
+            })
 
-            await agent.sendMessage(value)
+            setMessage('')
+            await agent.sendMessage(submissionParseResult.data.message)
         },
     })
 
@@ -54,6 +96,7 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
                 styles={{
                     bottomSection: {
                         alignItems: 'flex-start',
+                        color: 'var(--mantine-color-text)',
                         paddingInline: 'var(--mantine-spacing-sm)',
                     },
                     wrapper: {
@@ -85,13 +128,19 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
                 maxRows={10}
                 placeholder="Ask the assistant"
                 bottomSection={
-                    <Group className="justify-between w-full">
-                        <Space />
+                    <Group className="w-full" justify="space-between">
+                        <ModelSelector
+                            onChange={setSelectedModel}
+                            value={selectedModel}
+                        />
                         {isResponding ? (
                             <StopButton client={client} />
                         ) : (
                             <SendButton
-                                disabled={!messageParseResult.success}
+                                disabled={
+                                    !submissionParseResult.success ||
+                                    updateModelMutation.isPending
+                                }
                             />
                         )}
                     </Group>

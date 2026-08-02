@@ -11,7 +11,6 @@ const serverEnv = createEnv({
     server: {
         DB_FILE_NAME: z.string().min(1).default('app.db'),
         FLUE_DB_FILE_NAME: z.string().min(1).default('flue.db'),
-        FLUE_MODEL: z.string().min(1),
     },
 })
 

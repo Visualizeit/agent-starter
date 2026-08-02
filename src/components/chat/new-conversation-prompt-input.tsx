@@ -1,4 +1,4 @@
-import { ActionIcon, Textarea, Group, Space, rem } from '@mantine/core'
+import { ActionIcon, Textarea, Group, rem } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate, useSearch } from '@tanstack/react-router'
@@ -10,17 +10,27 @@ import { z } from 'zod'
 
 import orpc from '@/lib/orpc'
 
-const messageSchema = z.string().trim().min(1)
+import ModelSelector from './model-selector'
+
+const submissionSchema = z.object({
+    message: z.string().trim().min(1),
+    model: z.string().trim().min(1),
+})
 
 const NewConversationPromptInput = () => {
     const [message, setMessage] = useInputState('')
+
+    const [model, setModel] = useInputState<string | null>(null)
 
     const projectId = useSearch({
         from: '/',
         select: (search) => search.projectId,
     })
 
-    const messageParseResult = messageSchema.safeParse(message)
+    const submissionParseResult = submissionSchema.safeParse({
+        message,
+        model,
+    })
 
     const navigate = useNavigate()
 
@@ -57,14 +67,14 @@ const NewConversationPromptInput = () => {
     const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
         mode: 'mod-enter',
         onSubmit: async () => {
-            if (!messageParseResult.success) {
+            if (!submissionParseResult.success) {
                 return
             }
 
             setMessage('')
 
             await createConversationMutation.mutateAsync({
-                message: messageParseResult.data,
+                ...submissionParseResult.data,
                 projectId,
             })
         },
@@ -87,6 +97,7 @@ const NewConversationPromptInput = () => {
                 styles={{
                     bottomSection: {
                         alignItems: 'flex-start',
+                        color: 'var(--mantine-color-text)',
                         paddingInline: 'var(--mantine-spacing-sm)',
                     },
                     wrapper: {
@@ -119,10 +130,10 @@ const NewConversationPromptInput = () => {
                 placeholder="Ask the assistant"
                 bottomSection={
                     <Group className="justify-between w-full">
-                        <Space />
+                        <ModelSelector onChange={setModel} value={model} />
                         <ActionIcon
                             disabled={
-                                !messageParseResult.success ||
+                                !submissionParseResult.success ||
                                 createConversationMutation.isPending
                             }
                             variant="filled"

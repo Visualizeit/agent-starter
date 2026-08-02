@@ -7,6 +7,7 @@ import serverEnv from '@/server/server-env'
 
 import assistantAgent from './agents/assistant'
 import generateTitleAgent from './agents/generate-title'
+import modelRegistry from './model-registry'
 
 let flueRuntimePromise: Promise<Flue> | undefined
 let flueAppPromise: Promise<Hono> | undefined
@@ -19,6 +20,7 @@ export const getFlueRuntime = () => {
     flueRuntimePromise = start({
         agents: [assistantAgent, generateTitleAgent],
         db: sqlite(serverEnv.FLUE_DB_FILE_NAME),
+        providers: modelRegistry.getProviders(),
     })
 
     return flueRuntimePromise

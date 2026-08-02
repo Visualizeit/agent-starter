@@ -75,4 +75,5 @@ export const Route = createFileRoute('/$conversationId')({
             ],
         }
     },
+    remountDeps: ({ params }) => ({ conversationId: params.conversationId }),
 })

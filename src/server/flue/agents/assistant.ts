@@ -1,48 +1,20 @@
 'use agent'
 
-import {
-    useAgentStart,
-    useModel,
-    usePersistentState,
-    useResponseFinish,
-    useResponseStart,
-} from '@flue/runtime'
+import { useModel, useResponseFinish, useResponseStart } from '@flue/runtime'
 import type { AgentProps } from '@flue/runtime'
 import { isEmpty } from 'es-toolkit/compat'
-import { isNotNil } from 'es-toolkit/predicate'
 import * as v from 'valibot'
 
-import database from '@/server/db/client'
-import serverEnv from '@/server/server-env'
+import getConversationContext from '@/server/flue/conversation-context'
 
 const responseMetricsStartSchema = v.object({
     startedAt: v.number(),
 })
 
 const Assistant = ({ id }: AgentProps) => {
-    const [projectInstructions, setProjectInstructions] = usePersistentState(
-        'projectInstructions',
-        ''
-    )
+    const conversationContext = getConversationContext(id)
 
-    useAgentStart(async () => {
-        const conversationRecord = await database.query.conversations.findFirst(
-            {
-                columns: {},
-                where: { id },
-                with: {
-                    project: {
-                        columns: { instructions: true },
-                    },
-                },
-            }
-        )
-        const project = conversationRecord && conversationRecord.project
-
-        setProjectInstructions(isNotNil(project) ? project.instructions : '')
-    })
-
-    useModel(serverEnv.FLUE_MODEL)
+    useModel(conversationContext.model)
 
     useResponseStart(() => ({
         responseMetrics: {
@@ -65,9 +37,9 @@ const Assistant = ({ id }: AgentProps) => {
         }
     })
 
-    return isEmpty(projectInstructions)
+    return isEmpty(conversationContext.projectInstructions)
         ? undefined
-        : `<project_instructions>\n${projectInstructions}\n</project_instructions>`
+        : `<project_instructions>\n${conversationContext.projectInstructions}\n</project_instructions>`
 }
 
 Assistant.agentName = 'assistant'

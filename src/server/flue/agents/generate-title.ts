@@ -1,8 +1,9 @@
 'use agent'
 
 import { useModel } from '@flue/runtime'
+import type { AgentProps } from '@flue/runtime'
 
-import serverEnv from '@/server/server-env'
+import getConversationContext from '@/server/flue/conversation-context'
 
 const instructions = `You will generate a short title based on the first message a user begins a conversation with.
 
@@ -16,8 +17,8 @@ const instructions = `You will generate a short title based on the first message
 - Never return anything that is more than one sentence (one line) long.
 </rules>`
 
-const GenerateTitle = () => {
-    useModel(serverEnv.FLUE_MODEL)
+const GenerateTitle = ({ id }: AgentProps) => {
+    useModel(getConversationContext(id).model)
 
     return instructions
 }

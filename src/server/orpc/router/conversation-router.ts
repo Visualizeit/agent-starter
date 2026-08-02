@@ -10,12 +10,14 @@ import {
     generateConversationTitle,
     sendAssistantMessage,
 } from '@/server/flue/actions'
+import modelRegistry from '@/server/flue/model-registry'
 import publisher from '@/server/orpc/publisher'
 
 import base from '../base'
 
 const idSchema = z.string().min(1)
 const messageSchema = z.string().trim().min(1)
+const modelSchema = z.string().trim().min(1).max(120)
 const metadataSchema = z.record(z.string(), z.json())
 const conversationSelectSchema = createSelectSchema(conversations, {
     metadata: metadataSchema,
@@ -29,6 +31,15 @@ const conversationUpdateSchema = createUpdateSchema(conversations, {
 const generateTitleResultSchema = z.object({
     title: z.string().trim().min(1).max(200),
 })
+
+const isModelAvailable = async (model: string) => {
+    const availableModels = await modelRegistry.getAvailable()
+
+    return availableModels.some(
+        (availableModel) =>
+            `${availableModel.provider}/${availableModel.id}` === model
+    )
+}
 
 interface GenerateAndUpdateConversationTitleOptions {
     conversationId: string
@@ -76,11 +87,18 @@ const conversationRouter = {
         .input(
             z.object({
                 message: messageSchema,
+                model: modelSchema,
                 projectId: idSchema.optional(),
             })
         )
         .handler(async ({ input, errors }) => {
             const conversationId = nanoid()
+
+            const { model } = input
+
+            if (!(await isModelAvailable(model))) {
+                throw errors.BAD_REQUEST()
+            }
 
             if (isNotNil(input.projectId)) {
                 const projectRecord = await database.query.projects.findFirst({
@@ -98,6 +116,7 @@ const conversationRouter = {
                 .insert(conversations)
                 .values({
                     id: conversationId,
+                    model,
                     projectId: input.projectId,
                 })
                 .onConflictDoNothing({ target: conversations.id })
@@ -189,6 +208,7 @@ const conversationRouter = {
                 })
                 .extend({
                     id: idSchema,
+                    model: modelSchema.optional(),
                     status: conversationStatusSchema
                         .exclude(['deleted'])
                         .optional(),

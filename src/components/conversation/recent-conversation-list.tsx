@@ -46,10 +46,12 @@ const RecentConversationList = () => {
                     onClick={toggle}
                 >
                     <Group gap="xxs" px="xs">
-                        <Text size="sm">Recents</Text>
+                        <Text c="dimmed" size="sm">
+                            Recents
+                        </Text>
                         <ThemeIcon
                             variant="transparent"
-                            c="gray"
+                            c="dimmed"
                             size="sm"
                             className={cn(
                                 isExpanded &&
@@ -68,7 +70,7 @@ const RecentConversationList = () => {
                 <Tooltip label="New chat">
                     <ActionIcon
                         variant="subtle"
-                        c="gray"
+                        c="dimmed"
                         color="gray"
                         size="sm"
                         radius="md"

@@ -40,10 +40,12 @@ const PinnedConversationList = () => {
                 onClick={toggle}
             >
                 <Group gap="xxs" px="xs">
-                    <Text size="sm">Pinned</Text>
+                    <Text c="dimmed" size="sm">
+                        Pinned
+                    </Text>
                     <ThemeIcon
                         variant="transparent"
-                        c="gray"
+                        c="dimmed"
                         size="sm"
                         className={cn(
                             isExpanded &&

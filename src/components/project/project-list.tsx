@@ -51,10 +51,12 @@ const ProjectList = () => {
                     onClick={toggle}
                 >
                     <Group gap="xxs" px="xs">
-                        <Text size="sm">Projects</Text>
+                        <Text c="dimmed" size="sm">
+                            Projects
+                        </Text>
                         <ThemeIcon
                             variant="transparent"
-                            c="gray"
+                            c="dimmed"
                             size="sm"
                             className={cn(
                                 isExpanded &&
@@ -73,7 +75,7 @@ const ProjectList = () => {
                 <Tooltip label="Add project">
                     <ActionIcon
                         variant="subtle"
-                        c="gray"
+                        c="dimmed"
                         color="gray"
                         size="sm"
                         radius="md"

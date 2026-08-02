@@ -47,7 +47,7 @@ const ProjectConversationList = ({
         {isEmpty(conversations) ? (
             <Text
                 c="dimmed"
-                size="sm"
+                size="xs"
                 pl="calc(var(--mantine-spacing-xs) + var(--mantine-spacing-md) + var(--mantine-spacing-xs))"
                 pr="xs"
             >

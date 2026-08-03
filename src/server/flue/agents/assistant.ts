@@ -3,13 +3,11 @@
 import { useModel, useResponseFinish, useResponseStart } from '@flue/runtime'
 import type { AgentProps } from '@flue/runtime'
 import { isEmpty } from 'es-toolkit/compat'
-import * as v from 'valibot'
 
+import assistantMessageMetadataSchema, {
+    assistantMessageMetadataStartSchema,
+} from '@/schemas/assistant-message-metadata'
 import getConversationContext from '@/server/flue/conversation-context'
-
-const responseMetricsStartSchema = v.object({
-    startedAt: v.number(),
-})
 
 const Assistant = ({ id }: AgentProps) => {
     const conversationContext = getConversationContext(id)
@@ -17,24 +15,42 @@ const Assistant = ({ id }: AgentProps) => {
     useModel(conversationContext.model)
 
     useResponseStart(() => ({
-        responseMetrics: {
+        model: conversationContext.model,
+        timing: {
             startedAt: Date.now(),
         },
     }))
 
-    useResponseFinish(({ metadata, response }) => {
-        const responseMetrics = v.parse(
-            responseMetricsStartSchema,
-            metadata.responseMetrics
-        )
+    useResponseFinish(({ log, metadata, response }) => {
+        const metadataStartResult =
+            assistantMessageMetadataStartSchema.safeParse(metadata)
 
-        return {
-            responseMetrics: {
-                completedAt: Date.now(),
-                startedAt: responseMetrics.startedAt,
-                usage: response.usage,
-            },
+        if (!metadataStartResult.success) {
+            log.error('Failed to parse assistant message start metadata', {
+                issues: metadataStartResult.error.issues,
+            })
+
+            return
         }
+
+        const metadataResult = assistantMessageMetadataSchema.safeParse({
+            ...metadataStartResult.data,
+            timing: {
+                ...metadataStartResult.data.timing,
+                completedAt: Date.now(),
+            },
+            usage: response.usage,
+        })
+
+        if (!metadataResult.success) {
+            log.error('Failed to parse assistant message metadata', {
+                issues: metadataResult.error.issues,
+            })
+
+            return
+        }
+
+        return metadataResult.data
     })
 
     return isEmpty(conversationContext.projectInstructions)

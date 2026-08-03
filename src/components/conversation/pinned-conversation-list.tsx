@@ -1,3 +1,5 @@
+import { ChevronRightIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import {
     Collapse,
     Group,
@@ -10,7 +12,6 @@ import { useDisclosure } from '@mantine/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { cn } from 'cnfast'
 import { isEmpty } from 'es-toolkit/compat'
-import { ChevronRightIcon } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
 
@@ -52,7 +53,8 @@ const PinnedConversationList = () => {
                                 'invisible group-hover/pinned-conversation-list:visible group-focus-visible/pinned-conversation-list-toggle:visible'
                         )}
                     >
-                        <ChevronRightIcon
+                        <HugeiconsIcon
+                            icon={ChevronRightIcon}
                             className={cn(
                                 'size-4 transition-transform',
                                 isExpanded && 'rotate-90'

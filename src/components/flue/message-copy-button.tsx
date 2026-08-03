@@ -1,5 +1,6 @@
+import { Copy01Icon, Tick02Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { ActionIcon, CopyButton, Tooltip } from '@mantine/core'
-import { CheckIcon, CopyIcon } from 'lucide-react'
 
 interface MessageCopyButtonProps {
     value: string
@@ -17,9 +18,9 @@ const MessageCopyButton = ({ value }: MessageCopyButtonProps) => (
                     onClick={copy}
                 >
                     {copied ? (
-                        <CheckIcon className="size-4" />
+                        <HugeiconsIcon icon={Tick02Icon} className="size-4" />
                     ) : (
-                        <CopyIcon className="size-4" />
+                        <HugeiconsIcon icon={Copy01Icon} className="size-4" />
                     )}
                 </ActionIcon>
             </Tooltip>

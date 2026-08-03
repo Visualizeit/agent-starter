@@ -1,3 +1,5 @@
+import { ChevronRightIcon, FolderAddIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import {
     ActionIcon,
     Collapse,
@@ -15,7 +17,6 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { useSearch } from '@tanstack/react-router'
 import { cn } from 'cnfast'
 import { isEmpty } from 'es-toolkit/compat'
-import { ChevronRightIcon, PlusIcon } from 'lucide-react'
 import { useEffect } from 'react'
 
 import orpc from '@/lib/orpc'
@@ -76,7 +77,8 @@ const ProjectList = () => {
                                     'invisible group-hover/project-list:visible group-focus-visible/project-list-toggle:visible'
                             )}
                         >
-                            <ChevronRightIcon
+                            <HugeiconsIcon
+                                icon={ChevronRightIcon}
                                 className={cn(
                                     'size-4 transition-transform',
                                     isExpanded && 'rotate-90'
@@ -96,7 +98,10 @@ const ProjectList = () => {
                         className="invisible group-hover/project-list-header:visible focus-visible:visible"
                         onClick={handleAddProject}
                     >
-                        <PlusIcon className="size-4" />
+                        <HugeiconsIcon
+                            icon={FolderAddIcon}
+                            className="size-4"
+                        />
                     </ActionIcon>
                 </Tooltip>
             </Group>

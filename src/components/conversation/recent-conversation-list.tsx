@@ -1,3 +1,5 @@
+import { PlusSignIcon, ChevronRightIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import {
     ActionIcon,
     Collapse,
@@ -14,7 +16,6 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { cn } from 'cnfast'
 import { isEmpty } from 'es-toolkit/compat'
-import { ChevronRightIcon, PlusIcon } from 'lucide-react'
 
 import orpc from '@/lib/orpc'
 
@@ -59,7 +60,8 @@ const RecentConversationList = () => {
                                     'invisible group-hover/recent-conversation-list:visible group-focus-visible/recent-conversation-list-toggle:visible'
                             )}
                         >
-                            <ChevronRightIcon
+                            <HugeiconsIcon
+                                icon={ChevronRightIcon}
                                 className={cn(
                                     'size-4 transition-transform',
                                     isExpanded && 'rotate-90'
@@ -79,7 +81,7 @@ const RecentConversationList = () => {
                         className="invisible group-hover/recent-conversation-list-header:visible focus-visible:visible"
                         renderRoot={(props) => <Link to="/" {...props} />}
                     >
-                        <PlusIcon className="size-4" />
+                        <HugeiconsIcon icon={PlusSignIcon} className="size-4" />
                     </ActionIcon>
                 </Tooltip>
             </Group>

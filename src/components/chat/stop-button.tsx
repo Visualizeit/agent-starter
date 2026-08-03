@@ -1,7 +1,8 @@
 import type { FlueClient } from '@flue/react'
+import { StopIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { ActionIcon, Tooltip } from '@mantine/core'
 import { useMutation } from '@tanstack/react-query'
-import { SquareIcon } from 'lucide-react'
 
 interface StopButtonProps {
     client: FlueClient
@@ -24,7 +25,10 @@ const StopButton = ({ client }: StopButtonProps) => {
                 size="lg"
                 type="button"
             >
-                <SquareIcon className="size-4 fill-current text-(--mantine-color-body)" />
+                <HugeiconsIcon
+                    icon={StopIcon}
+                    className="size-4 fill-current text-(--mantine-color-body)"
+                />
             </ActionIcon>
         </Tooltip>
     )

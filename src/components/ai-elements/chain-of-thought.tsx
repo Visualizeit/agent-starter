@@ -1,9 +1,14 @@
 'use client'
 
+import {
+    AiBrain03Icon,
+    ChevronDownIcon,
+    DotIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import type { IconSvgElement } from '@hugeicons/react'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 import { cn } from 'cnfast'
-import type { LucideIcon } from 'lucide-react'
-import { BrainIcon, ChevronDownIcon, DotIcon } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
 import { createContext, memo, useContext, useMemo } from 'react'
 
@@ -40,14 +45,14 @@ export type ChainOfThoughtProps = ComponentProps<'div'> & {
 }
 
 export const ChainOfThought = memo(
-    ({
+    function({
         className,
         open,
         defaultOpen = false,
         onOpenChange,
         children,
         ...props
-    }: ChainOfThoughtProps) => {
+    }: ChainOfThoughtProps) {
         const [isOpen, setIsOpen] = useControllableState({
             defaultProp: defaultOpen,
             onChange: onOpenChange,
@@ -77,7 +82,7 @@ export type ChainOfThoughtHeaderProps = ComponentProps<
 >
 
 export const ChainOfThoughtHeader = memo(
-    ({ className, children, ...props }: ChainOfThoughtHeaderProps) => {
+    function({ className, children, ...props }: ChainOfThoughtHeaderProps) {
         const { isOpen, setIsOpen } = useChainOfThought()
 
         return (
@@ -89,11 +94,12 @@ export const ChainOfThoughtHeader = memo(
                     )}
                     {...props}
                 >
-                    <BrainIcon className="size-4" />
+                    <HugeiconsIcon icon={AiBrain03Icon} className="size-4" />
                     <span className="flex-1 text-left">
                         {children ?? 'Chain of Thought'}
                     </span>
-                    <ChevronDownIcon
+                    <HugeiconsIcon
+                        icon={ChevronDownIcon}
                         className={cn(
                             'size-4 transition-transform',
                             isOpen ? 'rotate-180' : 'rotate-0'
@@ -106,7 +112,7 @@ export const ChainOfThoughtHeader = memo(
 )
 
 export type ChainOfThoughtStepProps = ComponentProps<'div'> & {
-    icon?: LucideIcon
+    icon?: IconSvgElement
     label: ReactNode
     description?: ReactNode
     status?: 'complete' | 'active' | 'pending'
@@ -119,7 +125,7 @@ const stepStatusStyles = {
 }
 
 export const ChainOfThoughtStep = memo(
-    ({
+    function({
         className,
         icon: Icon = DotIcon,
         label,
@@ -127,7 +133,8 @@ export const ChainOfThoughtStep = memo(
         status = 'complete',
         children,
         ...props
-    }: ChainOfThoughtStepProps) => (
+    }: ChainOfThoughtStepProps) {
+ return (
         <div
             className={cn(
                 'flex gap-2 text-sm',
@@ -138,7 +145,7 @@ export const ChainOfThoughtStep = memo(
             {...props}
         >
             <div className="relative mt-0.5">
-                <Icon className="size-4" />
+                <HugeiconsIcon icon={Icon} className="size-4" />
                 <div className="absolute top-7 bottom-0 left-1/2 -mx-px w-px bg-border" />
             </div>
             <div className="flex-1 space-y-2 overflow-hidden">
@@ -152,23 +159,27 @@ export const ChainOfThoughtStep = memo(
             </div>
         </div>
     )
+}
 )
 
 export type ChainOfThoughtSearchResultsProps = ComponentProps<'div'>
 
 export const ChainOfThoughtSearchResults = memo(
-    ({ className, ...props }: ChainOfThoughtSearchResultsProps) => (
+    function({ className, ...props }: ChainOfThoughtSearchResultsProps) {
+ return (
         <div
             className={cn('flex flex-wrap items-center gap-2', className)}
             {...props}
         />
     )
+}
 )
 
 export type ChainOfThoughtSearchResultProps = ComponentProps<typeof Badge>
 
 export const ChainOfThoughtSearchResult = memo(
-    ({ className, children, ...props }: ChainOfThoughtSearchResultProps) => (
+    function({ className, children, ...props }: ChainOfThoughtSearchResultProps) {
+ return (
         <Badge
             className={cn('gap-1 px-2 py-0.5 font-normal text-xs', className)}
             variant="secondary"
@@ -177,6 +188,7 @@ export const ChainOfThoughtSearchResult = memo(
             {children}
         </Badge>
     )
+}
 )
 
 export type ChainOfThoughtContentProps = ComponentProps<
@@ -184,7 +196,7 @@ export type ChainOfThoughtContentProps = ComponentProps<
 >
 
 export const ChainOfThoughtContent = memo(
-    ({ className, children, ...props }: ChainOfThoughtContentProps) => {
+    function({ className, children, ...props }: ChainOfThoughtContentProps) {
         const { isOpen } = useChainOfThought()
 
         return (
@@ -209,7 +221,8 @@ export type ChainOfThoughtImageProps = ComponentProps<'div'> & {
 }
 
 export const ChainOfThoughtImage = memo(
-    ({ className, children, caption, ...props }: ChainOfThoughtImageProps) => (
+    function({ className, children, caption, ...props }: ChainOfThoughtImageProps) {
+ return (
         <div className={cn('mt-2 space-y-2', className)} {...props}>
             <div className="relative flex max-h-[22rem] items-center justify-center overflow-hidden rounded-lg bg-muted p-3">
                 {children}
@@ -219,6 +232,7 @@ export const ChainOfThoughtImage = memo(
             )}
         </div>
     )
+}
 )
 
 ChainOfThought.displayName = 'ChainOfThought'

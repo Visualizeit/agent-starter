@@ -1,8 +1,9 @@
+import { ChevronDownIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { ComboboxPopover, Group, Text, UnstyledButton } from '@mantine/core'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { cn } from 'cnfast'
 import { groupBy, keyBy } from 'es-toolkit'
-import { ChevronDownIcon } from 'lucide-react'
 import { useEffect } from 'react'
 
 import orpc from '@/lib/orpc'
@@ -76,7 +77,10 @@ const ModelSelector = ({ onChange, value }: ModelSelectorProps) => {
                                 ? selectedModel.name
                                 : 'Select model'}
                         </Text>
-                        <ChevronDownIcon className="size-4" />
+                        <HugeiconsIcon
+                            icon={ChevronDownIcon}
+                            className="size-4"
+                        />
                     </Group>
                 </UnstyledButton>
             </ComboboxPopover.Target>

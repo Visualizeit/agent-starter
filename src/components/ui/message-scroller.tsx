@@ -1,8 +1,9 @@
 'use client'
 
+import { ArrowDown01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { MessageScroller as MessageScrollerPrimitive } from '@shadcn/react/message-scroller'
 import { cn } from 'cnfast'
-import { ArrowDownIcon } from 'lucide-react'
 import * as React from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -91,7 +92,7 @@ const MessageScrollerButton = ({
     >
         {children ?? (
             <>
-                <ArrowDownIcon />
+                <HugeiconsIcon icon={ArrowDown01Icon} />
                 <span className="sr-only">
                     {direction === 'end' ? 'Scroll to end' : 'Scroll to start'}
                 </span>

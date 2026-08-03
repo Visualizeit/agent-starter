@@ -1,6 +1,7 @@
+import { ArrowUp02Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { ActionIcon, Tooltip } from '@mantine/core'
 import { useOs } from '@mantine/hooks'
-import { ArrowUpIcon } from 'lucide-react'
 
 interface SendButtonProps {
     disabled: boolean
@@ -23,7 +24,10 @@ const SendButton = ({ disabled }: SendButtonProps) => {
                 size="lg"
                 type="submit"
             >
-                <ArrowUpIcon className="size-4 text-(--mantine-color-body) group-disabled:text-inherit" />
+                <HugeiconsIcon
+                    icon={ArrowUp02Icon}
+                    className="size-4 text-(--mantine-color-body) group-disabled:text-inherit"
+                />
             </ActionIcon>
         </Tooltip>
     )

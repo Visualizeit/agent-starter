@@ -1,4 +1,13 @@
 import {
+    PlusSignIcon,
+    Delete02Icon,
+    Edit02Icon,
+    Folder01Icon,
+    Folder02Icon,
+    MoreHorizontalIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import {
     ActionIcon,
     Box,
     Collapse,
@@ -14,14 +23,6 @@ import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { cn } from 'cnfast'
 import { isEmpty } from 'es-toolkit/compat'
-import {
-    FolderIcon,
-    FolderOpenIcon,
-    MoreHorizontalIcon,
-    PencilLineIcon,
-    PlusIcon,
-    XIcon,
-} from 'lucide-react'
 
 import ConversationListItem from '@/components/conversation/conversation-list-item'
 import orpc from '@/lib/orpc'
@@ -134,9 +135,15 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                 >
                     <Group gap="xs" wrap="nowrap">
                         {isExpanded ? (
-                            <FolderOpenIcon className="size-4 shrink-0 text-(--mantine-color-dimmed)" />
+                            <HugeiconsIcon
+                                icon={Folder02Icon}
+                                className="size-4 shrink-0 text-(--mantine-color-dimmed)"
+                            />
                         ) : (
-                            <FolderIcon className="size-4 shrink-0 text-(--mantine-color-dimmed)" />
+                            <HugeiconsIcon
+                                icon={Folder01Icon}
+                                className="size-4 shrink-0 text-(--mantine-color-dimmed)"
+                            />
                         )}
                         <Text className="min-w-0" size="sm" truncate>
                             {project.name}
@@ -160,13 +167,19 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                                 size="sm"
                                 aria-label="Project actions"
                             >
-                                <MoreHorizontalIcon className="size-4" />
+                                <HugeiconsIcon
+                                    icon={MoreHorizontalIcon}
+                                    className="size-4"
+                                />
                             </ActionIcon>
                         </Menu.Target>
                         <Menu.Dropdown>
                             <Menu.Item
                                 leftSection={
-                                    <PencilLineIcon className="size-4" />
+                                    <HugeiconsIcon
+                                        icon={Edit02Icon}
+                                        className="size-4"
+                                    />
                                 }
                                 onClick={handleEdit}
                             >
@@ -175,7 +188,12 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                             <Menu.Item
                                 color="red"
                                 disabled={deleteProjectMutation.isPending}
-                                leftSection={<XIcon className="size-4" />}
+                                leftSection={
+                                    <HugeiconsIcon
+                                        icon={Delete02Icon}
+                                        className="size-4"
+                                    />
+                                }
                                 onClick={handleDelete}
                             >
                                 Delete
@@ -197,7 +215,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                             />
                         )}
                     >
-                        <PlusIcon className="size-4" />
+                        <HugeiconsIcon icon={PlusSignIcon} className="size-4" />
                     </ActionIcon>
                 </Group>
             </Box>

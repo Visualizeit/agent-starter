@@ -1,15 +1,16 @@
+import {
+    Archive02Icon,
+    Edit02Icon,
+    MoreHorizontalIcon,
+    PinIcon,
+    PinOffIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { ActionIcon, Box, Menu, Text, UnstyledButton } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { cn } from 'cnfast'
-import {
-    ArchiveIcon,
-    MoreHorizontalIcon,
-    PencilLineIcon,
-    PinIcon,
-    PinOffIcon,
-} from 'lucide-react'
 
 import orpc from '@/lib/orpc'
 import type { conversations } from '@/server/db/schema'
@@ -145,12 +146,20 @@ const ConversationListItem = ({
                             'group-hover/menu-item:visible group-focus-within/menu-item:visible aria-expanded:visible'
                         )}
                     >
-                        <MoreHorizontalIcon className="size-4" />
+                        <HugeiconsIcon
+                            icon={MoreHorizontalIcon}
+                            className="size-4"
+                        />
                     </ActionIcon>
                 </Menu.Target>
                 <Menu.Dropdown>
                     <Menu.Item
-                        leftSection={<PencilLineIcon className="size-4" />}
+                        leftSection={
+                            <HugeiconsIcon
+                                icon={Edit02Icon}
+                                className="size-4"
+                            />
+                        }
                         onClick={handleRename}
                     >
                         Rename
@@ -159,9 +168,15 @@ const ConversationListItem = ({
                         disabled={pinConversationMutation.isPending}
                         leftSection={
                             conversation.isPinned ? (
-                                <PinOffIcon className="size-4" />
+                                <HugeiconsIcon
+                                    icon={PinOffIcon}
+                                    className="size-4"
+                                />
                             ) : (
-                                <PinIcon className="size-4" />
+                                <HugeiconsIcon
+                                    icon={PinIcon}
+                                    className="size-4"
+                                />
                             )
                         }
                         onClick={handlePin}
@@ -170,7 +185,12 @@ const ConversationListItem = ({
                     </Menu.Item>
                     <Menu.Item
                         disabled={archiveConversationMutation.isPending}
-                        leftSection={<ArchiveIcon className="size-4" />}
+                        leftSection={
+                            <HugeiconsIcon
+                                icon={Archive02Icon}
+                                className="size-4"
+                            />
+                        }
                         onClick={handleArchive}
                     >
                         Archive

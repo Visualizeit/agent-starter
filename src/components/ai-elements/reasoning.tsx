@@ -1,5 +1,7 @@
 'use client'
 
+import { ChevronDownIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { Collapse, Group, Stack, Text, UnstyledButton } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { cjk } from '@streamdown/cjk'
@@ -7,7 +9,6 @@ import { code } from '@streamdown/code'
 import { math } from '@streamdown/math'
 import { mermaid } from '@streamdown/mermaid'
 import { cn } from 'cnfast'
-import { ChevronDownIcon } from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { Streamdown } from 'streamdown'
 
@@ -34,7 +35,8 @@ const Reasoning = ({ children, isStreaming = false }: ReasoningProps) => {
                             ? 'Thinking...'
                             : 'Thought for a few seconds'}
                     </Text>
-                    <ChevronDownIcon
+                    <HugeiconsIcon
+                        icon={ChevronDownIcon}
                         className={cn(
                             'size-4 text-(--mantine-color-dimmed) transition-transform',
                             isOpen && 'rotate-180'

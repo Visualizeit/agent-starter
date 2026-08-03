@@ -6,9 +6,9 @@ import { useParams } from '@tanstack/react-router'
 import { invariant } from 'es-toolkit'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
-import { z } from 'zod'
 
 import orpc from '@/lib/orpc'
+import { chatSubmissionSchema } from '@/schemas/chat-submission-schema'
 
 import ModelSelector from './model-selector'
 import SendButton from './send-button'
@@ -18,11 +18,6 @@ interface PromptInputProps {
     agent: UseFlueAgentResult
     client: FlueClient
 }
-
-const submissionSchema = z.object({
-    message: z.string().trim().min(1),
-    model: z.string().trim().min(1),
-})
 
 const PromptInput = ({ agent, client }: PromptInputProps) => {
     const { conversationId } = useParams({ from: '/$conversationId' })
@@ -53,7 +48,7 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
     const isResponding =
         agent.status === 'submitted' || agent.status === 'streaming'
 
-    const submissionParseResult = submissionSchema.safeParse({
+    const submissionParseResult = chatSubmissionSchema.safeParse({
         message,
         model: selectedModel,
     })
@@ -69,13 +64,15 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
                 return
             }
 
-            await updateModelMutation.mutateAsync({
-                id: conversationId,
-                model: submissionParseResult.data.model,
-            })
+            if (submissionParseResult.data.model !== conversation.model) {
+                await updateModelMutation.mutateAsync({
+                    id: conversationId,
+                    model: submissionParseResult.data.model,
+                })
+            }
 
-            setMessage('')
             await agent.sendMessage(submissionParseResult.data.message)
+            setMessage('')
         },
     })
 
@@ -88,6 +85,7 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
     return (
         <form onSubmit={handleSubmit}>
             <Textarea
+                aria-label="Message the assistant"
                 autoFocus
                 {...getTextareaProps({
                     onChange: setMessage,

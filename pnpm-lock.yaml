@@ -131,9 +131,6 @@ importers:
       use-chat-submit:
         specifier: ^1.0.9
         version: 1.0.9(react@19.2.8)
-      valibot:
-        specifier: ^1.4.2
-        version: 1.4.2(typescript@7.0.2)
       zod:
         specifier: ^4.4.3
         version: 4.4.3

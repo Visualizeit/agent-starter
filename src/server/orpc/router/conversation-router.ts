@@ -4,6 +4,11 @@ import { isNil, isNotNil } from 'es-toolkit/predicate'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
+import {
+    chatSubmissionSchema,
+    modelSchema,
+} from '@/schemas/chat-submission-schema'
+import { conversationTitleSchema } from '@/schemas/rename-conversation-schema'
 import database from '@/server/db/client'
 import { conversations } from '@/server/db/schema'
 import {
@@ -16,8 +21,6 @@ import publisher from '@/server/orpc/publisher'
 import base from '../base'
 
 const idSchema = z.string().min(1)
-const messageSchema = z.string().trim().min(1)
-const modelSchema = z.string().trim().min(1).max(120)
 const metadataSchema = z.record(z.string(), z.json())
 const conversationSelectSchema = createSelectSchema(conversations, {
     metadata: metadataSchema,
@@ -26,10 +29,10 @@ const conversationStatusSchema = conversationSelectSchema.shape.status
 const conversationUpdateSchema = createUpdateSchema(conversations, {
     metadata: metadataSchema.optional(),
     model: (schema) => schema.max(120),
-    title: (schema) => schema.max(200),
+    title: conversationTitleSchema.optional(),
 })
 const generateTitleResultSchema = z.object({
-    title: z.string().trim().min(1).max(200),
+    title: conversationTitleSchema,
 })
 
 const isModelAvailable = async (model: string) => {
@@ -85,9 +88,7 @@ const generateAndUpdateConversationTitle = async ({
 const conversationRouter = {
     create: base
         .input(
-            z.object({
-                message: messageSchema,
-                model: modelSchema,
+            chatSubmissionSchema.extend({
                 projectId: idSchema.optional(),
             })
         )

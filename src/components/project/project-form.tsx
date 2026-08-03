@@ -4,15 +4,10 @@ import { closeAllModals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { isNotNil } from 'es-toolkit/predicate'
-import { z } from 'zod'
 
 import orpc from '@/lib/orpc'
+import { projectFormSchema } from '@/schemas/project-form-schema'
 import type { projects } from '@/server/db/schema'
-
-const schema = z.object({
-    instructions: z.string().trim().max(20_000),
-    name: z.string().trim().min(1).max(200),
-})
 
 interface ProjectFormProps {
     project?: typeof projects.$inferSelect
@@ -28,7 +23,7 @@ const ProjectForm = ({ project }: ProjectFormProps) => {
             instructions: isEditing ? project.instructions : '',
             name: isEditing ? project.name : '',
         },
-        validate: schemaResolver(schema),
+        validate: schemaResolver(projectFormSchema),
     })
 
     const addMutation = useMutation(

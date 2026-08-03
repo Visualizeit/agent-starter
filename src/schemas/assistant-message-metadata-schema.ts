@@ -21,7 +21,7 @@ const timingSchema = z.object({
     startedAt: z.int().nonnegative(),
 })
 
-const assistantMessageMetadataSchema = z.object({
+export const assistantMessageMetadataSchema = z.object({
     model: z.string().min(1),
     timing: timingSchema,
     usage: usageSchema,
@@ -31,5 +31,3 @@ export const assistantMessageMetadataStartSchema = z.object({
     model: assistantMessageMetadataSchema.shape.model,
     timing: timingSchema.pick({ startedAt: true }),
 })
-
-export default assistantMessageMetadataSchema

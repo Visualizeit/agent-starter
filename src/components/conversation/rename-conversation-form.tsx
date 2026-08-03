@@ -3,16 +3,12 @@ import { useForm, schemaResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
-import { z } from 'zod'
 
 import orpc from '@/lib/orpc'
+import { renameConversationSchema } from '@/schemas/rename-conversation-schema'
 import type { conversations } from '@/server/db/schema'
 
 import { NEW_CHAT_LABEL } from './conversation-constants'
-
-const schema = z.object({
-    title: z.string().max(200),
-})
 
 interface RenameConversationFormProps {
     conversation: typeof conversations.$inferSelect
@@ -27,7 +23,7 @@ const RenameConversationForm = ({
         initialValues: {
             title: conversation.title ?? NEW_CHAT_LABEL,
         },
-        validate: schemaResolver(schema),
+        validate: schemaResolver(renameConversationSchema),
     })
 
     const renameMutation = useMutation(

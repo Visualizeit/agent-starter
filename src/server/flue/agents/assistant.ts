@@ -4,9 +4,10 @@ import { useModel, useResponseFinish, useResponseStart } from '@flue/runtime'
 import type { AgentProps } from '@flue/runtime'
 import { isEmpty } from 'es-toolkit/compat'
 
-import assistantMessageMetadataSchema, {
+import {
+    assistantMessageMetadataSchema,
     assistantMessageMetadataStartSchema,
-} from '@/schemas/assistant-message-metadata'
+} from '@/schemas/assistant-message-metadata-schema'
 import getConversationContext from '@/server/flue/conversation-context'
 
 const Assistant = ({ id }: AgentProps) => {

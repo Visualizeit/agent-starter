@@ -3,16 +3,13 @@ import { isNil } from 'es-toolkit/predicate'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
+import { projectFormSchema } from '@/schemas/project-form-schema'
 import database from '@/server/db/client'
 import { projects } from '@/server/db/schema'
 
 import base from '../base'
 
 const idSchema = z.string().min(1)
-const projectFormSchema = z.object({
-    instructions: z.string().trim().max(20_000),
-    name: z.string().trim().min(1).max(200),
-})
 
 const projectRouter = {
     add: base.input(projectFormSchema).handler(async ({ input, errors }) => {

@@ -1,22 +1,32 @@
-import { ActionIcon } from '@mantine/core'
+import { ActionIcon, Tooltip } from '@mantine/core'
+import { useOs } from '@mantine/hooks'
 import { ArrowUpIcon } from 'lucide-react'
 
 interface SendButtonProps {
     disabled: boolean
 }
 
-const SendButton = ({ disabled }: SendButtonProps) => (
-    <ActionIcon
-        aria-label="Send message"
-        disabled={disabled}
-        variant="filled"
-        radius="full"
-        color="dark"
-        size="lg"
-        type="submit"
-    >
-        <ArrowUpIcon className="size-4" />
-    </ActionIcon>
-)
+const SendButton = ({ disabled }: SendButtonProps) => {
+    const operatingSystem = useOs()
+
+    const shortcut = operatingSystem === 'macos' ? '⌘+Enter' : 'Ctrl+Enter'
+
+    return (
+        <Tooltip label={`Send message · ${shortcut}`}>
+            <ActionIcon
+                aria-label="Send message"
+                className="group disabled:bg-(--mantine-color-default-hover)"
+                disabled={disabled}
+                variant="filled"
+                radius="full"
+                color="var(--mantine-color-text)"
+                size="lg"
+                type="submit"
+            >
+                <ArrowUpIcon className="size-4 text-(--mantine-color-body) group-disabled:text-inherit" />
+            </ActionIcon>
+        </Tooltip>
+    )
+}
 
 export default SendButton

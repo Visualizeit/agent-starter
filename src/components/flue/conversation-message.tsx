@@ -1,4 +1,5 @@
 import type { FlueConversationMessage } from '@flue/react'
+import { Group } from '@mantine/core'
 import { flatMap } from 'es-toolkit'
 import { match } from 'ts-pattern'
 
@@ -6,7 +7,7 @@ import Reasoning from '@/components/ai-elements/reasoning'
 import MessageCopyButton from '@/components/flue/message-copy-button'
 import MessageResponse from '@/components/flue/message-response'
 import AssistantMessageBody from '@/components/ui/assistant-message-body'
-import { Message, MessageContent, MessageFooter } from '@/components/ui/message'
+import { Message, MessageContent } from '@/components/ui/message'
 import UserMessageBody from '@/components/ui/user-message-body'
 
 interface ConversationMessageProps {
@@ -64,13 +65,14 @@ const ConversationMessage = ({ message }: ConversationMessageProps) => {
                         )
                         .otherwise(() => null)
                 )}
-                <MessageFooter
-                    className={
-                        message.role === 'assistant' ? 'px-0' : undefined
-                    }
-                >
-                    <MessageCopyButton value={copyText} />
-                </MessageFooter>
+                {copyText.length > 0 && (
+                    <Group
+                        className="invisible group-hover/message:visible group-focus-within/message:visible"
+                        justify={align === 'end' ? 'flex-end' : 'flex-start'}
+                    >
+                        <MessageCopyButton value={copyText} />
+                    </Group>
+                )}
             </MessageContent>
         </Message>
     )

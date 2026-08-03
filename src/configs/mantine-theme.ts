@@ -51,6 +51,18 @@ const mantineTheme = createTheme({
             '#006bca',
             '#005cb3',
         ],
+        dark: [
+            '#c1c2c5',
+            '#a6a7ab',
+            '#909296',
+            '#5c5f66',
+            '#373a40',
+            '#2c2e33',
+            '#25262b',
+            '#1a1b1e',
+            '#141517',
+            '#101113',
+        ],
     },
     components: {
         Badge: Badge.extend({

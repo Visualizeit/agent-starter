@@ -2,6 +2,7 @@ import {
     ColorSchemeScript,
     MantineProvider,
     mantineHtmlProps,
+    v8CssVariablesResolver,
 } from '@mantine/core'
 import { ModalsProvider } from '@mantine/modals'
 import {
@@ -23,7 +24,11 @@ const Component = () => (
             <ColorSchemeScript />
         </head>
         <body>
-            <MantineProvider deduplicateInlineStyles theme={mantineTheme}>
+            <MantineProvider
+                deduplicateInlineStyles
+                theme={mantineTheme}
+                cssVariablesResolver={v8CssVariablesResolver}
+            >
                 <ModalsProvider modalProps={{ centered: true }}>
                     <MainLayout />
                 </ModalsProvider>

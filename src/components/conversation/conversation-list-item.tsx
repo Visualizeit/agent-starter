@@ -11,6 +11,7 @@ import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { cn } from 'cnfast'
+import { TextMorph } from 'torph/react'
 
 import orpc from '@/lib/orpc'
 import type { conversations } from '@/server/db/schema'
@@ -128,7 +129,7 @@ const ConversationListItem = ({
                             size="sm"
                             truncate
                         >
-                            {label}
+                            <TextMorph>{label}</TextMorph>
                         </Text>
                     </Link>
                 )}

@@ -122,6 +122,9 @@ importers:
       streamdown:
         specifier: ^2.5.0
         version: 2.5.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      torph:
+        specifier: ^0.0.10
+        version: 0.0.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       ts-pattern:
         specifier: ^5.9.0
         version: 5.9.0
@@ -5766,6 +5769,23 @@ packages:
   toidentifier@1.0.1:
     resolution: {integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==}
     engines: {node: '>=0.6'}
+
+  torph@0.0.10:
+    resolution: {integrity: sha512-8ru2j0+3WWdjTi7teZdwJr0XIeTULr4RfBHePr0UQ6b6tLtBNnLvsqAYCy8NEHs7CU3JLTdh04XP2ycVOU9wMQ==}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+      svelte: '>=5'
+      vue: '>=3'
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
 
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
@@ -11876,6 +11896,11 @@ snapshots:
       is-number: 7.0.0
 
   toidentifier@1.0.1: {}
+
+  torph@0.0.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+    optionalDependencies:
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
 
   totalist@3.0.1: {}
 

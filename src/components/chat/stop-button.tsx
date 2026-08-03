@@ -20,6 +20,7 @@ const StopButton = ({ client }: StopButtonProps) => {
             onClick={() => stopMutation.mutate()}
             variant="filled"
             radius="full"
+            color="dark"
             size="lg"
             type="button"
         >

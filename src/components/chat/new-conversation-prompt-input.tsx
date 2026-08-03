@@ -1,9 +1,8 @@
-import { ActionIcon, Textarea, Group, rem } from '@mantine/core'
+import { Textarea, Group, rem } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { invariant } from 'es-toolkit'
-import { ArrowUpIcon } from 'lucide-react'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 import { z } from 'zod'
@@ -11,6 +10,7 @@ import { z } from 'zod'
 import orpc from '@/lib/orpc'
 
 import ModelSelector from './model-selector'
+import SendButton from './send-button'
 
 const submissionSchema = z.object({
     message: z.string().trim().min(1),
@@ -133,18 +133,12 @@ const NewConversationPromptInput = () => {
                 bottomSection={
                     <Group className="justify-between w-full">
                         <ModelSelector onChange={setModel} value={model} />
-                        <ActionIcon
+                        <SendButton
                             disabled={
                                 !submissionParseResult.success ||
                                 createConversationMutation.isPending
                             }
-                            variant="filled"
-                            size="lg"
-                            type="submit"
-                            radius="full"
-                        >
-                            <ArrowUpIcon className="size-5" />
-                        </ActionIcon>
+                        />
                     </Group>
                 }
             />

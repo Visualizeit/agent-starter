@@ -11,10 +11,11 @@ const SendButton = ({ disabled }: SendButtonProps) => (
         disabled={disabled}
         variant="filled"
         radius="full"
+        color="dark"
         size="lg"
         type="submit"
     >
-        <ArrowUpIcon className="size-5" />
+        <ArrowUpIcon className="size-4" />
     </ActionIcon>
 )
 

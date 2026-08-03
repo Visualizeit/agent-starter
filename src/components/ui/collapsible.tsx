@@ -2,16 +2,16 @@
 
 import { Collapsible as CollapsiblePrimitive } from '@base-ui/react/collapsible'
 import { cn } from 'cnfast'
-import * as React from 'react'
+import type { ComponentPropsWithRef } from 'react'
 
 const Collapsible = CollapsiblePrimitive.Root
 
-const CollapsibleTrigger = React.forwardRef<
-    React.ComponentRef<typeof CollapsiblePrimitive.Trigger>,
-    React.ComponentPropsWithoutRef<typeof CollapsiblePrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+const CollapsibleTrigger = ({
+    className,
+    children,
+    ...props
+}: ComponentPropsWithRef<typeof CollapsiblePrimitive.Trigger>) => (
     <CollapsiblePrimitive.Trigger
-        ref={ref}
         className={cn(
             'flex w-full items-center [&[data-state=open]>[data-slot=chevron]>svg]:rotate-180',
             className
@@ -20,15 +20,15 @@ const CollapsibleTrigger = React.forwardRef<
     >
         {children}
     </CollapsiblePrimitive.Trigger>
-))
+)
 CollapsibleTrigger.displayName = 'CollapsibleTrigger'
 
-const CollapsibleContent = React.forwardRef<
-    React.ComponentRef<typeof CollapsiblePrimitive.Panel>,
-    React.ComponentPropsWithoutRef<typeof CollapsiblePrimitive.Panel>
->(({ className, children, ...props }, ref) => (
+const CollapsibleContent = ({
+    className,
+    children,
+    ...props
+}: ComponentPropsWithRef<typeof CollapsiblePrimitive.Panel>) => (
     <CollapsiblePrimitive.Panel
-        ref={ref}
         className={cn(
             'overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down',
             className
@@ -37,7 +37,7 @@ const CollapsibleContent = React.forwardRef<
     >
         {children}
     </CollapsiblePrimitive.Panel>
-))
+)
 CollapsibleContent.displayName = 'CollapsibleContent'
 
 export { Collapsible, CollapsibleContent, CollapsibleTrigger }

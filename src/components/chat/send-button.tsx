@@ -16,7 +16,7 @@ const SendButton = ({ disabled }: SendButtonProps) => {
         <Tooltip label={`Send message · ${shortcut}`}>
             <ActionIcon
                 aria-label="Send message"
-                className="group disabled:bg-(--mantine-color-default-hover)"
+                className="group dark:disabled:bg-(--mantine-color-default-hover)"
                 disabled={disabled}
                 variant="filled"
                 radius="full"

@@ -25,6 +25,14 @@
     [data-mantine-color-scheme="dark"] *
   ));
 
+[data-mantine-color-scheme='light'] {
+    --mantine-color-text: #18181b;
+}
+
+[data-mantine-color-scheme='dark'] {
+    --mantine-color-text: #fcfcfc;
+}
+
 @theme inline {
     --spacing: 0.25rem;
 

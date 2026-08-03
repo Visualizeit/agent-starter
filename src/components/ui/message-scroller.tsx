@@ -45,7 +45,10 @@ const MessageScrollerContent = ({
 }: React.ComponentProps<typeof MessageScrollerPrimitive.Content>) => (
     <MessageScrollerPrimitive.Content
         data-slot="message-scroller-content"
-        className={cn('flex h-max min-h-full flex-col gap-6', className)}
+        className={cn(
+            'flex h-max min-h-full flex-col gap-(--mantine-spacing-xs)',
+            className
+        )}
         {...props}
     />
 )
@@ -58,10 +61,7 @@ const MessageScrollerItem = ({
     <MessageScrollerPrimitive.Item
         data-slot="message-scroller-item"
         scrollAnchor={scrollAnchor}
-        className={cn(
-            'min-w-0 shrink-0 [contain-intrinsic-size:auto_10rem] [content-visibility:auto]',
-            className
-        )}
+        className={cn('min-w-0 shrink-0', className)}
         {...props}
     />
 )

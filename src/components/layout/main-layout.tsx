@@ -22,21 +22,23 @@ const MainLayout = () => {
                     <Outlet />
                 </Box>
             </AppShell.Main>
-            <AppShell.Navbar className="gap-(--mantine-spacing-sm) py-(--mantine-spacing-xs) *:px-(--mantine-spacing-xs)">
-                <AppShell.Section>
+            <AppShell.Navbar className="gap-(--mantine-spacing-sm) py-(--mantine-spacing-xs)">
+                <AppShell.Section className="px-(--mantine-spacing-xs)">
                     <Stack gap="xs">
                         <Link to="/">Logo</Link>
                         <NewChatButton />
                     </Stack>
                 </AppShell.Section>
                 <AppShell.Section component={ScrollArea} grow>
-                    <Stack gap="sm">
+                    <Stack gap="sm" className="p-(--mantine-spacing-xs)">
                         <PinnedConversationList />
                         <ProjectList />
                         <RecentConversationList />
                     </Stack>
                 </AppShell.Section>
-                <AppShell.Section>Profile</AppShell.Section>
+                <AppShell.Section className="px-(--mantine-spacing-xs)">
+                    Profile
+                </AppShell.Section>
             </AppShell.Navbar>
         </AppShell>
     )

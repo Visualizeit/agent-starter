@@ -49,7 +49,11 @@ const ModelSelector = ({ onChange, value }: ModelSelectorProps) => {
     return (
         <ComboboxPopover
             allowDeselect={false}
-            comboboxProps={{ position: 'top-start', width: 320 }}
+            comboboxProps={{
+                position: 'top-start',
+                shadow: 'md',
+                width: 'max-content',
+            }}
             data={data.options}
             maxDropdownHeight={320}
             nothingFoundMessage="No models found"

@@ -158,7 +158,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                         'group-hover/project-menu-item:visible group-focus-within/project-menu-item:visible has-aria-expanded:visible'
                     )}
                 >
-                    <Menu position="bottom-start">
+                    <Menu position="bottom-start" shadow="md">
                         <Menu.Target>
                             <ActionIcon
                                 variant="subtle"

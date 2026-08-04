@@ -134,7 +134,7 @@ const ConversationListItem = ({
                     </Link>
                 )}
             />
-            <Menu position="bottom-start">
+            <Menu position="bottom-start" shadow="md">
                 <Menu.Target>
                     <ActionIcon
                         variant="subtle"

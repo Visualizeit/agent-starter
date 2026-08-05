@@ -30,7 +30,7 @@ const filesRouter = createFilesRouter({
     },
     files,
     maxUploadSize: serverEnv.FILE_UPLOAD_MAX_BYTES,
-    operations: ['delete', 'download', 'upload'],
+    operations: ['download', 'upload'],
 })
 
 export default filesRouter

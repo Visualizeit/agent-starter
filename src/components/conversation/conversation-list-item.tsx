@@ -14,13 +14,13 @@ import { cn } from 'cnfast'
 import { TextMorph } from 'torph/react'
 
 import orpc from '@/lib/orpc'
-import type { conversations } from '@/server/db/schema'
+import type { ConversationSummary } from '@/types/conversation'
 
 import { NEW_CHAT_LABEL } from './conversation-constants'
 import RenameConversationForm from './rename-conversation-form'
 
 interface ConversationListItemProps {
-    conversation: typeof conversations.$inferSelect
+    conversation: ConversationSummary
     isNested?: boolean
 }
 

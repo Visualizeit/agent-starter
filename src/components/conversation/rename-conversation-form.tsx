@@ -6,12 +6,12 @@ import { useRouter } from '@tanstack/react-router'
 
 import orpc from '@/lib/orpc'
 import { renameConversationSchema } from '@/schemas/rename-conversation-schema'
-import type { conversations } from '@/server/db/schema'
+import type { ConversationSummary } from '@/types/conversation'
 
 import { NEW_CHAT_LABEL } from './conversation-constants'
 
 interface RenameConversationFormProps {
-    conversation: typeof conversations.$inferSelect
+    conversation: ConversationSummary
 }
 
 const RenameConversationForm = ({

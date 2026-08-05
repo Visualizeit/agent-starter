@@ -1,4 +1,4 @@
-import { and, eq, isNull } from 'drizzle-orm'
+import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { createSelectSchema, createUpdateSchema } from 'drizzle-orm/zod'
 import { isNil, isNotNil } from 'es-toolkit/predicate'
 import { nanoid } from 'nanoid'
@@ -10,7 +10,7 @@ import {
 } from '@/schemas/chat-submission-schema'
 import { conversationTitleSchema } from '@/schemas/rename-conversation-schema'
 import database from '@/server/db/client'
-import { conversations } from '@/server/db/schema'
+import { attachments, conversations } from '@/server/db/schema'
 import {
     generateConversationTitle,
     sendAssistantMessage,
@@ -86,9 +86,10 @@ const generateAndUpdateConversationTitle = async ({
 }
 
 const conversationRouter = {
-    create: base
+    createDraft: base
         .input(
-            chatSubmissionSchema.extend({
+            z.object({
+                model: modelSchema,
                 projectId: idSchema.optional(),
             })
         )
@@ -126,16 +127,6 @@ const conversationRouter = {
             if (isNil(createdConversation)) {
                 throw errors.CONFLICT()
             }
-
-            await sendAssistantMessage({
-                conversationId,
-                message: input.message,
-            })
-
-            void generateAndUpdateConversationTitle({
-                conversationId,
-                userMessage: input.message,
-            })
 
             return createdConversation
         }),
@@ -197,6 +188,116 @@ const conversationRouter = {
             })
 
             return { list: records }
+        }),
+    send: base
+        .input(
+            chatSubmissionSchema.extend({
+                attachmentIds: z.array(idSchema).max(1).default([]),
+                id: idSchema,
+                idempotencyKey: z.string().min(1).max(256),
+            })
+        )
+        .handler(async ({ errors, input }) => {
+            const conversation = await database.query.conversations.findFirst({
+                where: {
+                    id: input.id,
+                    status: { ne: 'deleted' },
+                },
+            })
+
+            if (isNil(conversation)) {
+                throw errors.NOT_FOUND()
+            }
+
+            if (!(await isModelAvailable(input.model))) {
+                throw errors.BAD_REQUEST()
+            }
+
+            const attachmentRecords =
+                input.attachmentIds.length === 0
+                    ? []
+                    : await database.query.attachments.findMany({
+                          where: {
+                              conversationId: conversation.id,
+                              id: { in: input.attachmentIds },
+                          },
+                      })
+
+            if (attachmentRecords.length !== input.attachmentIds.length) {
+                throw errors.NOT_FOUND()
+            }
+
+            if (
+                attachmentRecords.some(
+                    (attachment) =>
+                        isNotNil(attachment.idempotencyKey) &&
+                        attachment.idempotencyKey !== input.idempotencyKey
+                )
+            ) {
+                throw errors.CONFLICT()
+            }
+
+            if (input.attachmentIds.length > 0) {
+                await database
+                    .update(attachments)
+                    .set({ idempotencyKey: input.idempotencyKey })
+                    .where(
+                        and(
+                            inArray(attachments.id, input.attachmentIds),
+                            eq(attachments.conversationId, conversation.id),
+                            isNull(attachments.idempotencyKey)
+                        )
+                    )
+
+                const claimedAttachments =
+                    await database.query.attachments.findMany({
+                        where: {
+                            conversationId: conversation.id,
+                            id: { in: input.attachmentIds },
+                            idempotencyKey: input.idempotencyKey,
+                        },
+                    })
+
+                if (claimedAttachments.length !== input.attachmentIds.length) {
+                    throw errors.CONFLICT()
+                }
+            }
+
+            await database
+                .update(conversations)
+                .set({ model: input.model })
+                .where(eq(conversations.id, conversation.id))
+
+            const receipt = await sendAssistantMessage({
+                conversationId: conversation.id,
+                idempotencyKey: input.idempotencyKey,
+                message: input.message,
+            })
+
+            if (input.attachmentIds.length > 0) {
+                await database
+                    .update(attachments)
+                    .set({
+                        status: 'attached',
+                        submissionId: receipt.submissionId,
+                    })
+                    .where(
+                        and(
+                            inArray(attachments.id, input.attachmentIds),
+                            eq(attachments.conversationId, conversation.id),
+                            eq(attachments.idempotencyKey, input.idempotencyKey)
+                        )
+                    )
+            }
+
+            if (isNil(conversation.title)) {
+                void generateAndUpdateConversationTitle({
+                    conversationId: conversation.id,
+                    userMessage: input.message,
+                })
+            }
+
+            return { submissionId: receipt.submissionId }
         }),
     update: base
         .input(

@@ -7,10 +7,10 @@ import { isNotNil } from 'es-toolkit/predicate'
 
 import orpc from '@/lib/orpc'
 import { projectFormSchema } from '@/schemas/project-form-schema'
-import type { projects } from '@/server/db/schema'
+import type { ProjectDetails } from '@/types/project'
 
 interface ProjectFormProps {
-    project?: typeof projects.$inferSelect
+    project?: ProjectDetails
 }
 
 const ProjectForm = ({ project }: ProjectFormProps) => {

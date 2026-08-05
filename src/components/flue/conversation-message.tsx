@@ -1,5 +1,7 @@
 import type { FlueConversationMessage } from '@flue/react'
 import { Group } from '@mantine/core'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
 import { flatMap } from 'es-toolkit'
 import { match } from 'ts-pattern'
 
@@ -9,6 +11,9 @@ import MessageResponse from '@/components/flue/message-response'
 import AssistantMessageBody from '@/components/ui/assistant-message-body'
 import { Message, MessageContent } from '@/components/ui/message'
 import UserMessageBody from '@/components/ui/user-message-body'
+import orpc from '@/lib/orpc'
+
+import MessageAttachment from './message-attachment'
 
 interface ConversationMessageProps {
     message: FlueConversationMessage
@@ -22,6 +27,21 @@ const getMessageCopyText = (message: FlueConversationMessage) =>
     ).join('\n\n')
 
 const ConversationMessage = ({ message }: ConversationMessageProps) => {
+    const { conversationId } = useParams({ from: '/$conversationId' })
+
+    const { data: attachments } = useSuspenseQuery(
+        orpc.attachment.list.queryOptions({
+            input: { conversationId },
+            select: (data) =>
+                message.role === 'user'
+                    ? data.list.filter(
+                          (attachment) =>
+                              attachment.submissionId === message.submissionId
+                      )
+                    : [],
+        })
+    )
+
     const align = message.role === 'user' ? 'end' : 'start'
 
     const copyText = getMessageCopyText(message)
@@ -29,6 +49,16 @@ const ConversationMessage = ({ message }: ConversationMessageProps) => {
     return (
         <Message align={align}>
             <MessageContent>
+                {attachments.length > 0 && (
+                    <Group justify="flex-end">
+                        {attachments.map((attachment) => (
+                            <MessageAttachment
+                                attachment={attachment}
+                                key={attachment.id}
+                            />
+                        ))}
+                    </Group>
+                )}
                 {message.parts.map((part, index) =>
                     match(part)
                         .with({ type: 'reasoning' }, (reasoningPart) => (

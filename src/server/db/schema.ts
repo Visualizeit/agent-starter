@@ -1,6 +1,14 @@
 import { sql } from 'drizzle-orm'
-import { check, index, integer, snakeCase, text } from 'drizzle-orm/sqlite-core'
+import {
+    check,
+    index,
+    integer,
+    snakeCase,
+    text,
+    uniqueIndex,
+} from 'drizzle-orm/sqlite-core'
 
+const attachmentStatusValues = ['pending', 'attached'] as const
 const conversationStatusValues = ['active', 'archived', 'deleted'] as const
 
 export const projects = snakeCase.table(
@@ -75,6 +83,43 @@ export const conversations = snakeCase.table(
         check(
             'conversations_metadata_json_check',
             sql`json_valid(${table.metadata}) and json_type(${table.metadata}) = 'object'`
+        ),
+    ]
+)
+
+export const attachments = snakeCase.table(
+    'attachments',
+    {
+        conversationId: text()
+            .notNull()
+            .references(() => conversations.id, { onDelete: 'cascade' }),
+        createdAt: integer({ mode: 'timestamp_ms' })
+            .notNull()
+            .default(sql`(cast(unixepoch('subsec') * 1000 as integer))`),
+        filename: text().notNull(),
+        id: text().primaryKey(),
+        idempotencyKey: text(),
+        mimeType: text().notNull(),
+        size: integer().notNull(),
+        status: text({ enum: attachmentStatusValues })
+            .notNull()
+            .default('pending'),
+        storageKey: text().notNull(),
+        submissionId: text(),
+    },
+    (table) => [
+        uniqueIndex('attachments_conversation_id_storage_key_unique').on(
+            table.conversationId,
+            table.storageKey
+        ),
+        index('attachments_conversation_id_submission_id_idx').on(
+            table.conversationId,
+            table.submissionId
+        ),
+        check('attachments_size_check', sql`${table.size} >= 0`),
+        check(
+            'attachments_status_check',
+            sql`${table.status} in ('pending', 'attached')`
         ),
     ]
 )

@@ -1,9 +1,26 @@
 import type { FlueClient, UseFlueAgentResult } from '@flue/react'
-import { Textarea, Group, rem } from '@mantine/core'
+import { PlusSignIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+import {
+    ActionIcon,
+    FileButton,
+    Group,
+    Pill,
+    rem,
+    Scroller,
+    Stack,
+    Textarea,
+    Tooltip,
+} from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
+import {
+    useMutation,
+    useQueryClient,
+    useSuspenseQuery,
+} from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
-import { invariant } from 'es-toolkit'
+import { isNil, isNotNil } from 'es-toolkit/predicate'
+import { invariant } from 'es-toolkit/util'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 
@@ -13,6 +30,8 @@ import { chatSubmissionSchema } from '@/schemas/chat-submission-schema'
 import ModelSelector from './model-selector'
 import SendButton from './send-button'
 import StopButton from './stop-button'
+import useAttachment from './use-attachment'
+import useIdempotencyKey from './use-idempotency-key'
 
 interface PromptInputProps {
     agent: UseFlueAgentResult
@@ -21,64 +40,107 @@ interface PromptInputProps {
 
 const PromptInput = ({ agent, client }: PromptInputProps) => {
     const { conversationId } = useParams({ from: '/$conversationId' })
+    const queryClient = useQueryClient()
+
+    const attachment = useAttachment()
+    const { getIdempotencyKey, resetIdempotencyKey } = useIdempotencyKey()
 
     const { data: conversation } = useSuspenseQuery(
         orpc.conversation.find.queryOptions({
             input: { id: conversationId },
-            select: (data) => ({ model: data.model }),
+            select: (data) => ({
+                model: data.model,
+                projectId: data.projectId,
+            }),
         })
     )
 
     const [message, setMessage] = useInputState('')
-
     const [selectedModel, setSelectedModel] = useInputState(conversation.model)
 
-    const updateModelMutation = useMutation(
-        orpc.conversation.update.mutationOptions({
-            onSuccess: async (_data, _variables, _onMutateResult, context) => {
-                await context.client.invalidateQueries(
-                    orpc.conversation.find.queryOptions({
-                        input: { id: conversationId },
-                    })
-                )
-            },
-        })
-    )
+    const sendMutation = useMutation(orpc.conversation.send.mutationOptions())
 
     const isResponding =
         agent.status === 'submitted' || agent.status === 'streaming'
-
     const submissionParseResult = chatSubmissionSchema.safeParse({
         message,
         model: selectedModel,
     })
+    const isSendDisabled =
+        !submissionParseResult.success ||
+        attachment.isPending ||
+        sendMutation.isPending
+    const hasAttachment = isNotNil(attachment.filename)
+    let inputError = attachment.error
+
+    if (isNil(inputError) && isNotNil(sendMutation.error)) {
+        inputError = sendMutation.error.message
+    }
+
+    const submit = async () => {
+        if (
+            isResponding ||
+            attachment.isPending ||
+            sendMutation.isPending ||
+            !submissionParseResult.success
+        ) {
+            return
+        }
+
+        const attachmentIds = await attachment.register(conversationId)
+
+        if (isNil(attachmentIds)) {
+            return
+        }
+
+        const submission = {
+            attachmentIds,
+            ...submissionParseResult.data,
+        }
+
+        await sendMutation.mutateAsync({
+            ...submission,
+            id: conversationId,
+            idempotencyKey: getIdempotencyKey(submission),
+        })
+
+        await Promise.all([
+            queryClient.invalidateQueries(
+                orpc.attachment.list.queryOptions({
+                    input: { conversationId },
+                })
+            ),
+            queryClient.invalidateQueries(
+                orpc.conversation.find.queryOptions({
+                    input: { id: conversationId },
+                })
+            ),
+            queryClient.invalidateQueries(
+                orpc.conversation.list.queryOptions({
+                    input: {
+                        projectId: isNotNil(conversation.projectId)
+                            ? conversation.projectId
+                            : undefined,
+                        status: 'active',
+                    },
+                })
+            ),
+            queryClient.invalidateQueries(orpc.project.list.queryOptions()),
+        ])
+
+        agent.refresh()
+        attachment.reset()
+        resetIdempotencyKey()
+        setMessage('')
+    }
 
     const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
         mode: 'mod-enter',
-        onSubmit: async () => {
-            if (
-                isResponding ||
-                updateModelMutation.isPending ||
-                !submissionParseResult.success
-            ) {
-                return
-            }
-
-            if (submissionParseResult.data.model !== conversation.model) {
-                await updateModelMutation.mutateAsync({
-                    id: conversationId,
-                    model: submissionParseResult.data.model,
-                })
-            }
-
-            await agent.sendMessage(submissionParseResult.data.message)
-            setMessage('')
-        },
+        onSubmit: submit,
     })
 
     const handleSubmit: SubmitEventHandler = (event) => {
         event.preventDefault()
-
         triggerSubmit()
     }
 
@@ -100,7 +162,9 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
                     wrapper: {
                         '--input-bd-focus':
                             'var(--mantine-color-default-border)',
-                        '--input-bottom-section-height': `calc(${rem(34)} + var(--mantine-spacing-sm))`,
+                        '--input-bottom-section-height': hasAttachment
+                            ? `calc(${rem(59)} + var(--mantine-spacing-xs) + var(--mantine-spacing-sm))`
+                            : `calc(${rem(34)} + var(--mantine-spacing-sm))`,
                         '--input-padding-y-md': 'var(--mantine-spacing-sm)',
                         '--input-radius': 'var(--mantine-radius-3xl)',
                         cursor: 'text',
@@ -117,7 +181,6 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
                         const textarea = textareaRef.current
 
                         invariant(textarea, 'Textarea ref is not set')
-
                         textarea.focus()
                     },
                 }}
@@ -127,23 +190,78 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
                 rows={1}
                 maxRows={10}
                 placeholder="Ask the assistant"
+                error={inputError}
                 bottomSection={
-                    <Group className="w-full" justify="space-between">
-                        <ModelSelector
-                            onChange={setSelectedModel}
-                            value={selectedModel}
-                        />
-                        {isResponding ? (
-                            <StopButton client={client} />
-                        ) : (
-                            <SendButton
-                                disabled={
-                                    !submissionParseResult.success ||
-                                    updateModelMutation.isPending
-                                }
-                            />
+                    <Stack gap="xs" w="100%">
+                        {hasAttachment && (
+                            <Scroller
+                                controlSize="sm"
+                                edgeGradientColor="var(--input-bg)"
+                            >
+                                <Group gap="xs" wrap="nowrap">
+                                    <Pill
+                                        disabled={attachment.isPending}
+                                        onRemove={() => {
+                                            void attachment.remove(
+                                                conversationId
+                                            )
+                                        }}
+                                        removeButtonProps={{
+                                            'aria-label': `Remove ${attachment.filename}`,
+                                        }}
+                                        size="md"
+                                        withRemoveButton
+                                    >
+                                        {attachment.filename}
+                                    </Pill>
+                                </Group>
+                            </Scroller>
                         )}
-                    </Group>
+                        <Group justify="space-between" wrap="nowrap">
+                            <Group gap="xs" wrap="nowrap">
+                                <FileButton
+                                    disabled={
+                                        hasAttachment || attachment.isPending
+                                    }
+                                    onChange={attachment.handleFileChange}
+                                    resetRef={attachment.fileInputResetRef}
+                                >
+                                    {(props) => (
+                                        <Tooltip label="Attach file">
+                                            <ActionIcon
+                                                {...props}
+                                                aria-label="Attach file"
+                                                color="dimmed"
+                                                disabled={
+                                                    hasAttachment ||
+                                                    attachment.isPending
+                                                }
+                                                loading={attachment.isPending}
+                                                radius="full"
+                                                size="lg"
+                                                type="button"
+                                                variant="subtle"
+                                            >
+                                                <HugeiconsIcon
+                                                    className="size-4"
+                                                    icon={PlusSignIcon}
+                                                />
+                                            </ActionIcon>
+                                        </Tooltip>
+                                    )}
+                                </FileButton>
+                                <ModelSelector
+                                    onChange={setSelectedModel}
+                                    value={selectedModel}
+                                />
+                            </Group>
+                            {isResponding ? (
+                                <StopButton client={client} />
+                            ) : (
+                                <SendButton disabled={isSendDisabled} />
+                            )}
+                        </Group>
+                    </Stack>
                 }
             />
         </form>

@@ -6,17 +6,20 @@ import { getFlueRuntime } from './runtime'
 
 interface SendAssistantMessageOptions {
     conversationId: string
+    idempotencyKey: string
     message: string
 }
 
 export const sendAssistantMessage = async ({
     conversationId,
+    idempotencyKey,
     message,
 }: SendAssistantMessageOptions) => {
     await getFlueRuntime()
 
     return dispatch(assistant, {
         id: conversationId,
+        idempotencyKey,
         message,
     })
 }

@@ -26,19 +26,19 @@ import { isEmpty } from 'es-toolkit/compat'
 
 import ConversationListItem from '@/components/conversation/conversation-list-item'
 import orpc from '@/lib/orpc'
-import type { ORPCOutputs } from '@/lib/orpc'
+import type {
+    ProjectConversationSummary,
+    ProjectSummary,
+} from '@/types/project'
 
 import ProjectForm from './project-form'
 
-type Project = ORPCOutputs['project']['list']['list'][number]
-type ProjectConversations = Project['conversations']
-
 interface ProjectListItemProps {
-    project: Project
+    project: ProjectSummary
 }
 
 interface ProjectConversationListProps {
-    conversations: ProjectConversations
+    conversations: ProjectConversationSummary[]
 }
 
 const ProjectConversationList = ({

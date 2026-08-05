@@ -9,7 +9,17 @@ import serverEnv from '@/server/server-env'
 const client = new DatabaseSync(serverEnv.DB_FILE_NAME)
 
 const relations = defineRelations(schema, (relation) => ({
+    attachments: {
+        conversation: relation.one.conversations({
+            from: relation.attachments.conversationId,
+            to: relation.conversations.id,
+        }),
+    },
     conversations: {
+        attachments: relation.many.attachments({
+            from: relation.conversations.id,
+            to: relation.attachments.conversationId,
+        }),
         project: relation.one.projects({
             from: relation.conversations.projectId,
             to: relation.projects.id,

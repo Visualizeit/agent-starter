@@ -1,4 +1,4 @@
-import type { FlueConversationMessage } from '@flue/react'
+import type { FlueConversationMessage, FlueConversationPart } from '@flue/react'
 
 import {
     HoverCard,
@@ -14,9 +14,14 @@ interface MessageTrackingProps {
     messages: FlueConversationMessage[]
 }
 
+const isTextPart = (
+    part: FlueConversationPart
+): part is Extract<FlueConversationPart, { type: 'text' }> =>
+    part.type === 'text'
+
 const getMessageText = (message: FlueConversationMessage) =>
     message.parts
-        .filter((part) => part.type === 'text')
+        .filter(isTextPart)
         .map((part) => part.text)
         .join('\n')
 
@@ -29,7 +34,9 @@ const getTrimmedMessageText = (message: FlueConversationMessage) => {
 const MessageTracking = ({ messages }: MessageTrackingProps) => {
     const { scrollToMessage } = useMessageScroller()
     const { currentAnchorId } = useMessageScrollerVisibility()
-    const userMessages = messages.filter((message) => message.role === 'user')
+    const userMessages = messages.filter(
+        (message) => message.role === 'user' && message.display === 'visible'
+    )
 
     if (userMessages.length === 0) {
         return null

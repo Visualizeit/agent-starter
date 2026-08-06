@@ -1,8 +1,11 @@
-import type { AgentStatus, FlueConversationMessage } from '@flue/react'
+import type { UseFlueAgentResult } from '@flue/react'
+import { AlertCircleIcon, StopIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 import { Box } from '@mantine/core'
+import { cn } from 'cnfast'
 import { last } from 'es-toolkit'
-import { isNil, isNotNil } from 'es-toolkit/predicate'
 
+import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
 import {
     MessageScroller,
     MessageScrollerButton,
@@ -11,81 +14,61 @@ import {
     MessageScrollerProvider,
     MessageScrollerViewport,
 } from '@/components/ui/message-scroller'
+import STATUS_COLORS from '@/configs/status-colors'
 
 import ConversationMessage from './conversation-message'
-import type { ConversationMessageGroup } from './conversation-message'
+import getMessageListItems from './message-list-items'
+import type { MessageMarkerItem } from './message-list-items'
 import MessageTracking from './message-tracking'
 
-interface MessageListProps {
-    messages: FlueConversationMessage[]
-    status: AgentStatus
-}
+type MessageListProps = Pick<
+    UseFlueAgentResult,
+    'failedSends' | 'messages' | 'status'
+>
 
-const groupMessages = (
-    messages: FlueConversationMessage[]
-): ConversationMessageGroup[] => {
-    const groups: ConversationMessageGroup[] = []
+const ConversationMarker = ({ marker }: Pick<MessageMarkerItem, 'marker'>) => {
+    const isSettlement = 'outcome' in marker
+    const isAborted = isSettlement && marker.outcome === 'aborted'
 
-    for (const message of messages) {
-        if (
-            message.display !== 'visible' ||
-            (message.role !== 'assistant' && message.role !== 'user')
-        ) {
-            continue
-        }
+    let text = 'Response was stopped.'
 
-        if (message.role === 'user') {
-            groups.push({
-                id: message.id,
-                messages: [message],
-                role: message.role,
-                submissionId: message.submissionId,
-            })
-
-            continue
-        }
-
-        const previousGroup = last(groups)
-
-        const isSameTrackedTurn =
-            previousGroup &&
-            previousGroup.role === message.role &&
-            isNotNil(message.submissionId) &&
-            previousGroup.submissionId === message.submissionId
-
-        const isSameUntrackedRun =
-            previousGroup &&
-            previousGroup.role === message.role &&
-            isNil(message.submissionId) &&
-            isNil(previousGroup.submissionId)
-
-        if (isSameTrackedTurn || isSameUntrackedRun) {
-            previousGroup.messages.push(message)
-
-            continue
-        }
-
-        groups.push({
-            id: message.id,
-            messages: [message],
-            role: message.role,
-            submissionId: message.submissionId,
-        })
+    if (!isSettlement) {
+        text = 'Message not sent.'
+    } else if (marker.outcome === 'failed') {
+        text = "The assistant couldn't finish this response."
     }
 
-    return groups
+    return (
+        <Marker
+            className={cn(!isSettlement && 'ml-auto w-fit')}
+            render={
+                <Box
+                    c={isSettlement ? undefined : STATUS_COLORS.DANGER}
+                    component="output"
+                />
+            }
+        >
+            <MarkerIcon>
+                <HugeiconsIcon icon={isAborted ? StopIcon : AlertCircleIcon} />
+            </MarkerIcon>
+            <MarkerContent>{text}</MarkerContent>
+        </Marker>
+    )
 }
 
-const MessageList = ({ messages, status }: MessageListProps) => {
-    const groups = groupMessages(messages)
+const MessageList = ({ failedSends, messages, status }: MessageListProps) => {
+    const items = getMessageListItems(messages, last(failedSends))
 
     const isResponding = status === 'submitted' || status === 'streaming'
 
-    const lastGroup = last(groups)
+    const lastItem = last(items)
 
     const activeAssistantGroup =
-        isResponding && lastGroup && lastGroup.role === 'assistant'
-            ? lastGroup
+        isResponding &&
+        lastItem &&
+        lastItem.kind === 'message' &&
+        lastItem.role === 'assistant'
+            ? lastItem
             : undefined
 
     return (
@@ -94,20 +77,33 @@ const MessageList = ({ messages, status }: MessageListProps) => {
                 <MessageScroller className="h-full">
                     <MessageScrollerViewport>
                         <MessageScrollerContent className="p-(--mantine-spacing-lg) container mx-auto max-w-3xl">
-                            {groups.map((group) => (
-                                <MessageScrollerItem
-                                    key={group.id}
-                                    messageId={group.id}
-                                    scrollAnchor={group.role === 'user'}
-                                >
-                                    <ConversationMessage
-                                        group={group}
-                                        isResponding={
-                                            group === activeAssistantGroup
-                                        }
-                                    />
-                                </MessageScrollerItem>
-                            ))}
+                            {items.map((item) => {
+                                if (item.kind === 'message') {
+                                    return (
+                                        <MessageScrollerItem
+                                            key={item.id}
+                                            messageId={item.id}
+                                            scrollAnchor={item.role === 'user'}
+                                        >
+                                            <ConversationMessage
+                                                group={item}
+                                                isResponding={
+                                                    item ===
+                                                    activeAssistantGroup
+                                                }
+                                            />
+                                        </MessageScrollerItem>
+                                    )
+                                }
+
+                                return (
+                                    <MessageScrollerItem key={item.id}>
+                                        <ConversationMarker
+                                            marker={item.marker}
+                                        />
+                                    </MessageScrollerItem>
+                                )
+                            })}
                         </MessageScrollerContent>
                     </MessageScrollerViewport>
                     <MessageScrollerButton />

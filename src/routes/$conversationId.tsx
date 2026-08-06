@@ -31,7 +31,11 @@ const Conversation = () => {
     return (
         <Stack className="size-full absolute" gap={0}>
             <Box className="flex-1 overflow-hidden">
-                <MessageList messages={agent.messages} status={agent.status} />
+                <MessageList
+                    failedSends={agent.failedSends}
+                    messages={agent.messages}
+                    status={agent.status}
+                />
             </Box>
             <Box className="container mx-auto max-w-3xl px-(--mantine-spacing-md) pb-(--mantine-spacing-md)">
                 <PromptInput agent={agent} client={client} />

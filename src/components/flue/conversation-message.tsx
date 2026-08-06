@@ -12,6 +12,8 @@ import AssistantMessageBody from '@/components/ui/assistant-message-body'
 import { Message, MessageContent } from '@/components/ui/message'
 import UserMessageBody from '@/components/ui/user-message-body'
 
+import type { ConversationMessageGroup } from './message-list-items'
+
 interface ConversationMessageProps {
     group: ConversationMessageGroup
     isResponding: boolean
@@ -24,13 +26,6 @@ interface AssistantMessageBlockProps {
 
 interface UserMessageBlockProps {
     messages: FlueConversationMessage[]
-}
-
-export interface ConversationMessageGroup {
-    id: FlueConversationMessage['id']
-    messages: FlueConversationMessage[]
-    role: Exclude<FlueConversationMessage['role'], 'system'>
-    submissionId: FlueConversationMessage['submissionId']
 }
 
 interface MessagePartEntry {

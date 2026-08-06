@@ -1,7 +1,7 @@
 import type { AgentStatus, FlueConversationMessage } from '@flue/react'
 import { Box } from '@mantine/core'
 import { last } from 'es-toolkit'
-import { invariant } from 'es-toolkit/util'
+import { isNil, isNotNil } from 'es-toolkit/predicate'
 
 import {
     MessageScroller,
@@ -45,18 +45,21 @@ const groupMessages = (
             continue
         }
 
-        invariant(
-            message.submissionId,
-            'Visible assistant message has no submission id'
-        )
-
         const previousGroup = last(groups)
 
-        if (
+        const isSameTrackedTurn =
             previousGroup &&
             previousGroup.role === message.role &&
+            isNotNil(message.submissionId) &&
             previousGroup.submissionId === message.submissionId
-        ) {
+
+        const isSameUntrackedRun =
+            previousGroup &&
+            previousGroup.role === message.role &&
+            isNil(message.submissionId) &&
+            isNil(previousGroup.submissionId)
+
+        if (isSameTrackedTurn || isSameUntrackedRun) {
             previousGroup.messages.push(message)
 
             continue

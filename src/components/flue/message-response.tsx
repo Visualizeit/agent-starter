@@ -20,7 +20,6 @@ const MessageResponse = ({
         isAnimating={isStreaming}
         mode={isStreaming ? 'streaming' : 'static'}
         plugins={streamdownPlugins}
-        animated
     >
         {markdown}
     </Streamdown>

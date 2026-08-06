@@ -78,7 +78,7 @@ const MessageList = ({ failedSends, messages, status }: MessageListProps) => {
             : undefined
 
     return (
-        <MessageScrollerProvider autoScroll defaultScrollPosition="last-anchor">
+        <MessageScrollerProvider autoScroll>
             <Box className="relative h-full">
                 <MessageScroller className="h-full">
                     <MessageScrollerViewport>

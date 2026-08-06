@@ -56,6 +56,12 @@ const ConversationMarker = ({ marker }: Pick<MessageMarkerItem, 'marker'>) => {
     )
 }
 
+const PendingResponseMarker = () => (
+    <Marker render={<output />}>
+        <MarkerContent className="shimmer">Thinking...</MarkerContent>
+    </Marker>
+)
+
 const MessageList = ({ failedSends, messages, status }: MessageListProps) => {
     const items = getMessageListItems(messages, last(failedSends))
 
@@ -76,12 +82,16 @@ const MessageList = ({ failedSends, messages, status }: MessageListProps) => {
             <Box className="relative h-full">
                 <MessageScroller className="h-full">
                     <MessageScrollerViewport>
-                        <MessageScrollerContent className="p-(--mantine-spacing-lg) container mx-auto max-w-3xl">
+                        <MessageScrollerContent
+                            aria-busy={isResponding}
+                            className="p-(--mantine-spacing-lg) container mx-auto max-w-3xl"
+                        >
                             {items.map((item) => {
                                 if (item.kind === 'message') {
                                     return (
                                         <MessageScrollerItem
                                             key={item.id}
+                                            className="flex flex-col gap-(--mantine-spacing-xs)"
                                             messageId={item.id}
                                             scrollAnchor={item.role === 'user'}
                                         >
@@ -92,16 +102,20 @@ const MessageList = ({ failedSends, messages, status }: MessageListProps) => {
                                                     activeAssistantGroup
                                                 }
                                             />
+                                            {isResponding &&
+                                                item === lastItem &&
+                                                item.role === 'user' && (
+                                                    <PendingResponseMarker />
+                                                )}
                                         </MessageScrollerItem>
                                     )
                                 }
 
                                 return (
-                                    <MessageScrollerItem key={item.id}>
-                                        <ConversationMarker
-                                            marker={item.marker}
-                                        />
-                                    </MessageScrollerItem>
+                                    <ConversationMarker
+                                        key={item.id}
+                                        marker={item.marker}
+                                    />
                                 )
                             })}
                         </MessageScrollerContent>

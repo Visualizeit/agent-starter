@@ -32,7 +32,7 @@
         "@mantine/modals": "^9.5.1",
         "@orpc/client": "1.14.13",
         "@orpc/experimental-publisher": "1.14.13",
-        "@orpc/server": "1.14.13",
+        "@orpc/server": "1.14.14",
         "@orpc/tanstack-query": "^1.14.13",
         "@radix-ui/react-use-controllable-state": "^1.2.6",
         "@shadcn/react": "^0.3.0",

@@ -11,9 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConversationIdRouteImport } from './routes/$conversationId'
+import { Route as ApiSplatRouteImport } from './routes/api/$'
 import { Route as ApiFilesRouteImport } from './routes/api/files'
-import { Route as ApiAgentsSplatRouteImport } from './routes/api/agents.$'
-import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -25,65 +24,49 @@ const ConversationIdRoute = ConversationIdRouteImport.update({
   path: '/$conversationId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSplatRoute = ApiSplatRouteImport.update({
+  id: '/api/$',
+  path: '/api/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiFilesRoute = ApiFilesRouteImport.update({
   id: '/api/files',
   path: '/api/files',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAgentsSplatRoute = ApiAgentsSplatRouteImport.update({
-  id: '/api/agents/$',
-  path: '/api/agents/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
-  id: '/api/rpc/$',
-  path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$conversationId': typeof ConversationIdRoute
+  '/api/$': typeof ApiSplatRoute
   '/api/files': typeof ApiFilesRoute
-  '/api/agents/$': typeof ApiAgentsSplatRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$conversationId': typeof ConversationIdRoute
+  '/api/$': typeof ApiSplatRoute
   '/api/files': typeof ApiFilesRoute
-  '/api/agents/$': typeof ApiAgentsSplatRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$conversationId': typeof ConversationIdRoute
+  '/api/$': typeof ApiSplatRoute
   '/api/files': typeof ApiFilesRoute
-  '/api/agents/$': typeof ApiAgentsSplatRoute
-  '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    '/' | '/$conversationId' | '/api/files' | '/api/agents/$' | '/api/rpc/$'
+  fullPaths: '/' | '/$conversationId' | '/api/$' | '/api/files'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$conversationId' | '/api/files' | '/api/agents/$' | '/api/rpc/$'
-  id:
-    | '__root__'
-    | '/'
-    | '/$conversationId'
-    | '/api/files'
-    | '/api/agents/$'
-    | '/api/rpc/$'
+  to: '/' | '/$conversationId' | '/api/$' | '/api/files'
+  id: '__root__' | '/' | '/$conversationId' | '/api/$' | '/api/files'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConversationIdRoute: typeof ConversationIdRoute
+  ApiSplatRoute: typeof ApiSplatRoute
   ApiFilesRoute: typeof ApiFilesRoute
-  ApiAgentsSplatRoute: typeof ApiAgentsSplatRoute
-  ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -102,25 +85,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConversationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/$': {
+      id: '/api/$'
+      path: '/api/$'
+      fullPath: '/api/$'
+      preLoaderRoute: typeof ApiSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/files': {
       id: '/api/files'
       path: '/api/files'
       fullPath: '/api/files'
       preLoaderRoute: typeof ApiFilesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/agents/$': {
-      id: '/api/agents/$'
-      path: '/api/agents/$'
-      fullPath: '/api/agents/$'
-      preLoaderRoute: typeof ApiAgentsSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/rpc/$': {
-      id: '/api/rpc/$'
-      path: '/api/rpc/$'
-      fullPath: '/api/rpc/$'
-      preLoaderRoute: typeof ApiRpcSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -129,9 +105,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConversationIdRoute: ConversationIdRoute,
+  ApiSplatRoute: ApiSplatRoute,
   ApiFilesRoute: ApiFilesRoute,
-  ApiAgentsSplatRoute: ApiAgentsSplatRoute,
-  ApiRpcSplatRoute: ApiRpcSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

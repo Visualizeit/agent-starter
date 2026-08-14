@@ -18,7 +18,6 @@ const SendButton = ({ disabled }: SendButtonProps) => {
                 aria-label="Send message"
                 className="group dark:disabled:bg-(--mantine-color-default-hover)"
                 disabled={disabled}
-                variant="filled"
                 radius="full"
                 color="var(--mantine-color-text)"
                 size="lg"

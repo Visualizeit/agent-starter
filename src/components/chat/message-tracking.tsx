@@ -1,4 +1,4 @@
-import type { FlueConversationMessage, FlueConversationPart } from '@flue/react'
+import type { UIMessage } from '@tanstack/ai-react'
 
 import {
     HoverCard,
@@ -11,21 +11,22 @@ import {
 } from '@/components/ui/message-scroller'
 
 interface MessageTrackingProps {
-    messages: FlueConversationMessage[]
+    messages: readonly UIMessage[]
 }
 
-const isTextPart = (
-    part: FlueConversationPart
-): part is Extract<FlueConversationPart, { type: 'text' }> =>
+type MessagePart = UIMessage['parts'][number]
+type TextMessagePart = Extract<MessagePart, { type: 'text' }>
+
+const isTextPart = (part: MessagePart): part is TextMessagePart =>
     part.type === 'text'
 
-const getMessageText = (message: FlueConversationMessage) =>
+const getMessageText = (message: UIMessage) =>
     message.parts
         .filter(isTextPart)
-        .map((part) => part.text)
+        .map((part) => part.content)
         .join('\n')
 
-const getTrimmedMessageText = (message: FlueConversationMessage) => {
+const getTrimmedMessageText = (message: UIMessage) => {
     const text = getMessageText(message)
 
     return text.length > 42 ? `${text.slice(0, 39)}...` : text
@@ -34,11 +35,8 @@ const getTrimmedMessageText = (message: FlueConversationMessage) => {
 const MessageTracking = ({ messages }: MessageTrackingProps) => {
     const { scrollToMessage } = useMessageScroller()
     const { currentAnchorId } = useMessageScrollerVisibility()
-    const userMessages = messages.filter(
-        (message) => message.role === 'user' && message.display === 'visible'
-    )
 
-    if (userMessages.length === 0) {
+    if (messages.length === 0) {
         return null
     }
 
@@ -53,7 +51,7 @@ const MessageTracking = ({ messages }: MessageTrackingProps) => {
                     />
                 }
             >
-                {userMessages.map((message) => (
+                {messages.map((message) => (
                     <span
                         key={message.id}
                         data-current={message.id === currentAnchorId}
@@ -67,7 +65,7 @@ const MessageTracking = ({ messages }: MessageTrackingProps) => {
                 sideOffset={-28}
                 className="flex w-64 flex-col gap-1 rounded-2xl p-1"
             >
-                {userMessages.map((message) => (
+                {messages.map((message) => (
                     <button
                         key={message.id}
                         type="button"

@@ -1,11 +1,13 @@
 import { MemoryPublisher } from '@orpc/experimental-publisher/memory'
 
-// oxlint-disable-next-line typescript/consistent-type-definitions
-export type ApplicationEvents = {
-    'conversation.title.generated': {
-        type: 'conversation.title.generated'
-        conversationId: string
-    }
+interface ConversationTitleGeneratedEvent {
+    type: 'conversation.title.generated'
+    conversationId: string
+}
+
+export interface ApplicationEvents {
+    [key: string]: object
+    'conversation.title.generated': ConversationTitleGeneratedEvent
 }
 
 const publisher = new MemoryPublisher<ApplicationEvents>({

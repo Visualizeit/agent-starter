@@ -2,30 +2,23 @@ import { Textarea, Group, rem } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { invariant } from 'es-toolkit'
+import { invariant } from 'es-toolkit/util'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 
 import orpc from '@/lib/orpc'
-import { chatSubmissionSchema } from '@/schemas/chat-submission-schema'
 
-import ModelSelector from './model-selector'
 import SendButton from './send-button'
 
 const NewConversationPromptInput = () => {
     const [message, setMessage] = useInputState('')
-
-    const [model, setModel] = useInputState<string | null>(null)
 
     const projectId = useSearch({
         from: '/',
         select: (search) => search.projectId,
     })
 
-    const submissionParseResult = chatSubmissionSchema.safeParse({
-        message,
-        model,
-    })
+    const trimmedMessage = message.trim()
 
     const navigate = useNavigate()
 
@@ -61,13 +54,16 @@ const NewConversationPromptInput = () => {
 
     const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
         mode: 'mod-enter',
-        onSubmit: async () => {
-            if (!submissionParseResult.success) {
+        onSubmit: () => {
+            if (
+                trimmedMessage.length === 0 ||
+                createConversationMutation.isPending
+            ) {
                 return
             }
 
-            await createConversationMutation.mutateAsync({
-                ...submissionParseResult.data,
+            createConversationMutation.mutate({
+                message: trimmedMessage,
                 projectId,
             })
         },
@@ -105,9 +101,12 @@ const NewConversationPromptInput = () => {
                 }}
                 wrapperProps={{
                     onClick: (event) => {
-                        const target = event.target as HTMLElement
+                        const { target } = event
 
-                        if (target.closest('button')) {
+                        if (
+                            target instanceof HTMLElement &&
+                            target.closest('button')
+                        ) {
                             return
                         }
 
@@ -125,11 +124,10 @@ const NewConversationPromptInput = () => {
                 maxRows={10}
                 placeholder="Ask the assistant"
                 bottomSection={
-                    <Group className="justify-between w-full">
-                        <ModelSelector onChange={setModel} value={model} />
+                    <Group className="justify-end w-full">
                         <SendButton
                             disabled={
-                                !submissionParseResult.success ||
+                                trimmedMessage.length === 0 ||
                                 createConversationMutation.isPending
                             }
                         />

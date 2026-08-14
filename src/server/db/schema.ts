@@ -1,3 +1,4 @@
+import type { ModelMessage } from '@tanstack/ai'
 import { sql } from 'drizzle-orm'
 import { check, index, integer, snakeCase, text } from 'drizzle-orm/sqlite-core'
 
@@ -75,6 +76,27 @@ export const conversations = snakeCase.table(
         check(
             'conversations_metadata_json_check',
             sql`json_valid(${table.metadata}) and json_type(${table.metadata}) = 'object'`
+        ),
+    ]
+)
+
+export const aiChatThreads = snakeCase.table(
+    'ai_chat_threads',
+    {
+        messages: text({ mode: 'json' })
+            .$type<ModelMessage[]>()
+            .notNull()
+            .default(sql`'[]'`),
+        threadId: text()
+            .primaryKey()
+            .references(() => conversations.id, {
+                onDelete: 'cascade',
+            }),
+    },
+    (table) => [
+        check(
+            'ai_chat_threads_messages_json_check',
+            sql`json_valid(${table.messages}) and json_type(${table.messages}) = 'array'`
         ),
     ]
 )

@@ -1,78 +1,34 @@
-import type { FlueClient, UseFlueAgentResult } from '@flue/react'
 import { Textarea, Group, rem } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query'
-import { useParams } from '@tanstack/react-router'
-import { invariant } from 'es-toolkit'
+import type { UseChatReturn } from '@tanstack/ai-react'
+import { invariant } from 'es-toolkit/util'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 
-import orpc from '@/lib/orpc'
-import { chatSubmissionSchema } from '@/schemas/chat-submission-schema'
-
-import ModelSelector from './model-selector'
 import SendButton from './send-button'
 import StopButton from './stop-button'
 
 interface PromptInputProps {
-    agent: UseFlueAgentResult
-    client: FlueClient
+    isResponding: boolean
+    sendMessage: UseChatReturn['sendMessage']
+    stop: UseChatReturn['stop']
 }
 
-const PromptInput = ({ agent, client }: PromptInputProps) => {
-    const { conversationId } = useParams({ from: '/$conversationId' })
-
-    const { data: conversation } = useSuspenseQuery(
-        orpc.conversation.find.queryOptions({
-            input: { id: conversationId },
-            select: (data) => ({ model: data.model }),
-        })
-    )
-
+const PromptInput = ({ isResponding, sendMessage, stop }: PromptInputProps) => {
     const [message, setMessage] = useInputState('')
 
-    const [selectedModel, setSelectedModel] = useInputState(conversation.model)
-
-    const updateModelMutation = useMutation(
-        orpc.conversation.update.mutationOptions({
-            onSuccess: async (_data, _variables, _onMutateResult, context) => {
-                await context.client.invalidateQueries(
-                    orpc.conversation.find.queryOptions({
-                        input: { id: conversationId },
-                    })
-                )
-            },
-        })
-    )
-
-    const isResponding =
-        agent.status === 'submitted' || agent.status === 'streaming'
-
-    const submissionParseResult = chatSubmissionSchema.safeParse({
-        message,
-        model: selectedModel,
-    })
+    const trimmedMessage = message.trim()
 
     const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
         mode: 'mod-enter',
-        onSubmit: async () => {
-            if (
-                isResponding ||
-                updateModelMutation.isPending ||
-                !submissionParseResult.success
-            ) {
+        onSubmit: () => {
+            if (isResponding || trimmedMessage.length === 0) {
                 return
             }
 
-            if (submissionParseResult.data.model !== conversation.model) {
-                await updateModelMutation.mutateAsync({
-                    id: conversationId,
-                    model: submissionParseResult.data.model,
-                })
-            }
-
-            await agent.sendMessage(submissionParseResult.data.message)
+            const submittedMessage = trimmedMessage
             setMessage('')
+            void sendMessage(submittedMessage)
         },
     })
 
@@ -108,9 +64,12 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
                 }}
                 wrapperProps={{
                     onClick: (event) => {
-                        const target = event.target as HTMLElement
+                        const { target } = event
 
-                        if (target.closest('button')) {
+                        if (
+                            target instanceof HTMLElement &&
+                            target.closest('button')
+                        ) {
                             return
                         }
 
@@ -128,19 +87,12 @@ const PromptInput = ({ agent, client }: PromptInputProps) => {
                 maxRows={10}
                 placeholder="Ask the assistant"
                 bottomSection={
-                    <Group className="w-full" justify="space-between">
-                        <ModelSelector
-                            onChange={setSelectedModel}
-                            value={selectedModel}
-                        />
+                    <Group className="w-full" justify="flex-end">
                         {isResponding ? (
-                            <StopButton client={client} />
+                            <StopButton stop={stop} />
                         ) : (
                             <SendButton
-                                disabled={
-                                    !submissionParseResult.success ||
-                                    updateModelMutation.isPending
-                                }
+                                disabled={trimmedMessage.length === 0}
                             />
                         )}
                     </Group>

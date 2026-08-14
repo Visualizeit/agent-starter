@@ -1,44 +1,43 @@
-import { useFlueAgent } from '@flue/react'
-import { createFlueClient } from '@flue/sdk'
 import { Box, Stack } from '@mantine/core'
+import { fetchServerSentEvents, useChat } from '@tanstack/ai-react'
 import {
     ClientOnly,
     createFileRoute,
     getRouteApi,
 } from '@tanstack/react-router'
-import { useMemo } from 'react'
 
+import MessageList from '@/components/chat/message-list'
 import PromptInput from '@/components/chat/prompt-input'
 import { NEW_CHAT_LABEL } from '@/components/conversation/conversation-constants'
-import MessageList from '@/components/flue/message-list'
 import orpc from '@/lib/orpc'
 
 const conversationRouteApi = getRouteApi('/$conversationId')
+const chatConnection = fetchServerSentEvents('/api/chat')
 
 const Conversation = () => {
     const { conversationId } = conversationRouteApi.useParams()
-
-    const client = useMemo(
-        () =>
-            createFlueClient({
-                url: `/api/agents/assistant/${conversationId}`,
-            }),
-        [conversationId]
-    )
-
-    const agent = useFlueAgent({ client })
+    const { error, isLoading, messages, sendMessage, stop } = useChat({
+        connection: chatConnection,
+        persistence: true,
+        threadId: conversationId,
+    })
+    const isResponding = messages.length === 0 || isLoading
 
     return (
         <Stack className="size-full absolute" gap={0}>
             <Box className="flex-1 overflow-hidden">
                 <MessageList
-                    failedSends={agent.failedSends}
-                    messages={agent.messages}
-                    status={agent.status}
+                    error={error}
+                    isResponding={isResponding}
+                    messages={messages}
                 />
             </Box>
             <Box className="container mx-auto max-w-3xl px-(--mantine-spacing-md) pb-(--mantine-spacing-md)">
-                <PromptInput agent={agent} client={client} />
+                <PromptInput
+                    isResponding={isResponding}
+                    sendMessage={sendMessage}
+                    stop={stop}
+                />
             </Box>
         </Stack>
     )

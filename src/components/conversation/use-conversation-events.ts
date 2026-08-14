@@ -13,7 +13,12 @@ const useConversationEvents = () => {
 
     useEffect(() => {
         const unsubscribe = consumeEventIterator(
-            orpc.event.conversation.call(),
+            orpc.event.conversation.call(
+                {},
+                {
+                    context: { retry: Number.POSITIVE_INFINITY },
+                }
+            ),
             {
                 onError: (error) => {
                     console.error(

@@ -28,7 +28,7 @@
         "@mantine/hooks": "9.5.1",
         "@mantine/modals": "^9.5.1",
         "@orpc/client": "1.14.13",
-        "@orpc/experimental-publisher": "1.14.13",
+        "@orpc/experimental-publisher": "1.15.0",
         "@orpc/server": "1.14.13",
         "@orpc/tanstack-query": "^1.14.13",
         "@radix-ui/react-use-controllable-state": "^1.2.6",

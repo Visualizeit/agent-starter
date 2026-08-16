@@ -5,6 +5,10 @@ import { withPersistence } from '@tanstack/ai-persistence'
 import createChatAdapter from './chat-adapter'
 import type createChatDurability from './chat-durability'
 import chatPersistence from './chat-persistence'
+import {
+    chatRunCancellationMiddleware,
+    getOrCreateChatRunAbortController,
+} from './chat-run-cancellation'
 import conversationTitleMiddleware from './conversation-title-middleware'
 
 interface CreateChatRunResponseOptions {
@@ -23,15 +27,19 @@ const createChatRunResponse = ({
     runId,
     systemPrompts,
     threadId,
-}: CreateChatRunResponseOptions) =>
-    toServerSentEventsResponse(
+}: CreateChatRunResponseOptions) => {
+    const abortController = getOrCreateChatRunAbortController(runId)
+
+    return toServerSentEventsResponse(
         chat({
+            abortController,
             adapter: createChatAdapter(),
             agentLoopStrategy: maxIterations(100),
             messages,
             middleware: [
                 withPersistence(chatPersistence),
                 conversationTitleMiddleware,
+                chatRunCancellationMiddleware,
             ],
             ...(resume ? { resume } : {}),
             runId,
@@ -39,7 +47,9 @@ const createChatRunResponse = ({
             threadId,
         }),
         {
+            abortController,
             durability: { adapter: durability },
         }
     )
+}
 export default createChatRunResponse

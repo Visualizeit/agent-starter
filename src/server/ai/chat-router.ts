@@ -5,10 +5,14 @@ import {
     resumeServerSentEventsResponse,
 } from '@tanstack/ai'
 import { reconstructChat } from '@tanstack/ai-persistence'
+import { isNil, isNotNil } from 'es-toolkit/predicate'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { validator } from 'hono/validator'
 import { z } from 'zod'
+
+import database from '@/server/db/client'
+import { conversations } from '@/server/db/schema'
 
 import getChatContext from './chat-context'
 import createChatDurability from './chat-durability'
@@ -19,25 +23,125 @@ const chatQuerySchema = z.xor([
     z.object({ runId: z.string().min(1) }),
     z.object({ threadId: z.string().min(1) }),
 ])
+const newChatPropertiesSchema = z.object({
+    projectId: z.string().min(1).optional(),
+})
 
-const validateChatRequest = validator(
-    'json',
-    async (body, context) =>
-        await chatParamsFromRequestBody(body).catch(() =>
-            context.text('Invalid chat request', 400)
-        )
-)
+const parseChatParameters = async (body: unknown) => {
+    try {
+        return await chatParamsFromRequestBody(body)
+    } catch (error) {
+        throw new HTTPException(400, {
+            cause: error,
+            message: 'Invalid chat request',
+        })
+    }
+}
+
+const validateChatRequest = validator('json', parseChatParameters)
 
 const chatRouter = new Hono()
-    .post('/', validateChatRequest, async (context) => {
-        const {
-            messages,
-            resume,
-            runId,
-            threadId: conversationId,
-        } = context.req.valid('json')
+    .post('/start', validateChatRequest, async (context) => {
+        const { forwardedProps, messages, runId, threadId } =
+            context.req.valid('json')
 
-        const chatContext = await getChatContext(conversationId)
+        const result = newChatPropertiesSchema.safeParse(forwardedProps)
+
+        if (!result.success) {
+            throw new HTTPException(400, {
+                cause: result.error,
+                message: 'Invalid new chat request',
+            })
+        }
+
+        const { projectId } = result.data
+
+        if (resolveResumeRunId(context.req.raw) !== runId) {
+            throw new HTTPException(400, {
+                message: 'Run ID does not match',
+            })
+        }
+
+        const durability = createChatDurability(context.req.raw)
+
+        if (isNotNil(durability.resumeFrom())) {
+            return resumeServerSentEventsResponse({ adapter: durability })
+        }
+
+        let projectInstructions = ''
+
+        if (isNotNil(projectId)) {
+            const projectRecord = await database.query.projects.findFirst({
+                columns: {
+                    instructions: true,
+                },
+                where: {
+                    id: projectId,
+                },
+            })
+
+            if (isNil(projectRecord)) {
+                throw new HTTPException(404, {
+                    message: 'Project not found',
+                })
+            }
+
+            projectInstructions = projectRecord.instructions
+        }
+
+        const [createdConversation] = await database
+            .insert(conversations)
+            .values({
+                id: threadId,
+                projectId,
+            })
+            .onConflictDoNothing({ target: conversations.id })
+            .returning({ id: conversations.id })
+
+        if (isNil(createdConversation)) {
+            const existingConversation =
+                await database.query.conversations.findFirst({
+                    columns: {
+                        projectId: true,
+                        status: true,
+                    },
+                    where: {
+                        id: threadId,
+                    },
+                })
+
+            if (
+                isNil(existingConversation) ||
+                existingConversation.projectId !== (projectId ?? null) ||
+                existingConversation.status !== 'active'
+            ) {
+                throw new HTTPException(409, {
+                    message: 'Conversation cannot be retried',
+                })
+            }
+
+            const activeRun =
+                await chatPersistence.stores.runs.findActiveRun(threadId)
+
+            if (isNotNil(activeRun)) {
+                throw new HTTPException(409, {
+                    message: 'Conversation already has an active run',
+                })
+            }
+        }
+
+        return createChatRunResponse({
+            durability,
+            messages,
+            runId,
+            systemPrompts: projectInstructions ? [projectInstructions] : [],
+            threadId,
+        })
+    })
+    .post('/', validateChatRequest, async (context) => {
+        const { messages, resume, runId, threadId } = context.req.valid('json')
+
+        const chatContext = await getChatContext(threadId)
 
         if (!chatContext) {
             throw new HTTPException(404, {
@@ -59,10 +163,10 @@ const chatRouter = new Hono()
 
         const durability = createChatDurability(context.req.raw)
 
-        if (durability.resumeFrom() !== null) {
+        if (isNotNil(durability.resumeFrom())) {
             const run = await chatPersistence.stores.runs.get(runId)
 
-            if (!run || run.threadId !== conversationId) {
+            if (!run || run.threadId !== threadId) {
                 throw new HTTPException(404, {
                     message: 'Chat run not found',
                 })
@@ -79,7 +183,7 @@ const chatRouter = new Hono()
             systemPrompts: chatContext.projectInstructions
                 ? [chatContext.projectInstructions]
                 : [],
-            threadId: conversationId,
+            threadId,
         })
     })
     .get('/', zValidator('query', chatQuerySchema), async (context) => {

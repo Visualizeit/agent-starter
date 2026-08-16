@@ -25,7 +25,6 @@ const generateConversationTitle = async ({
 }: GenerateConversationTitleOptions) => {
     const generatedTitle = await chat({
         adapter: createChatAdapter(),
-        conversationId,
         messages: [
             {
                 content: userMessage,
@@ -34,6 +33,7 @@ const generateConversationTitle = async ({
         ],
         stream: false,
         systemPrompts: [titleInstructions],
+        threadId: conversationId,
     })
 
     return generatedTitle.trim()

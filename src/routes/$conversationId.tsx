@@ -16,12 +16,15 @@ const chatConnection = fetchServerSentEvents('/api/chat')
 
 const Conversation = () => {
     const { conversationId } = conversationRouteApi.useParams()
-    const { error, isLoading, messages, sendMessage, stop } = useChat({
-        connection: chatConnection,
-        persistence: true,
-        threadId: conversationId,
-    })
-    const isResponding = messages.length === 0 || isLoading
+
+    const { error, isLoading, messages, sendMessage, sessionGenerating, stop } =
+        useChat({
+            connection: chatConnection,
+            persistence: true,
+            threadId: conversationId,
+        })
+
+    const isResponding = messages.length === 0 || isLoading || sessionGenerating
 
     return (
         <Stack className="size-full absolute" gap={0}>

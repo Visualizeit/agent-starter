@@ -1,8 +1,13 @@
-import { Textarea, Group, rem } from '@mantine/core'
+import { Group, rem, Textarea } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
-import { useMutation } from '@tanstack/react-query'
+import { EventType } from '@tanstack/ai'
+import { fetchServerSentEvents, useChat } from '@tanstack/ai-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearch } from '@tanstack/react-router'
+import { isEmpty } from 'es-toolkit/compat'
 import { invariant } from 'es-toolkit/util'
+import { nanoid } from 'nanoid'
+import { useMemo } from 'react'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 
@@ -10,62 +15,66 @@ import orpc from '@/lib/orpc'
 
 import SendButton from './send-button'
 
+const newChatConnection = fetchServerSentEvents('/api/chat/start')
+
 const NewConversationPromptInput = () => {
     const [message, setMessage] = useInputState('')
+    const threadId = useMemo(() => nanoid(), [])
+
+    const trimmedMessage = message.trim()
+
+    const navigate = useNavigate()
 
     const projectId = useSearch({
         from: '/',
         select: (search) => search.projectId,
     })
 
-    const trimmedMessage = message.trim()
+    const queryClient = useQueryClient()
 
-    const navigate = useNavigate()
-
-    const createConversationMutation = useMutation(
-        orpc.conversation.create.mutationOptions({
-            onSuccess: async (
-                createdConversation,
-                variables,
-                _onMutateResult,
-                context
-            ) => {
-                await Promise.all([
-                    context.client.invalidateQueries(
-                        orpc.conversation.list.queryOptions({
-                            input: {
-                                projectId: variables.projectId,
-                                status: 'active',
-                            },
-                        })
-                    ),
-                    context.client.invalidateQueries(
-                        orpc.project.list.queryOptions()
-                    ),
-                ])
-
-                await navigate({
-                    params: { conversationId: createdConversation.id },
-                    to: '/$conversationId',
+    const handleRunStarted = async () => {
+        await Promise.all([
+            queryClient.invalidateQueries(
+                orpc.conversation.list.queryOptions({
+                    input: { projectId, status: 'active' },
                 })
-            },
+            ),
+            queryClient.invalidateQueries(orpc.project.list.queryOptions()),
+        ])
+
+        await navigate({
+            params: { conversationId: threadId },
+            to: '/$conversationId',
         })
-    )
+    }
+
+    const { clear, error, isLoading, sendMessage } = useChat({
+        connection: newChatConnection,
+        forwardedProps: { projectId },
+        onChunk: (chunk) => {
+            if (chunk.type === EventType.RUN_STARTED) {
+                handleRunStarted()
+            }
+        },
+        onError: (chatError) => {
+            console.error('Failed to start conversation', chatError)
+        },
+        queue: 'drop',
+        threadId,
+    })
 
     const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
         mode: 'mod-enter',
         onSubmit: () => {
-            if (
-                trimmedMessage.length === 0 ||
-                createConversationMutation.isPending
-            ) {
+            if (isEmpty(trimmedMessage) || isLoading) {
                 return
             }
 
-            createConversationMutation.mutate({
-                message: trimmedMessage,
-                projectId,
-            })
+            if (error) {
+                clear()
+            }
+
+            void sendMessage(trimmedMessage)
         },
     })
 
@@ -117,22 +126,19 @@ const NewConversationPromptInput = () => {
                         textarea.focus()
                     },
                 }}
-                size="md"
                 autosize
-                minRows={1}
-                rows={1}
-                maxRows={10}
-                placeholder="Ask the assistant"
                 bottomSection={
-                    <Group className="justify-end w-full">
+                    <Group className="w-full" justify="flex-end">
                         <SendButton
-                            disabled={
-                                trimmedMessage.length === 0 ||
-                                createConversationMutation.isPending
-                            }
+                            disabled={isEmpty(trimmedMessage) || isLoading}
                         />
                     </Group>
                 }
+                maxRows={10}
+                minRows={1}
+                placeholder="Ask the assistant"
+                rows={1}
+                size="md"
             />
         </form>
     )

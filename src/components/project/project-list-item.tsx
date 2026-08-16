@@ -209,8 +209,8 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                         onClick={open}
                         renderRoot={(props) => (
                             <Link
-                                to="/"
                                 search={{ projectId: project.id }}
+                                to="/"
                                 {...props}
                             />
                         )}

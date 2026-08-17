@@ -17,13 +17,13 @@ import {
 import ConversationMessage from './conversation-message'
 import MessageTracking from './message-tracking'
 
-const PendingResponseMarker = () => (
+const AssistantThinkingMarker = () => (
     <Marker render={<output />}>
         <MarkerContent className="shimmer">Thinking...</MarkerContent>
     </Marker>
 )
 
-const ErrorMarker = () => (
+const AssistantErrorMarker = () => (
     <Marker render={<Box component="output" />}>
         <MarkerIcon>
             <HugeiconsIcon icon={AlertCircleIcon} />
@@ -71,11 +71,11 @@ const MessageList = ({ error, isResponding, messages }: MessageListProps) => {
                                     {isResponding &&
                                         message === lastMessage &&
                                         message.role === 'user' && (
-                                            <PendingResponseMarker />
+                                            <AssistantThinkingMarker />
                                         )}
                                 </MessageScrollerItem>
                             ))}
-                            {error && <ErrorMarker />}
+                            {error && <AssistantErrorMarker />}
                         </MessageScrollerContent>
                     </MessageScrollerViewport>
                     <MessageScrollerButton />

@@ -122,12 +122,11 @@ const ConversationListItem = ({
                     >
                         <Text
                             className={cn(
-                                'min-w-0',
+                                'scroll-fade-e overflow-hidden whitespace-nowrap',
                                 isNested &&
                                     'pl-[calc(var(--mantine-spacing-md)+var(--mantine-spacing-xs))]'
                             )}
                             size="sm"
-                            truncate
                         >
                             <TextMorph>{label}</TextMorph>
                         </Text>

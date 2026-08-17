@@ -23,6 +23,7 @@ import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { cn } from 'cnfast'
 import { isEmpty } from 'es-toolkit/compat'
+import { TextMorph } from 'torph/react'
 
 import ConversationListItem from '@/components/conversation/conversation-list-item'
 import orpc from '@/lib/orpc'
@@ -145,8 +146,11 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                                 className="size-4 shrink-0 text-(--mantine-color-dimmed)"
                             />
                         )}
-                        <Text className="min-w-0" size="sm" truncate>
-                            {project.name}
+                        <Text
+                            className="scroll-fade-e min-w-0 overflow-hidden whitespace-nowrap"
+                            size="sm"
+                        >
+                            <TextMorph>{project.name}</TextMorph>
                         </Text>
                     </Group>
                 </UnstyledButton>

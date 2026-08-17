@@ -117,7 +117,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
             <Box
                 className={cn(
                     'group/project-menu-item relative rounded-(--mantine-radius-md)',
-                    'hover:bg-(--mantine-color-gray-light-hover) focus-within:bg-(--mantine-color-gray-light-hover)',
+                    'hover:bg-(--mantine-color-gray-light-hover)',
                     'has-[[aria-haspopup=menu][aria-expanded=true]]:bg-(--mantine-color-gray-light-hover)'
                 )}
             >

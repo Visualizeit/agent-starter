@@ -51,7 +51,7 @@ const ProjectConversationList = ({
                 No conversations
             </Text>
         ) : (
-            <Box component="ul">
+            <Stack component="ul" gap="xxxs">
                 {conversations.map((conversation) => (
                     <ConversationListItem
                         conversation={conversation}
@@ -59,7 +59,7 @@ const ProjectConversationList = ({
                         key={conversation.id}
                     />
                 ))}
-            </Box>
+            </Stack>
         )}
     </Box>
 )

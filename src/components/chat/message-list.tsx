@@ -23,14 +23,16 @@ const AssistantThinkingMarker = () => (
     </Marker>
 )
 
-const AssistantErrorMarker = () => (
+interface AssistantErrorMarkerProps {
+    message: string
+}
+
+const AssistantErrorMarker = ({ message }: AssistantErrorMarkerProps) => (
     <Marker render={<Box component="output" />}>
         <MarkerIcon>
             <HugeiconsIcon icon={AlertCircleIcon} />
         </MarkerIcon>
-        <MarkerContent>
-            The assistant could not finish this response.
-        </MarkerContent>
+        <MarkerContent>{message}</MarkerContent>
     </Marker>
 )
 
@@ -75,7 +77,9 @@ const MessageList = ({ error, isResponding, messages }: MessageListProps) => {
                                         )}
                                 </MessageScrollerItem>
                             ))}
-                            {error && <AssistantErrorMarker />}
+                            {error && (
+                                <AssistantErrorMarker message={error.message} />
+                            )}
                         </MessageScrollerContent>
                     </MessageScrollerViewport>
                     <MessageScrollerButton />

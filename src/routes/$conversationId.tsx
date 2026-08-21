@@ -1,6 +1,5 @@
 import { Box, Stack } from '@mantine/core'
-import { fetchServerSentEvents, useChat } from '@tanstack/ai-react'
-import { useMutation } from '@tanstack/react-query'
+import { useChat } from '@tanstack/ai-react'
 import {
     ClientOnly,
     createFileRoute,
@@ -10,40 +9,21 @@ import {
 import MessageList from '@/components/chat/message-list'
 import PromptInput from '@/components/chat/prompt-input'
 import { NEW_CHAT_LABEL } from '@/components/conversation/conversation-constants'
+import chatConnection from '@/lib/chat-connection'
 import orpc from '@/lib/orpc'
 
 const conversationRouteApi = getRouteApi('/$conversationId')
-const chatConnection = fetchServerSentEvents('/api/chat')
 
 const Conversation = () => {
     const { conversationId } = conversationRouteApi.useParams()
 
-    const {
-        error,
-        isLoading,
-        messages,
-        runId,
-        sendMessage,
-        sessionGenerating,
-        stop,
-    } = useChat({
-        connection: chatConnection,
-        persistence: true,
-        threadId: conversationId,
-    })
-    const cancelChatRunMutation = useMutation(
-        orpc.chat.cancel.mutationOptions()
-    )
-
+    const { error, isLoading, messages, sendMessage, sessionGenerating, stop } =
+        useChat({
+            connection: chatConnection,
+            persistence: true,
+            threadId: conversationId,
+        })
     const isResponding = isLoading || sessionGenerating
-
-    const stopResponse = () => {
-        if (runId) {
-            cancelChatRunMutation.mutate({ runId })
-        }
-
-        stop()
-    }
 
     return (
         <Stack className="size-full absolute" gap={0}>
@@ -58,7 +38,7 @@ const Conversation = () => {
                 <PromptInput
                     isResponding={isResponding}
                     sendMessage={sendMessage}
-                    stop={stopResponse}
+                    stop={stop}
                 />
             </Box>
         </Stack>

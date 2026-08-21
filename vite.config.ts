@@ -9,7 +9,12 @@ export default defineConfig({
     plugins: [
         tailwindcss(),
         tanstackStart(),
-        nitro(),
+        nitro({
+            features: {
+                websocket: true,
+            },
+            serverDir: 'server',
+        }),
         viteReact({ compiler: true }),
     ],
     resolve: {

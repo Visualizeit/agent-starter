@@ -1,7 +1,7 @@
 import { Group, rem, Textarea } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { EventType } from '@tanstack/ai'
-import { fetchServerSentEvents, useChat } from '@tanstack/ai-react'
+import { useChat } from '@tanstack/ai-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { isEmpty } from 'es-toolkit/compat'
@@ -11,11 +11,10 @@ import { useMemo } from 'react'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 
+import { newChatConnection } from '@/lib/chat-connection'
 import orpc from '@/lib/orpc'
 
 import SendButton from './send-button'
-
-const newChatConnection = fetchServerSentEvents('/api/chat/start')
 
 const NewConversationPromptInput = () => {
     const [message, setMessage] = useInputState('')

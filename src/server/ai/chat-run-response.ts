@@ -1,55 +1,45 @@
-import { chat, maxIterations, toServerSentEventsResponse } from '@tanstack/ai'
-import type { ModelMessage, RunAgentResumeItem, UIMessage } from '@tanstack/ai'
+import { chat, maxIterations } from '@tanstack/ai'
+import type { WsRunContext } from '@tanstack/ai'
 import { withPersistence } from '@tanstack/ai-persistence'
 
-import createChatAdapter from './chat-adapter'
-import type createChatDurability from './chat-durability'
+import chatAdapter from './chat-adapter'
 import chatPersistence from './chat-persistence'
-import {
-    chatRunCancellationMiddleware,
-    getOrCreateChatRunAbortController,
-} from './chat-run-cancellation'
+import createChatRunContextMiddleware from './chat-run-context-middleware'
 import conversationTitleMiddleware from './conversation-title-middleware'
 
-interface CreateChatRunResponseOptions {
-    durability: ReturnType<typeof createChatDurability>
-    messages: (ModelMessage | UIMessage)[]
-    resume?: RunAgentResumeItem[]
-    runId: string
-    systemPrompts: string[]
-    threadId: string
-}
-
 const createChatRunResponse = ({
-    durability,
+    forwardedProps,
     messages,
-    resume,
     runId,
-    systemPrompts,
+    signal,
     threadId,
-}: CreateChatRunResponseOptions) => {
-    const abortController = getOrCreateChatRunAbortController(runId)
+}: WsRunContext) => {
+    const abortController = new AbortController()
 
-    return toServerSentEventsResponse(
-        chat({
-            abortController,
-            adapter: createChatAdapter(),
-            agentLoopStrategy: maxIterations(100),
-            messages,
-            middleware: [
-                withPersistence(chatPersistence),
-                conversationTitleMiddleware,
-                chatRunCancellationMiddleware,
-            ],
-            ...(resume ? { resume } : {}),
-            runId,
-            systemPrompts,
-            threadId,
-        }),
-        {
-            abortController,
-            durability: { adapter: durability },
-        }
-    )
+    if (signal.aborted) {
+        abortController.abort(signal.reason)
+    } else {
+        signal.addEventListener(
+            'abort',
+            () => {
+                abortController.abort(signal.reason)
+            },
+            { once: true }
+        )
+    }
+
+    return chat({
+        abortController,
+        adapter: chatAdapter,
+        agentLoopStrategy: maxIterations(100),
+        messages,
+        middleware: [
+            createChatRunContextMiddleware({ forwardedProps, threadId }),
+            withPersistence(chatPersistence, { snapshotStreaming: true }),
+            conversationTitleMiddleware,
+        ],
+        runId,
+        threadId,
+    })
 }
 export default createChatRunResponse

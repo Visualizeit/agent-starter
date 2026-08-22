@@ -12,8 +12,8 @@ import base from '../base'
 const idSchema = z.string().min(1)
 
 const projectRouter = {
-    add: base.input(projectFormSchema).handler(async ({ input, errors }) => {
-        const [projectRecord] = await database
+    add: base.input(projectFormSchema).handler(({ input }) =>
+        database
             .insert(projects)
             .values({
                 id: nanoid(),
@@ -21,13 +21,8 @@ const projectRouter = {
                 name: input.name,
             })
             .returning()
-
-        if (isNil(projectRecord)) {
-            throw errors.CONFLICT()
-        }
-
-        return projectRecord
-    }),
+            .get()
+    ),
     delete: base
         .input(z.object({ id: idSchema }))
         .handler(async ({ input, errors }) => {

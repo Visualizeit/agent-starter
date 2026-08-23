@@ -124,7 +124,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                 <UnstyledButton
                     className={cn(
                         'w-full rounded-[inherit] px-(--mantine-spacing-xs) py-(--mantine-spacing-sidebar-menu-item-y)',
-                        'group-hover/project-menu-item:pr-14 group-focus-within/project-menu-item:pr-14'
+                        'group-hover/project-menu-item:pr-14 group-focus-within/project-menu-item:pr-14 group-has-[[aria-haspopup=menu][aria-expanded=true]]/project-menu-item:pr-14'
                     )}
                     aria-expanded={isExpanded}
                     aria-label={

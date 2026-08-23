@@ -112,7 +112,7 @@ const ConversationListItem = ({
                 className={cn(
                     'block w-full rounded-[inherit] px-(--mantine-spacing-xs) py-(--mantine-spacing-sidebar-menu-item-y)',
                     'aria-[current=page]:bg-(--mantine-color-gray-light-hover)',
-                    'group-hover/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)] group-focus-within/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)]'
+                    'group-hover/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)] group-focus-within/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)] group-has-[[aria-haspopup=menu][aria-expanded=true]]/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)]'
                 )}
                 renderRoot={(props) => (
                     <Link

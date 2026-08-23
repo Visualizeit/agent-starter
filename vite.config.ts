@@ -8,7 +8,11 @@ import { defineConfig } from 'vite-plus'
 export default defineConfig({
     plugins: [
         tailwindcss(),
-        tanstackStart(),
+        tanstackStart({
+            spa: {
+                enabled: true,
+            },
+        }),
         nitro({
             features: {
                 websocket: true,

@@ -6,6 +6,7 @@ import {
 } from '@mantine/core'
 import { ModalsProvider } from '@mantine/modals'
 import {
+    ClientOnly,
     createRootRouteWithContext,
     HeadContent,
     Scripts,
@@ -30,7 +31,9 @@ const Component = () => (
                 cssVariablesResolver={v8CssVariablesResolver}
             >
                 <ModalsProvider modalProps={{ centered: true }}>
-                    <MainLayout />
+                    <ClientOnly>
+                        <MainLayout />
+                    </ClientOnly>
                 </ModalsProvider>
             </MantineProvider>
             <Scripts />

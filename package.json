@@ -56,6 +56,7 @@
         "nitro": "3.0.260610-beta",
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
+        "react-resizable-panels": "^4.12.3",
         "shadcn": "^4.16.1",
         "streamdown": "^2.5.0",
         "torph": "^0.0.10",

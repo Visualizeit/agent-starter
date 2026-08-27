@@ -95,7 +95,7 @@ const ProjectList = () => {
                         size="sm"
                         radius="md"
                         aria-label="Add project"
-                        className="invisible group-hover/project-list-header:visible focus-visible:visible"
+                        className="opacity-0 group-focus-within/project-list-header:opacity-100 group-hover/project-list-header:opacity-100"
                         onClick={handleAddProject}
                     >
                         <HugeiconsIcon

@@ -43,7 +43,7 @@ const UserMessage = ({
                 ))}
                 {copyText.length > 0 && (
                     <Group
-                        className="invisible group-focus-within/message:visible group-hover/message:visible"
+                        className="opacity-0 group-focus-within/message:opacity-100 group-hover/message:opacity-100"
                         justify="flex-end"
                     >
                         <MessageCopyButton value={copyText} />
@@ -90,7 +90,7 @@ const AssistantMessage = ({
                 ))}
                 {!isResponding && copyText.length > 0 && (
                     <Group
-                        className="invisible group-focus-within/message:visible group-hover/message:visible"
+                        className="opacity-0 group-focus-within/message:opacity-100 group-hover/message:opacity-100"
                         justify="flex-start"
                     >
                         <MessageCopyButton value={copyText} />

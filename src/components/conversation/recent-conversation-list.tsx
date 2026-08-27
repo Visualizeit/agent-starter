@@ -78,7 +78,7 @@ const RecentConversationList = () => {
                         size="sm"
                         radius="md"
                         aria-label="New chat"
-                        className="invisible group-hover/recent-conversation-list-header:visible focus-visible:visible"
+                        className="opacity-0 group-focus-within/recent-conversation-list-header:opacity-100 group-hover/recent-conversation-list-header:opacity-100"
                         renderRoot={(props) => <Link to="/" {...props} />}
                     >
                         <HugeiconsIcon icon={PlusSignIcon} className="size-4" />

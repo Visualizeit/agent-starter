@@ -130,6 +130,11 @@ const NewConversationPromptInput = () => {
                     <Group className="w-full" justify="flex-end">
                         <SendButton
                             disabled={isEmpty(trimmedMessage) || isLoading}
+                            disabledDescription={
+                                isLoading
+                                    ? 'Wait for the current message to send.'
+                                    : 'Enter a message to send.'
+                            }
                         />
                     </Group>
                 }

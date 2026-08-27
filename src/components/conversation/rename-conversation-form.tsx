@@ -64,6 +64,7 @@ const RenameConversationForm = ({
             <Stack>
                 <TextInput
                     data-autofocus
+                    label="Conversation title"
                     placeholder="Enter conversation title"
                     {...form.getInputProps('title')}
                 />

@@ -93,6 +93,7 @@ const PromptInput = ({ isResponding, sendMessage, stop }: PromptInputProps) => {
                         ) : (
                             <SendButton
                                 disabled={trimmedMessage.length === 0}
+                                disabledDescription="Enter a message to send."
                             />
                         )}
                     </Group>

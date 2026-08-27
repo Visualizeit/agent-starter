@@ -26,7 +26,7 @@ const Conversation = () => {
     const isResponding = isLoading || sessionGenerating
 
     return (
-        <Stack className="size-full absolute" gap={0}>
+        <Stack className="absolute size-full" gap={0}>
             <Box className="flex-1 overflow-hidden">
                 <MessageList
                     error={error}

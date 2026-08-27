@@ -6,7 +6,7 @@ interface AssistantMessageBodyProps {
 }
 
 const AssistantMessageBody = ({ children }: AssistantMessageBodyProps) => (
-    <Box className="w-fit min-w-0 max-w-full self-start wrap-break-word">
+    <Box className="w-fit max-w-full min-w-0 self-start wrap-break-word">
         {children}
     </Box>
 )

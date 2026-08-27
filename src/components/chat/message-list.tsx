@@ -53,7 +53,7 @@ const MessageList = ({ error, isResponding, messages }: MessageListProps) => {
                     <MessageScrollerViewport>
                         <MessageScrollerContent
                             aria-busy={isResponding}
-                            className="p-(--mantine-spacing-lg) container mx-auto max-w-3xl"
+                            className="container mx-auto max-w-3xl p-(--mantine-spacing-lg)"
                         >
                             {messages.map((message) => (
                                 <MessageScrollerItem

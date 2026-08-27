@@ -124,7 +124,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                 <UnstyledButton
                     className={cn(
                         'w-full rounded-[inherit] px-(--mantine-spacing-xs) py-(--mantine-spacing-sidebar-menu-item-y)',
-                        'group-hover/project-menu-item:pr-14 group-focus-within/project-menu-item:pr-14 group-has-[[aria-haspopup=menu][aria-expanded=true]]/project-menu-item:pr-14'
+                        'group-focus-within/project-menu-item:pr-14 group-hover/project-menu-item:pr-14 group-has-[[aria-haspopup=menu][aria-expanded=true]]/project-menu-item:pr-14'
                     )}
                     aria-expanded={isExpanded}
                     aria-label={
@@ -158,8 +158,8 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                     gap="xxs"
                     wrap="nowrap"
                     className={cn(
-                        'invisible absolute right-(--mantine-spacing-xs) top-1/2 -translate-y-1/2',
-                        'group-hover/project-menu-item:visible group-focus-within/project-menu-item:visible has-aria-expanded:visible'
+                        'invisible absolute top-1/2 right-(--mantine-spacing-xs) -translate-y-1/2',
+                        'group-focus-within/project-menu-item:visible group-hover/project-menu-item:visible has-aria-expanded:visible'
                     )}
                 >
                     <Menu position="bottom-start" shadow="md">

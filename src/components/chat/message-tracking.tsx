@@ -47,7 +47,7 @@ const MessageTracking = ({ messages }: MessageTrackingProps) => {
                     <button
                         type="button"
                         aria-label="Open transcript outline"
-                        className="flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-md transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                        className="focus-visible:ring-ring/50 flex h-9 w-9 flex-col items-center justify-center gap-1 rounded-md transition-colors outline-none focus-visible:ring-3"
                     />
                 }
             >
@@ -55,7 +55,7 @@ const MessageTracking = ({ messages }: MessageTrackingProps) => {
                     <span
                         key={message.id}
                         data-current={message.id === currentAnchorId}
-                        className="h-0.5 w-4 rounded-full bg-muted-foreground/40 data-[current=true]:bg-foreground"
+                        className="bg-muted-foreground/40 data-[current=true]:bg-foreground h-0.5 w-4 rounded-full"
                     />
                 ))}
             </HoverCardTrigger>
@@ -74,7 +74,7 @@ const MessageTracking = ({ messages }: MessageTrackingProps) => {
                                 ? 'location'
                                 : undefined
                         }
-                        className="flex min-h-7 items-center rounded-xl px-2 py-1.5 text-left text-sm transition-colors outline-none hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground aria-current:bg-accent aria-current:text-accent-foreground"
+                        className="hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground aria-current:bg-accent aria-current:text-accent-foreground flex min-h-7 items-center rounded-xl px-2 py-1.5 text-left text-sm transition-colors outline-none"
                         onClick={() =>
                             scrollToMessage(message.id, {
                                 align: 'start',

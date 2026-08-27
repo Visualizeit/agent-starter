@@ -90,7 +90,7 @@ export const ChainOfThoughtHeader = ({
         <Collapsible onOpenChange={setIsOpen} open={isOpen}>
             <CollapsibleTrigger
                 className={cn(
-                    'flex w-full items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground',
+                    'text-muted-foreground hover:text-foreground flex w-full items-center gap-2 text-sm transition-colors',
                     className
                 )}
                 {...props}
@@ -144,7 +144,7 @@ export const ChainOfThoughtStep = ({
     >
         <div className="relative mt-0.5">
             <HugeiconsIcon icon={Icon} className="size-4" />
-            <div className="absolute top-7 bottom-0 left-1/2 -mx-px w-px bg-border" />
+            <div className="bg-border absolute top-7 bottom-0 left-1/2 -mx-px w-px" />
         </div>
         <div className="flex-1 space-y-2 overflow-hidden">
             <div>{label}</div>
@@ -178,7 +178,7 @@ export const ChainOfThoughtSearchResult = ({
     ...props
 }: ChainOfThoughtSearchResultProps) => (
     <Badge
-        className={cn('gap-1 px-2 py-0.5 font-normal text-xs', className)}
+        className={cn('gap-1 px-2 py-0.5 text-xs font-normal', className)}
         variant="secondary"
         {...props}
     >
@@ -202,7 +202,7 @@ export const ChainOfThoughtContent = ({
             <CollapsibleContent
                 className={cn(
                     'mt-2 space-y-3',
-                    'data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-popover-foreground outline-none data-[state=closed]:animate-out data-[state=open]:animate-in',
+                    'data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2 text-popover-foreground data-[state=closed]:animate-out data-[state=open]:animate-in outline-none',
                     className
                 )}
                 {...props}
@@ -224,7 +224,7 @@ export const ChainOfThoughtImage = ({
     ...props
 }: ChainOfThoughtImageProps) => (
     <div className={cn('mt-2 space-y-2', className)} {...props}>
-        <div className="relative flex max-h-[22rem] items-center justify-center overflow-hidden rounded-lg bg-muted p-3">
+        <div className="bg-muted relative flex max-h-[22rem] items-center justify-center overflow-hidden rounded-lg p-3">
             {children}
         </div>
         {caption && <p className="text-muted-foreground text-xs">{caption}</p>}

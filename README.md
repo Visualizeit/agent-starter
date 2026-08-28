@@ -1,60 +1,28 @@
-# TanStack Starter
+# Agent Starter
 
-A modern, production-ready starter template for building full-stack React applications with server-side rendering.
+Full-stack AI chat starter built with TanStack Start, React, Mantine, and Tailwind CSS.
 
-## Tech Stack
+## Setup
 
-- **TanStack Start** - Full-stack React framework with SSR
-- **React 19** - Latest React with concurrent features
-- **TypeScript** - Strict type safety
-- **Mantine UI** - Component library with custom theme
-- **Tailwind CSS** - Utility-first CSS framework
-- **Vite+** - Unified dev, build, lint, format, and test toolchain
-- **Oxlint / Oxfmt** - Linting and formatting via `vp check`
-
-## Getting Started
-
-### Requirements
-
-- [Node.js](https://nodejs.org/en) (LTS version recommended)
-- [pnpm](https://pnpm.io)
-- [Vite+](https://viteplus.dev/)
-
-### Installation
-
-1. Clone the repository:
-
-```sh
-git clone https://github.com/Visualizeit/tanstack-starter
-cd tanstack-starter
-```
-
-2. Install dependencies:
+Requires Node.js and pnpm.
 
 ```sh
 pnpm install
+cp .env.example .env
+pnpm db:migrate
 ```
 
-3. Start the development server:
+Set `DEEPSEEK_API_KEY` in `.env`, then run these commands in separate terminals:
 
 ```sh
+pnpm durable-streams:dev
 pnpm dev
 ```
 
-## Available Scripts
+## Scripts
 
-| Command      | Description                             |
-| ------------ | --------------------------------------- |
-| `pnpm dev`   | Start development server with HMR       |
-| `pnpm build` | Build for production with SSR           |
-| `pnpm start` | Start production server                 |
-| `pnpm check` | Run Vite+ linting and formatting checks |
-| `pnpm fix`   | Auto-fix linting and formatting issues  |
-
-## Features
-
-- File-based routing with SSR via TanStack Start and Nitro
-- Mantine UI with Tailwind CSS
-- Vite+ workflow for dev, build, lint, and format
-- Git hooks via `vp staged`
-- TypeScript strict mode
+- `pnpm build` - Build for production
+- `pnpm start` - Start the production server
+- `pnpm typecheck` - Check TypeScript
+- `pnpm check` - Check code quality
+- `pnpm fix` - Fix code quality issues

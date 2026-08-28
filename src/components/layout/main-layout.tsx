@@ -18,7 +18,7 @@ const MainLayout = () => {
                     <ResizablePanels
                         leftPanel={
                             <Stack
-                                className="h-full py-(--mantine-spacing-xs)"
+                                className="absolute inset-0 py-(--mantine-spacing-xs)"
                                 component="aside"
                                 gap="sm"
                             >

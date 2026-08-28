@@ -2,7 +2,6 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) 0;
     align-items: center;
-    column-gap: var(--mantine-spacing-xxs);
 }
 
 .actions {
@@ -10,6 +9,7 @@
     align-items: center;
     justify-self: end;
     gap: var(--mantine-spacing-xxs);
+    margin-inline-start: var(--mantine-spacing-xxs);
     margin-inline-end: var(--mantine-spacing-xs);
     min-width: max-content;
     opacity: 0;

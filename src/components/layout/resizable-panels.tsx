@@ -33,6 +33,7 @@ const ResizablePanels = ({ leftPanel, rightPanel }: ResizablePanelsProps) => {
             onLayoutChanged={onLayoutChanged}
         >
             <Panel
+                className="relative"
                 defaultSize={LEFT_PANEL_DEFAULT_SIZE}
                 groupResizeBehavior="preserve-pixel-size"
                 id={LEFT_PANEL_ID}

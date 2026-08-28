@@ -19,6 +19,8 @@ import type { conversations } from '@/server/db/schema'
 import { NEW_CHAT_LABEL } from './conversation-constants'
 import RenameConversationForm from './rename-conversation-form'
 
+import sidebarListItemClasses from '@/components/layout/sidebar-list-item-actions.module.css'
+
 interface ConversationListItemProps {
     conversation: typeof conversations.$inferSelect
     isNested?: boolean
@@ -102,18 +104,16 @@ const ConversationListItem = ({
         <Box
             component="li"
             className={cn(
-                'group/menu-item relative list-none',
+                sidebarListItemClasses.root,
+                'group/menu-item list-none',
                 'rounded-(--mantine-radius-md)',
-                'focus-within:bg-(--mantine-color-gray-light-hover) hover:bg-(--mantine-color-gray-light-hover)',
-                'has-[[aria-haspopup=menu][aria-expanded=true]]:bg-(--mantine-color-gray-light-hover)'
+                'hover:bg-(--mantine-color-gray-light-hover) has-focus-visible:bg-(--mantine-color-gray-light-hover)',
+                'has-[[aria-haspopup=menu][aria-expanded=true]]:bg-(--mantine-color-gray-light-hover)',
+                'has-[[aria-current=page]]:bg-(--mantine-color-gray-light-hover)'
             )}
         >
             <UnstyledButton
-                className={cn(
-                    'block w-full rounded-[inherit] px-(--mantine-spacing-xs) py-(--mantine-spacing-sidebar-menu-item-y)',
-                    'aria-[current=page]:bg-(--mantine-color-gray-light-hover)',
-                    'group-focus-within/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)] group-hover/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)] group-has-[[aria-haspopup=menu][aria-expanded=true]]/menu-item:pr-[calc(var(--mantine-spacing-xs)+1.75rem)]'
-                )}
+                className="block w-full rounded-[inherit] px-(--mantine-spacing-xs) py-(--mantine-spacing-sidebar-menu-item-y)"
                 renderRoot={(props) => (
                     <Link
                         to="/$conversationId"
@@ -133,70 +133,68 @@ const ConversationListItem = ({
                     </Link>
                 )}
             />
-            <Menu position="bottom-start" shadow="md">
-                <Menu.Target>
-                    <ActionIcon
-                        variant="subtle"
-                        radius="sm"
-                        color="gray"
-                        size="sm"
-                        aria-label="Conversation actions"
-                        className={cn(
-                            'invisible absolute top-1/2 right-(--mantine-spacing-xs) -translate-y-1/2',
-                            'group-focus-within/menu-item:visible group-hover/menu-item:visible aria-expanded:visible'
-                        )}
-                    >
-                        <HugeiconsIcon
-                            icon={MoreHorizontalIcon}
-                            className="size-4"
-                        />
-                    </ActionIcon>
-                </Menu.Target>
-                <Menu.Dropdown>
-                    <Menu.Item
-                        leftSection={
+            <Box className={sidebarListItemClasses.actions}>
+                <Menu position="bottom-start" shadow="md">
+                    <Menu.Target>
+                        <ActionIcon
+                            variant="subtle"
+                            radius="sm"
+                            color="gray"
+                            size="sm"
+                            aria-label="Conversation actions"
+                        >
                             <HugeiconsIcon
-                                icon={Edit02Icon}
+                                icon={MoreHorizontalIcon}
                                 className="size-4"
                             />
-                        }
-                        onClick={handleRename}
-                    >
-                        Rename
-                    </Menu.Item>
-                    <Menu.Item
-                        disabled={pinConversationMutation.isPending}
-                        leftSection={
-                            conversation.isPinned ? (
+                        </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        <Menu.Item
+                            leftSection={
                                 <HugeiconsIcon
-                                    icon={PinOffIcon}
+                                    icon={Edit02Icon}
                                     className="size-4"
                                 />
-                            ) : (
+                            }
+                            onClick={handleRename}
+                        >
+                            Rename
+                        </Menu.Item>
+                        <Menu.Item
+                            disabled={pinConversationMutation.isPending}
+                            leftSection={
+                                conversation.isPinned ? (
+                                    <HugeiconsIcon
+                                        icon={PinOffIcon}
+                                        className="size-4"
+                                    />
+                                ) : (
+                                    <HugeiconsIcon
+                                        icon={PinIcon}
+                                        className="size-4"
+                                    />
+                                )
+                            }
+                            onClick={handlePin}
+                        >
+                            {conversation.isPinned ? 'Unpin' : 'Pin'}
+                        </Menu.Item>
+                        <Menu.Item
+                            disabled={archiveConversationMutation.isPending}
+                            leftSection={
                                 <HugeiconsIcon
-                                    icon={PinIcon}
+                                    icon={Archive02Icon}
                                     className="size-4"
                                 />
-                            )
-                        }
-                        onClick={handlePin}
-                    >
-                        {conversation.isPinned ? 'Unpin' : 'Pin'}
-                    </Menu.Item>
-                    <Menu.Item
-                        disabled={archiveConversationMutation.isPending}
-                        leftSection={
-                            <HugeiconsIcon
-                                icon={Archive02Icon}
-                                className="size-4"
-                            />
-                        }
-                        onClick={handleArchive}
-                    >
-                        Archive
-                    </Menu.Item>
-                </Menu.Dropdown>
-            </Menu>
+                            }
+                            onClick={handleArchive}
+                        >
+                            Archive
+                        </Menu.Item>
+                    </Menu.Dropdown>
+                </Menu>
+            </Box>
         </Box>
     )
 }

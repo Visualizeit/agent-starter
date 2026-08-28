@@ -31,6 +31,8 @@ import type { ORPCOutputs } from '@/lib/orpc'
 
 import ProjectForm from './project-form'
 
+import sidebarListItemClasses from '@/components/layout/sidebar-list-item-actions.module.css'
+
 type Project = ORPCOutputs['project']['list']['list'][number]
 type ProjectConversations = Project['conversations']
 
@@ -116,16 +118,14 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
         <Stack component="li" gap="xxs">
             <Box
                 className={cn(
-                    'group/project-menu-item relative rounded-(--mantine-radius-md)',
+                    sidebarListItemClasses.root,
+                    'group/project-menu-item rounded-(--mantine-radius-md)',
                     'hover:bg-(--mantine-color-gray-light-hover)',
                     'has-[[aria-haspopup=menu][aria-expanded=true]]:bg-(--mantine-color-gray-light-hover)'
                 )}
             >
                 <UnstyledButton
-                    className={cn(
-                        'w-full rounded-[inherit] px-(--mantine-spacing-xs) py-(--mantine-spacing-sidebar-menu-item-y)',
-                        'group-focus-within/project-menu-item:pr-14 group-hover/project-menu-item:pr-14 group-has-[[aria-haspopup=menu][aria-expanded=true]]/project-menu-item:pr-14'
-                    )}
+                    className="w-full rounded-[inherit] px-(--mantine-spacing-xs) py-(--mantine-spacing-sidebar-menu-item-y)"
                     aria-expanded={isExpanded}
                     aria-label={
                         isExpanded
@@ -154,14 +154,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                         </Text>
                     </Group>
                 </UnstyledButton>
-                <Group
-                    gap="xxs"
-                    wrap="nowrap"
-                    className={cn(
-                        'invisible absolute top-1/2 right-(--mantine-spacing-xs) -translate-y-1/2',
-                        'group-focus-within/project-menu-item:visible group-hover/project-menu-item:visible has-aria-expanded:visible'
-                    )}
-                >
+                <Box className={sidebarListItemClasses.actions}>
                     <Menu position="bottom-start" shadow="md">
                         <Menu.Target>
                             <ActionIcon
@@ -221,7 +214,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                     >
                         <HugeiconsIcon icon={PlusSignIcon} className="size-4" />
                     </ActionIcon>
-                </Group>
+                </Box>
             </Box>
             <Collapse expanded={isExpanded} keepMounted={false}>
                 <ProjectConversationList

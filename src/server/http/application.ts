@@ -7,16 +7,17 @@ import router from '@/server/orpc/router'
 
 const rpcHandler = new RPCHandler(router)
 
-const orpcMiddleware: MiddlewareHandler = async (context, next) => {
+// oxlint-disable-next-line typescript/consistent-return -- Hono middleware returns void after delegating.
+const orpcMiddleware: MiddlewareHandler = async (context, continueRequest) => {
     const { matched, response } = await rpcHandler.handle(context.req.raw, {
         prefix: '/api/rpc',
     })
 
-    if (matched && response) {
+    if (matched) {
         return context.newResponse(response.body, response)
     }
 
-    return await next()
+    await continueRequest()
 }
 
 const application = new Hono()

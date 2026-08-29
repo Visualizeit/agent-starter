@@ -44,7 +44,7 @@ const ProjectList = () => {
     const [isExpanded, { open, toggle }] = useDisclosure(!isEmpty(projects))
 
     useEffect(() => {
-        if (projectId) {
+        if (projectId !== undefined && projectId.length > 0) {
             open()
         }
     }, [open, projectId])

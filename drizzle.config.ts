@@ -4,7 +4,7 @@ import { defineConfig } from 'drizzle-kit'
 
 loadEnvFile('.env')
 
-const databaseFileName = process.env.DB_FILE_NAME || 'app.db'
+const databaseFileName = process.env.DB_FILE_NAME ?? 'app.db'
 
 export default defineConfig({
     dbCredentials: {

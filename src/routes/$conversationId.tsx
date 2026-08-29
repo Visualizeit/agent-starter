@@ -55,7 +55,7 @@ const Component = () => (
 export const Route = createFileRoute('/$conversationId')({
     component: Component,
     loader: async ({ context, params }) => {
-        const conversationRecord = await context.queryClient.fetchQuery(
+        const conversationRecord = await context.queryClient.query(
             orpc.conversation.find.queryOptions({
                 input: { id: params.conversationId },
             })

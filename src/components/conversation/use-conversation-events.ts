@@ -27,7 +27,7 @@ const useConversationEvents = () => {
                     )
                 },
                 onEvent: (event) => {
-                    match(event)
+                    void match(event)
                         .with(
                             { type: 'conversation.title.generated' },
                             async ({ conversationId }) => {
@@ -56,7 +56,7 @@ const useConversationEvents = () => {
         )
 
         return () => {
-            unsubscribe()
+            void unsubscribe()
         }
     }, [queryClient, router])
 }

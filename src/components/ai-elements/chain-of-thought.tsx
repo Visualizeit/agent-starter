@@ -148,7 +148,7 @@ export const ChainOfThoughtStep = ({
         </div>
         <div className="flex-1 space-y-2 overflow-hidden">
             <div>{label}</div>
-            {description && (
+            {Boolean(description) && (
                 <div className="text-muted-foreground text-xs">
                     {description}
                 </div>
@@ -227,6 +227,8 @@ export const ChainOfThoughtImage = ({
         <div className="bg-muted relative flex max-h-[22rem] items-center justify-center overflow-hidden rounded-lg p-3">
             {children}
         </div>
-        {caption && <p className="text-muted-foreground text-xs">{caption}</p>}
+        {caption !== undefined && caption.length > 0 && (
+            <p className="text-muted-foreground text-xs">{caption}</p>
+        )}
     </div>
 )

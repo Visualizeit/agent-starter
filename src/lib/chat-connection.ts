@@ -2,6 +2,10 @@ import { webSocket } from '@tanstack/ai-react'
 import type { SubscribeConnectionAdapter } from '@tanstack/ai-react'
 import { invariant } from 'es-toolkit/util'
 
+type ChatHydrationResult = Awaited<
+    ReturnType<NonNullable<SubscribeConnectionAdapter['hydrate']>>
+>
+
 const hydrateChat: NonNullable<SubscribeConnectionAdapter['hydrate']> = async (
     threadId
 ) => {
@@ -11,7 +15,8 @@ const hydrateChat: NonNullable<SubscribeConnectionAdapter['hydrate']> = async (
 
     invariant(response.ok, `Failed to hydrate chat: ${response.status}`)
 
-    return await response.json()
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- TanStack reconstructChat owns this response shape.
+    return (await response.json()) as ChatHydrationResult
 }
 
 export const newChatConnection = webSocket('/api/chat-ws', {

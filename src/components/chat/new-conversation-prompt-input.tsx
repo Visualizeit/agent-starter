@@ -52,7 +52,7 @@ const NewConversationPromptInput = () => {
         forwardedProps: { projectId },
         onChunk: (chunk) => {
             if (chunk.type === EventType.RUN_STARTED) {
-                handleRunStarted()
+                void handleRunStarted()
             }
         },
         onError: (chatError) => {

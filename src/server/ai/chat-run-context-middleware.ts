@@ -105,9 +105,9 @@ const createChatRunContextMiddleware = ({
 }: CreateChatRunContextMiddlewareOptions) => {
     let systemPromptsPromise: Promise<string[]> | undefined
 
-    const prepareChat = () => {
+    const prepareChat = async () => {
         if (isNotNil(systemPromptsPromise)) {
-            return systemPromptsPromise
+            return await systemPromptsPromise
         }
 
         systemPromptsPromise =
@@ -115,7 +115,7 @@ const createChatRunContextMiddleware = ({
                 ? prepareNewChat(threadId, forwardedProps)
                 : prepareExistingChat(threadId)
 
-        return systemPromptsPromise
+        return await systemPromptsPromise
     }
 
     return defineChatMiddleware({

@@ -1,8 +1,13 @@
 {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "oxc.oxc-vscode",
     "typescript.tsdk": "node_modules/typescript/lib",
     "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
     "editor.formatOnPaste": true,
+    "oxc.disableNestedConfig": true,
+    "oxc.configPath": "./oxlint.config.ts",
+    "oxc.fmt.disableNestedConfig": true,
+    "oxc.fmt.configPath": "./oxfmt.config.ts",
     "emmet.showExpandedAbbreviation": "never",
     "[javascript]": {
         "editor.defaultFormatter": "oxc.oxc-vscode"

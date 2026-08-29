@@ -75,12 +75,12 @@ const MessageTracking = ({ messages }: MessageTrackingProps) => {
                                 : undefined
                         }
                         className="hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent focus-visible:text-accent-foreground aria-current:bg-accent aria-current:text-accent-foreground flex min-h-7 items-center rounded-xl px-2 py-1.5 text-left text-sm transition-colors outline-none"
-                        onClick={() =>
+                        onClick={() => {
                             scrollToMessage(message.id, {
                                 align: 'start',
                                 behavior: 'smooth',
                             })
-                        }
+                        }}
                     >
                         <span className="line-clamp-1 min-w-0">
                             {getTrimmedMessageText(message)}

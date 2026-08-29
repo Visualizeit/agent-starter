@@ -79,15 +79,15 @@ const ConversationListItem = ({
         })
     )
 
-    const handleArchive = async () => {
-        await archiveConversationMutation.mutateAsync({
+    const handleArchive = () => {
+        archiveConversationMutation.mutate({
             id: conversation.id,
             status: 'archived',
         })
     }
 
-    const handlePin = async () => {
-        await pinConversationMutation.mutateAsync({
+    const handlePin = () => {
+        pinConversationMutation.mutate({
             id: conversation.id,
             isPinned: !conversation.isPinned,
         })

@@ -69,7 +69,12 @@ const RenameConversationForm = ({
                     {...form.getInputProps('title')}
                 />
                 <Group justify="flex-end" gap="xs">
-                    <Button variant="default" onClick={() => closeAllModals()}>
+                    <Button
+                        variant="default"
+                        onClick={() => {
+                            closeAllModals()
+                        }}
+                    >
                         Cancel
                     </Button>
                     <Button type="submit" loading={renameMutation.isPending}>

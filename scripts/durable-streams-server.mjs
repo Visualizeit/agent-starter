@@ -17,5 +17,9 @@ const stopServer = async () => {
     process.exit(0)
 }
 
-process.once('SIGINT', stopServer)
-process.once('SIGTERM', stopServer)
+process.once('SIGINT', () => {
+    void stopServer()
+})
+process.once('SIGTERM', () => {
+    void stopServer()
+})

@@ -82,6 +82,10 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                 await context.client.invalidateQueries(
                     orpc.project.list.queryOptions()
                 )
+
+                if (isCurrentProjectConversation) {
+                    await navigate({ to: '/' })
+                }
             },
         })
     )
@@ -103,12 +107,8 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
             ),
             confirmProps: { color: 'red' },
             labels: { cancel: 'Cancel', confirm: 'Delete' },
-            onConfirm: async () => {
-                await deleteProjectMutation.mutateAsync({ id: project.id })
-
-                if (isCurrentProjectConversation) {
-                    await navigate({ to: '/' })
-                }
+            onConfirm: () => {
+                deleteProjectMutation.mutate({ id: project.id })
             },
             title: 'Delete project',
         })

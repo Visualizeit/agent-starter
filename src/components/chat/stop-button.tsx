@@ -1,10 +1,9 @@
 import { StopIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ActionIcon, Tooltip } from '@mantine/core'
-import type { UseChatReturn } from '@tanstack/ai-react'
 
 interface StopButtonProps {
-    stop: UseChatReturn['stop']
+    stop: () => void
 }
 
 const StopButton = ({ stop }: StopButtonProps) => (

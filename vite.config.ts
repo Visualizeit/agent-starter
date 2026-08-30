@@ -28,9 +28,6 @@ export default defineConfig({
                 },
             }),
             nitro({
-                features: {
-                    websocket: true,
-                },
                 serverDir: 'server',
             }),
             viteReact({ compiler: true }),

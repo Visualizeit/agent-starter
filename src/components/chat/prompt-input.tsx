@@ -11,7 +11,7 @@ import StopButton from './stop-button'
 interface PromptInputProps {
     isResponding: boolean
     sendMessage: UseChatReturn['sendMessage']
-    stop: UseChatReturn['stop']
+    stop: () => void
 }
 
 const PromptInput = ({ isResponding, sendMessage, stop }: PromptInputProps) => {

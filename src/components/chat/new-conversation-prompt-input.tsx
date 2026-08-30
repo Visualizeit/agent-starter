@@ -11,7 +11,7 @@ import { useMemo } from 'react'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 
-import { newChatConnection } from '@/lib/chat-connection'
+import chatConnection from '@/lib/chat-connection'
 import orpc from '@/lib/orpc'
 
 import SendButton from './send-button'
@@ -48,8 +48,8 @@ const NewConversationPromptInput = () => {
     }
 
     const { clear, error, isLoading, sendMessage } = useChat({
-        connection: newChatConnection,
-        forwardedProps: { projectId },
+        connection: chatConnection,
+        forwardedProps: { newConversation: true, projectId },
         onChunk: (chunk) => {
             if (chunk.type === EventType.RUN_STARTED) {
                 void handleRunStarted()

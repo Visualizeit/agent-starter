@@ -9,22 +9,22 @@ import getChatContext from './chat-context'
 import chatPersistence from './chat-persistence'
 
 interface CreateChatRunContextMiddlewareOptions {
-    forwardedProps?: unknown
+    forwardedProps: unknown
     threadId: string
 }
 
-const newChatIndicatorSchema = z.object({
-    start: z.literal(true),
+const newConversationPropertiesSchema = z.object({
+    newConversation: z.literal(true),
+    projectId: z.string().min(1).optional(),
 })
 
-const newChatPropertiesSchema = z.object({
-    projectId: z.string().min(1).optional(),
-    start: z.literal(true),
+const newConversationIndicatorSchema = newConversationPropertiesSchema.pick({
+    newConversation: true,
 })
 
 const prepareNewChat = async (
     threadId: string,
-    forwardedProperties: z.infer<typeof newChatPropertiesSchema>
+    forwardedProperties: z.infer<typeof newConversationPropertiesSchema>
 ) => {
     const { projectId } = forwardedProperties
 
@@ -107,21 +107,18 @@ const createChatRunContextMiddleware = ({
     forwardedProps,
     threadId,
 }: CreateChatRunContextMiddlewareOptions) => {
+    const newConversationProperties = z.validate(
+        newConversationIndicatorSchema,
+        forwardedProps
+    )
+        ? newConversationPropertiesSchema.parse(forwardedProps)
+        : undefined
+
     let systemPromptsPromise: Promise<string[]> | undefined
 
     const prepareChat = async () => {
-        if (isNotNil(systemPromptsPromise)) {
-            return await systemPromptsPromise
-        }
-
-        systemPromptsPromise = z.validate(
-            newChatIndicatorSchema,
-            forwardedProps
-        )
-            ? prepareNewChat(
-                  threadId,
-                  newChatPropertiesSchema.parse(forwardedProps)
-              )
+        systemPromptsPromise ??= isNotNil(newConversationProperties)
+            ? prepareNewChat(threadId, newConversationProperties)
             : prepareExistingChat(threadId)
 
         return await systemPromptsPromise

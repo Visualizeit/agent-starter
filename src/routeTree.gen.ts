@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConversationIdRouteImport } from './routes/$conversationId'
 import { Route as ApiSplatRouteImport } from './routes/api/$'
-import { Route as ApiFilesRouteImport } from './routes/api/files'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,44 +28,35 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiFilesRoute = ApiFilesRouteImport.update({
-  id: '/api/files',
-  path: '/api/files',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$conversationId': typeof ConversationIdRoute
   '/api/$': typeof ApiSplatRoute
-  '/api/files': typeof ApiFilesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$conversationId': typeof ConversationIdRoute
   '/api/$': typeof ApiSplatRoute
-  '/api/files': typeof ApiFilesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$conversationId': typeof ConversationIdRoute
   '/api/$': typeof ApiSplatRoute
-  '/api/files': typeof ApiFilesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$conversationId' | '/api/$' | '/api/files'
+  fullPaths: '/' | '/$conversationId' | '/api/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$conversationId' | '/api/$' | '/api/files'
-  id: '__root__' | '/' | '/$conversationId' | '/api/$' | '/api/files'
+  to: '/' | '/$conversationId' | '/api/$'
+  id: '__root__' | '/' | '/$conversationId' | '/api/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConversationIdRoute: typeof ConversationIdRoute
   ApiSplatRoute: typeof ApiSplatRoute
-  ApiFilesRoute: typeof ApiFilesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -92,13 +82,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/files': {
-      id: '/api/files'
-      path: '/api/files'
-      fullPath: '/api/files'
-      preLoaderRoute: typeof ApiFilesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -106,7 +89,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConversationIdRoute: ConversationIdRoute,
   ApiSplatRoute: ApiSplatRoute,
-  ApiFilesRoute: ApiFilesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

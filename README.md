@@ -12,10 +12,9 @@ cp .env.example .env
 pnpm db:migrate
 ```
 
-Set `DEEPSEEK_API_KEY` in `.env`, then run these commands in separate terminals:
+Set `DEEPSEEK_API_KEY` in `.env`, then start the app:
 
 ```sh
-pnpm durable-streams:dev
 pnpm dev
 ```
 

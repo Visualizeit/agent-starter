@@ -6,7 +6,7 @@ interface ConversationTitleGeneratedEvent {
 }
 
 export interface ApplicationEvents {
-    [key: string]: object
+    [key: string]: ConversationTitleGeneratedEvent
     'conversation.title.generated': ConversationTitleGeneratedEvent
 }
 

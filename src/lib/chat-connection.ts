@@ -15,7 +15,7 @@ const hydrateChat: NonNullable<SubscribeConnectionAdapter['hydrate']> = async (
 
     invariant(response.ok, `Failed to hydrate chat: ${response.status}`)
 
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- TanStack reconstructChat owns this response shape.
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- SAFETY: TanStack reconstructChat owns this response contract.
     return (await response.json()) as ChatHydrationResult
 }
 

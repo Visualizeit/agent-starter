@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import { createSelectSchema, createUpdateSchema } from 'drizzle-orm/zod'
+import { createUpdateSchema } from 'drizzle-orm/zod'
 import { isNil, isNotNil } from 'es-toolkit/predicate'
 import { z } from 'zod'
 
@@ -11,10 +11,7 @@ import base from '../base'
 
 const idSchema = z.string().min(1)
 const metadataSchema = z.record(z.string(), z.json())
-const conversationSelectSchema = createSelectSchema(conversations, {
-    metadata: metadataSchema,
-})
-const conversationStatusSchema = conversationSelectSchema.shape.status
+const conversationStatusSchema = z.enum(conversations.status.enumValues)
 const conversationUpdateSchema = createUpdateSchema(conversations, {
     metadata: metadataSchema.optional(),
     title: conversationTitleSchema.optional(),

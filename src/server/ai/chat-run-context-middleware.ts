@@ -9,9 +9,13 @@ import getChatContext from './chat-context'
 import chatPersistence from './chat-persistence'
 
 interface CreateChatRunContextMiddlewareOptions {
-    forwardedProps?: Record<string, unknown>
+    forwardedProps?: unknown
     threadId: string
 }
+
+const newChatIndicatorSchema = z.object({
+    start: z.literal(true),
+})
 
 const newChatPropertiesSchema = z.object({
     projectId: z.string().min(1).optional(),
@@ -20,9 +24,9 @@ const newChatPropertiesSchema = z.object({
 
 const prepareNewChat = async (
     threadId: string,
-    forwardedProps: Record<string, unknown>
+    forwardedProperties: z.infer<typeof newChatPropertiesSchema>
 ) => {
-    const { projectId } = newChatPropertiesSchema.parse(forwardedProps)
+    const { projectId } = forwardedProperties
 
     let projectInstructions = ''
 
@@ -110,10 +114,15 @@ const createChatRunContextMiddleware = ({
             return await systemPromptsPromise
         }
 
-        systemPromptsPromise =
-            isNotNil(forwardedProps) && forwardedProps.start === true
-                ? prepareNewChat(threadId, forwardedProps)
-                : prepareExistingChat(threadId)
+        systemPromptsPromise = z.validate(
+            newChatIndicatorSchema,
+            forwardedProps
+        )
+            ? prepareNewChat(
+                  threadId,
+                  newChatPropertiesSchema.parse(forwardedProps)
+              )
+            : prepareExistingChat(threadId)
 
         return await systemPromptsPromise
     }

@@ -1,6 +1,5 @@
 import { chat } from '@tanstack/ai'
-
-import chatAdapter from '@/server/ai/chat-adapter'
+import type { AnyTextAdapter } from '@tanstack/ai'
 
 const titleInstructions = `You will generate a short title based on the first message a user begins a conversation with.
 
@@ -15,16 +14,18 @@ const titleInstructions = `You will generate a short title based on the first me
 </rules>`
 
 interface GenerateConversationTitleOptions {
+    adapter: AnyTextAdapter
     conversationId: string
     userMessage: string
 }
 
 const generateConversationTitle = async ({
     conversationId,
+    adapter,
     userMessage,
 }: GenerateConversationTitleOptions) => {
     const generatedTitle = await chat({
-        adapter: chatAdapter,
+        adapter,
         messages: [
             {
                 content: userMessage,

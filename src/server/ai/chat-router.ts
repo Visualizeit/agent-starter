@@ -12,12 +12,12 @@ import { Elysia, status } from 'elysia'
 import { isNil } from 'es-toolkit/predicate'
 import { z } from 'zod'
 
-import chatAdapter from './chat-adapter'
+import createChatAdapter from './chat-adapter'
 import getChatContext from './chat-context'
 import chatPersistence from './chat-persistence'
 import createChatRunContextMiddleware from './chat-run-context-middleware'
 import chatRunRegistry from './chat-run-registry'
-import conversationTitleMiddleware from './conversation-title-middleware'
+import createConversationTitleMiddleware from './conversation-title-middleware'
 
 const idSchema = z.string().min(1)
 
@@ -61,15 +61,18 @@ const chatRouter = new Elysia({ name: 'chat-router', prefix: '/api/chat' })
     .post(
         '/',
         async ({ request }) => {
-            const adapter = memoryStream(request)
+            const streamAdapter = memoryStream(request)
 
-            if (adapter.resumeFrom() !== null) {
-                return resumeServerSentEventsResponse({ adapter })
+            if (streamAdapter.resumeFrom() !== null) {
+                return resumeServerSentEventsResponse({
+                    adapter: streamAdapter,
+                })
             }
 
             try {
                 const { forwardedProps, messages, runId, threadId } =
                     await chatParamsFromRequest(request)
+                const chatAdapter = createChatAdapter(request, forwardedProps)
 
                 const chatRunContextMiddleware = createChatRunContextMiddleware(
                     {
@@ -102,7 +105,7 @@ const chatRouter = new Elysia({ name: 'chat-router', prefix: '/api/chat' })
                         withPersistence(chatPersistence, {
                             snapshotStreaming: true,
                         }),
-                        conversationTitleMiddleware,
+                        createConversationTitleMiddleware(chatAdapter),
                         chatRunRegistryMiddleware,
                     ],
                     runId,
@@ -111,7 +114,7 @@ const chatRouter = new Elysia({ name: 'chat-router', prefix: '/api/chat' })
 
                 return toServerSentEventsResponse(stream, {
                     abortController,
-                    durability: { adapter },
+                    durability: { adapter: streamAdapter },
                 })
             } catch (error) {
                 if (error instanceof Response) {

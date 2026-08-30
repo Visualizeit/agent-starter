@@ -11,13 +11,19 @@ import { useMemo } from 'react'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 
+import byok from '@/lib/byok'
 import chatConnection from '@/lib/chat-connection'
 import orpc from '@/lib/orpc'
+import type { NewConversationForwardedProps } from '@/schemas/model-config-schema'
+import useModelStore from '@/stores/model-store'
 
+import ModelSelector from './model-selector'
 import SendButton from './send-button'
 
 const NewConversationPromptInput = () => {
     const [message, setMessage] = useInputState('')
+    const selectedModel = useModelStore((state) => state.getSelectedModel())
+    const hasSelectedModel = selectedModel !== null
     const threadId = useMemo(() => nanoid(), [])
 
     const trimmedMessage = message.trim()
@@ -47,9 +53,23 @@ const NewConversationPromptInput = () => {
         })
     }
 
+    const forwardedProps: NewConversationForwardedProps = selectedModel
+        ? {
+              baseUrl: selectedModel.baseUrl,
+              credentialId: selectedModel.credentialId,
+              model: selectedModel.model,
+              newConversation: true,
+              projectId,
+              protocol: selectedModel.protocol,
+          }
+        : { newConversation: true, projectId }
+
     const { clear, error, isLoading, sendMessage } = useChat({
+        byok,
+        byokProvider: () =>
+            selectedModel ? selectedModel.credentialId : undefined,
         connection: chatConnection,
-        forwardedProps: { newConversation: true, projectId },
+        forwardedProps,
         onChunk: (chunk) => {
             if (chunk.type === EventType.RUN_STARTED) {
                 void handleRunStarted()
@@ -62,10 +82,20 @@ const NewConversationPromptInput = () => {
         threadId,
     })
 
+    let disabledDescription = 'Enter a message to send.'
+
+    if (!hasSelectedModel) {
+        disabledDescription = 'Select a model to send.'
+    }
+
+    if (isLoading) {
+        disabledDescription = 'Wait for the current message to send.'
+    }
+
     const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
         mode: 'mod-enter',
         onSubmit: () => {
-            if (isEmpty(trimmedMessage) || isLoading) {
+            if (isEmpty(trimmedMessage) || isLoading || !hasSelectedModel) {
                 return
             }
 
@@ -127,14 +157,15 @@ const NewConversationPromptInput = () => {
                 }}
                 autosize
                 bottomSection={
-                    <Group className="w-full" justify="flex-end">
+                    <Group className="w-full" justify="space-between">
+                        <ModelSelector disabled={isLoading} />
                         <SendButton
-                            disabled={isEmpty(trimmedMessage) || isLoading}
-                            disabledDescription={
-                                isLoading
-                                    ? 'Wait for the current message to send.'
-                                    : 'Enter a message to send.'
+                            disabled={
+                                isEmpty(trimmedMessage) ||
+                                isLoading ||
+                                !hasSelectedModel
                             }
+                            disabledDescription={disabledDescription}
                         />
                     </Group>
                 }

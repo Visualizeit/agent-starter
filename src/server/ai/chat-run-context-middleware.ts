@@ -2,6 +2,7 @@ import { defineChatMiddleware } from '@tanstack/ai'
 import { isNil, isNotNil } from 'es-toolkit/predicate'
 import { z } from 'zod'
 
+import { newConversationForwardedPropsSchema } from '@/schemas/model-config-schema'
 import database from '@/server/db/client'
 import { conversations } from '@/server/db/schema'
 
@@ -13,10 +14,11 @@ interface CreateChatRunContextMiddlewareOptions {
     threadId: string
 }
 
-const newConversationPropertiesSchema = z.object({
-    newConversation: z.literal(true),
-    projectId: z.string().min(1).optional(),
-})
+const newConversationPropertiesSchema =
+    newConversationForwardedPropsSchema.pick({
+        newConversation: true,
+        projectId: true,
+    })
 
 const newConversationIndicatorSchema = newConversationPropertiesSchema.pick({
     newConversation: true,

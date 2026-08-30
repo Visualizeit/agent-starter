@@ -12,11 +12,13 @@ cp .env.example .env
 pnpm db:migrate
 ```
 
-Set `DEEPSEEK_API_KEY` in `.env`, then start the app:
+Start the app:
 
 ```sh
 pnpm dev
 ```
+
+Configure a model from the composer’s `Select model` menu. API keys stay in the TanStack BYOK client storage and are sent only for the selected request.
 
 ## Scripts
 

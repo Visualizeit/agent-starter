@@ -5,6 +5,7 @@ import {
     v8CssVariablesResolver,
 } from '@mantine/core'
 import { ModalsProvider } from '@mantine/modals'
+import { Notifications } from '@mantine/notifications'
 import {
     ClientOnly,
     createRootRouteWithContext,
@@ -30,6 +31,7 @@ const Component = () => (
                 theme={mantineTheme}
                 cssVariablesResolver={v8CssVariablesResolver}
             >
+                <Notifications />
                 <ModalsProvider modalProps={{ centered: true }}>
                     <ClientOnly>
                         <MainLayout />

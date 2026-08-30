@@ -11,13 +11,25 @@ import { isNotNil } from 'es-toolkit/predicate'
 import MessageList from '@/components/chat/message-list'
 import PromptInput from '@/components/chat/prompt-input'
 import { NEW_CHAT_LABEL } from '@/components/conversation/conversation-constants'
+import byok from '@/lib/byok'
 import chatConnection from '@/lib/chat-connection'
 import orpc from '@/lib/orpc'
+import type { ModelConfiguration } from '@/schemas/model-config-schema'
+import useModelStore from '@/stores/model-store'
 
 const conversationRouteApi = getRouteApi('/$conversationId')
 
 const Conversation = () => {
     const { conversationId } = conversationRouteApi.useParams()
+    const selectedModel = useModelStore((state) => state.getSelectedModel())
+    const forwardedProps: Partial<ModelConfiguration> = selectedModel
+        ? {
+              baseUrl: selectedModel.baseUrl,
+              credentialId: selectedModel.credentialId,
+              model: selectedModel.model,
+              protocol: selectedModel.protocol,
+          }
+        : {}
 
     const cancelChatRunMutation = useMutation(
         orpc.chatRun.cancel.mutationOptions({
@@ -36,7 +48,11 @@ const Conversation = () => {
         sessionGenerating,
         stop,
     } = useChat({
+        byok,
+        byokProvider: () =>
+            selectedModel ? selectedModel.credentialId : undefined,
         connection: chatConnection,
+        forwardedProps,
         persistence: true,
         threadId: conversationId,
     })

@@ -5,6 +5,9 @@ import { invariant } from 'es-toolkit/util'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 
+import useModelStore from '@/stores/model-store'
+
+import ModelSelector from './model-selector'
 import SendButton from './send-button'
 import StopButton from './stop-button'
 
@@ -16,13 +19,19 @@ interface PromptInputProps {
 
 const PromptInput = ({ isResponding, sendMessage, stop }: PromptInputProps) => {
     const [message, setMessage] = useInputState('')
+    const selectedModel = useModelStore((state) => state.getSelectedModel())
+    const hasSelectedModel = selectedModel !== null
 
     const trimmedMessage = message.trim()
 
     const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
         mode: 'mod-enter',
         onSubmit: () => {
-            if (isResponding || trimmedMessage.length === 0) {
+            if (
+                isResponding ||
+                !hasSelectedModel ||
+                trimmedMessage.length === 0
+            ) {
                 return
             }
 
@@ -87,13 +96,21 @@ const PromptInput = ({ isResponding, sendMessage, stop }: PromptInputProps) => {
                 maxRows={10}
                 placeholder="Ask the assistant"
                 bottomSection={
-                    <Group className="w-full" justify="flex-end">
+                    <Group className="w-full" justify="space-between">
+                        <ModelSelector disabled={isResponding} />
                         {isResponding ? (
                             <StopButton stop={stop} />
                         ) : (
                             <SendButton
-                                disabled={trimmedMessage.length === 0}
-                                disabledDescription="Enter a message to send."
+                                disabled={
+                                    !hasSelectedModel ||
+                                    trimmedMessage.length === 0
+                                }
+                                disabledDescription={
+                                    hasSelectedModel
+                                        ? 'Enter a message to send.'
+                                        : 'Select a model to send.'
+                                }
                             />
                         )}
                     </Group>

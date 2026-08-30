@@ -1,5 +1,5 @@
 import { defineChatMiddleware } from '@tanstack/ai'
-import type { ModelMessage } from '@tanstack/ai'
+import type { AnyTextAdapter, ModelMessage } from '@tanstack/ai'
 import { and, eq, isNull as isDatabaseNull } from 'drizzle-orm'
 import { isNil, isNotNil, isNull, isString } from 'es-toolkit/predicate'
 
@@ -32,7 +32,8 @@ const getMessageText = (message: ModelMessage) => {
 
 const generateAndUpdateConversationTitle = async (
     conversationId: string,
-    userMessage: string
+    userMessage: string,
+    adapter: AnyTextAdapter
 ) => {
     try {
         const conversation = await database.query.conversations.findFirst({
@@ -50,6 +51,7 @@ const generateAndUpdateConversationTitle = async (
 
         const title = conversationTitleSchema.parse(
             await generateConversationTitle({
+                adapter,
                 conversationId,
                 userMessage,
             })
@@ -78,39 +80,44 @@ const generateAndUpdateConversationTitle = async (
     }
 }
 
-const conversationTitleMiddleware = defineChatMiddleware({
-    name: 'conversation-title',
-    onStart: (context) => {
-        let firstUserMessage: ModelMessage | undefined
+const createConversationTitleMiddleware = (adapter: AnyTextAdapter) =>
+    defineChatMiddleware({
+        name: 'conversation-title',
+        onStart: (context) => {
+            let firstUserMessage: ModelMessage | undefined
 
-        for (const message of context.messages) {
-            if (message.role === 'assistant') {
-                return
-            }
-
-            if (message.role === 'user') {
-                if (isNotNil(firstUserMessage)) {
+            for (const message of context.messages) {
+                if (message.role === 'assistant') {
                     return
                 }
 
-                firstUserMessage = message
+                if (message.role === 'user') {
+                    if (isNotNil(firstUserMessage)) {
+                        return
+                    }
+
+                    firstUserMessage = message
+                }
             }
-        }
 
-        if (isNil(firstUserMessage)) {
-            return
-        }
+            if (isNil(firstUserMessage)) {
+                return
+            }
 
-        const userMessage = getMessageText(firstUserMessage)
+            const userMessage = getMessageText(firstUserMessage)
 
-        if (!userMessage) {
-            return
-        }
+            if (!userMessage) {
+                return
+            }
 
-        context.defer(
-            generateAndUpdateConversationTitle(context.threadId, userMessage)
-        )
-    },
-})
+            context.defer(
+                generateAndUpdateConversationTitle(
+                    context.threadId,
+                    userMessage,
+                    adapter
+                )
+            )
+        },
+    })
 
-export default conversationTitleMiddleware
+export default createConversationTitleMiddleware

@@ -16,7 +16,7 @@ const NewChatButton = () => (
                 <Group gap="xs" wrap="nowrap">
                     <HugeiconsIcon
                         icon={PlusSignIcon}
-                        className="size-4 shrink-0 text-(--mantine-color-dimmed)"
+                        className="size-4 shrink-0"
                     />
                     <Text className="min-w-0" size="sm" truncate>
                         New Chat

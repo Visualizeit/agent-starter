@@ -138,12 +138,12 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                         {isExpanded ? (
                             <HugeiconsIcon
                                 icon={Folder02Icon}
-                                className="size-4 shrink-0 text-(--mantine-color-dimmed)"
+                                className="size-4 shrink-0"
                             />
                         ) : (
                             <HugeiconsIcon
                                 icon={Folder01Icon}
-                                className="size-4 shrink-0 text-(--mantine-color-dimmed)"
+                                className="size-4 shrink-0"
                             />
                         )}
                         <Text

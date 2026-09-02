@@ -115,7 +115,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
     }
 
     return (
-        <Stack component="li" gap="xxs">
+        <Stack component="li" gap="xxxs">
             <Box
                 className={cn(
                     sidebarListItemClasses.root,

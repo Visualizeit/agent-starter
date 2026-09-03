@@ -1,7 +1,7 @@
 'use client'
 
 import { Collapsible as CollapsiblePrimitive } from '@base-ui/react/collapsible'
-import { cn } from 'cnfast'
+import { cn } from 'cn'
 import type { ComponentPropsWithRef } from 'react'
 
 const Collapsible = CollapsiblePrimitive.Root

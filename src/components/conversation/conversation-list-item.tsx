@@ -10,7 +10,7 @@ import { ActionIcon, Box, Menu, Text, UnstyledButton } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
-import { cn } from 'cnfast'
+import { cn } from 'cn'
 import { TextMorph } from 'torph/react'
 
 import orpc from '@/lib/orpc'

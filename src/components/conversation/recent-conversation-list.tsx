@@ -14,7 +14,7 @@ import {
 import { useDisclosure } from '@mantine/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { cn } from 'cnfast'
+import { cn } from 'cn'
 import { isEmpty } from 'es-toolkit/compat'
 
 import orpc from '@/lib/orpc'

@@ -8,7 +8,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react'
 import type { IconSvgElement } from '@hugeicons/react'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
-import { cn } from 'cnfast'
+import { cn } from 'cn'
 import type { ComponentProps, ReactNode } from 'react'
 import { createContext, useContext, useMemo } from 'react'
 

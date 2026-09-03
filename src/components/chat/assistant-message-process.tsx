@@ -2,7 +2,7 @@ import { ChevronDownIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Collapse, Group, Stack, Text, UnstyledButton } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { cn } from 'cnfast'
+import { cn } from 'cn'
 import { useEffect } from 'react'
 import type { ReactNode } from 'react'
 

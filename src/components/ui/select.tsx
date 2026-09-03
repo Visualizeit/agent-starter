@@ -1,7 +1,7 @@
 'use client'
 
 import { Select as SelectPrimitive } from '@base-ui/react/select'
-import { cn } from 'cnfast'
+import { cn } from 'cn'
 import type { ComponentPropsWithRef } from 'react'
 
 const Select = SelectPrimitive.Root

@@ -10,7 +10,7 @@ import {
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { cn } from 'cnfast'
+import { cn } from 'cn'
 import { isEmpty } from 'es-toolkit/compat'
 
 import orpc from '@/lib/orpc'

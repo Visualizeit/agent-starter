@@ -2,7 +2,7 @@ import { PlusSignIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Group, Text, UnstyledButton } from '@mantine/core'
 import { Link } from '@tanstack/react-router'
-import { cn } from 'cnfast'
+import { cn } from 'cn'
 
 const NewChatButton = () => (
     <UnstyledButton

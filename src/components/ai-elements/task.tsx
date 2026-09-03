@@ -2,7 +2,7 @@
 
 import { AiSearchIcon, ChevronDownIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { cn } from 'cnfast'
+import { cn } from 'cn'
 import type { ComponentProps } from 'react'
 
 import {

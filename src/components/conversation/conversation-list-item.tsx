@@ -128,7 +128,9 @@ const ConversationListItem = ({
                             )}
                             size="sm"
                         >
-                            <TextMorph>{label}</TextMorph>
+                            <TextMorph>
+                                {label.replaceAll(/\s+/gu, ' ')}
+                            </TextMorph>
                         </Text>
                     </Link>
                 )}

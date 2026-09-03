@@ -150,7 +150,9 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                             className="scroll-fade-e min-w-0 overflow-hidden whitespace-nowrap"
                             size="sm"
                         >
-                            <TextMorph>{project.name}</TextMorph>
+                            <TextMorph>
+                                {project.name.replaceAll(/\s+/gu, ' ')}
+                            </TextMorph>
                         </Text>
                     </Group>
                 </UnstyledButton>

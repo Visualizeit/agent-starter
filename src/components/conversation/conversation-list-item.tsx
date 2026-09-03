@@ -119,22 +119,20 @@ const ConversationListItem = ({
                         to="/$conversationId"
                         params={{ conversationId: conversation.id }}
                         {...props}
-                    >
-                        <Text
-                            className={cn(
-                                'scroll-fade-e overflow-hidden whitespace-nowrap',
-                                isNested &&
-                                    'pl-[calc(var(--mantine-spacing-md)+var(--mantine-spacing-xs))]'
-                            )}
-                            size="sm"
-                        >
-                            <TextMorph>
-                                {label.replaceAll(/\s+/gu, ' ')}
-                            </TextMorph>
-                        </Text>
-                    </Link>
+                    />
                 )}
-            />
+            >
+                <Text
+                    className={cn(
+                        'scroll-fade-e overflow-hidden whitespace-nowrap',
+                        isNested &&
+                            'pl-[calc(var(--mantine-spacing-md)+var(--mantine-spacing-xs))]'
+                    )}
+                    size="sm"
+                >
+                    <TextMorph>{label.replaceAll(/\s+/gu, ' ')}</TextMorph>
+                </Text>
+            </UnstyledButton>
             <Box className={sidebarListItemClasses.actions}>
                 <Menu position="bottom-start" shadow="md">
                     <Menu.Target>

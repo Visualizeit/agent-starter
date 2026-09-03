@@ -1,111 +1,83 @@
-import { Box, Group } from '@mantine/core'
-import type { UIMessage } from '@tanstack/ai-react'
+import { Group } from '@mantine/core'
+import type { MessageProps } from '@tanstack/ai-react/ui'
+import { last } from 'es-toolkit'
+import { useMemo } from 'react'
 
-import AssistantMessageBody from '@/components/ui/assistant-message-body'
+import { Marker, MarkerContent } from '@/components/ui/marker'
 import { Message, MessageContent } from '@/components/ui/message'
-import UserMessageBody from '@/components/ui/user-message-body'
+import { MessageScrollerItem } from '@/components/ui/message-scroller'
+import type chatOptions from '@/lib/chat-options'
+import chatUiContext from '@/lib/chat-ui-context'
 
-import AssistantMessageProcess from './assistant-message-process'
 import MessageCopyButton from './message-copy-button'
-import MessageResponse from './message-response'
+import MessageRenderContext from './message-render-context'
 
-interface ConversationMessageProps {
-    isResponding: boolean
-    message: UIMessage
-}
-
-type MessagePart = UIMessage['parts'][number]
+type MessagePart = MessageProps<typeof chatOptions>['message']['parts'][number]
 type TextMessagePart = Extract<MessagePart, { type: 'text' }>
-type ThinkingMessagePart = Extract<MessagePart, { type: 'thinking' }>
 
 const isTextPart = (part: MessagePart): part is TextMessagePart =>
     part.type === 'text'
 
-const isThinkingPart = (part: MessagePart): part is ThinkingMessagePart =>
-    part.type === 'thinking'
-
 const getText = (parts: readonly TextMessagePart[]) =>
     parts.map((part) => part.content).join('\n\n')
 
-const UserMessage = ({
+const AssistantThinkingMarker = () => (
+    <Marker render={<output />}>
+        <MarkerContent className="shimmer">Thinking...</MarkerContent>
+    </Marker>
+)
+
+const ConversationMessage = ({
     message,
-}: Pick<ConversationMessageProps, 'message'>) => {
+    Parts,
+}: MessageProps<typeof chatOptions>) => {
+    const { isLoading, messages, sessionGenerating } =
+        chatUiContext.useChatContext()
+    const isResponding = isLoading || sessionGenerating
+    const isLastMessage = message === last(messages)
+    const isUserMessage = message.role === 'user'
+    const isMessageResponding = isResponding && isLastMessage && !isUserMessage
     const textParts = message.parts.filter(isTextPart)
     const copyText = getText(textParts)
-
-    return (
-        <Message align="end">
-            <MessageContent>
-                {textParts.map((part, index) => (
-                    <UserMessageBody key={`${message.id}:text:${index}`}>
-                        <MessageResponse markdown={part.content} />
-                    </UserMessageBody>
-                ))}
-                {copyText.length > 0 && (
-                    <Group
-                        className="pointer-events-none opacity-0 group-hover/message:pointer-events-auto group-hover/message:opacity-100 group-has-focus-visible/message:pointer-events-auto group-has-focus-visible/message:opacity-100"
-                        justify="flex-end"
-                    >
-                        <MessageCopyButton value={copyText} />
-                    </Group>
-                )}
-            </MessageContent>
-        </Message>
+    const messageRenderContextValue = useMemo(
+        () => ({
+            isResponding: isMessageResponding,
+            role: message.role,
+        }),
+        [isMessageResponding, message.role]
     )
-}
-
-const AssistantMessage = ({
-    isResponding,
-    message,
-}: ConversationMessageProps) => {
-    const thinkingParts = message.parts.filter(isThinkingPart)
-    const textParts = message.parts.filter(isTextPart)
-    const copyText = getText(textParts)
 
     return (
-        <Message>
-            <MessageContent>
-                {thinkingParts.length > 0 && (
-                    <AssistantMessageProcess isResponding={isResponding}>
-                        {thinkingParts.map((part, index) => (
-                            <Box
-                                className="text-muted-foreground text-sm"
-                                key={`${message.id}:thinking:${index}`}
+        <MessageScrollerItem
+            className="flex flex-col gap-(--mantine-spacing-xs)"
+            messageId={message.id}
+            scrollAnchor={isUserMessage}
+        >
+            <Message align={isUserMessage ? 'end' : undefined}>
+                <MessageContent>
+                    <MessageRenderContext.Provider
+                        value={messageRenderContextValue}
+                    >
+                        <Parts />
+                    </MessageRenderContext.Provider>
+                    {(!isMessageResponding || isUserMessage) &&
+                        copyText.length > 0 && (
+                            <Group
+                                className="pointer-events-none opacity-0 group-hover/message:pointer-events-auto group-hover/message:opacity-100 group-has-focus-visible/message:pointer-events-auto group-has-focus-visible/message:opacity-100"
+                                justify={
+                                    isUserMessage ? 'flex-end' : 'flex-start'
+                                }
                             >
-                                <MessageResponse
-                                    isStreaming={isResponding}
-                                    markdown={part.content}
-                                />
-                            </Box>
-                        ))}
-                    </AssistantMessageProcess>
-                )}
-                {textParts.map((part, index) => (
-                    <AssistantMessageBody key={`${message.id}:text:${index}`}>
-                        <MessageResponse
-                            isStreaming={isResponding}
-                            markdown={part.content}
-                        />
-                    </AssistantMessageBody>
-                ))}
-                {!isResponding && copyText.length > 0 && (
-                    <Group
-                        className="pointer-events-none opacity-0 group-hover/message:pointer-events-auto group-hover/message:opacity-100 group-has-focus-visible/message:pointer-events-auto group-has-focus-visible/message:opacity-100"
-                        justify="flex-start"
-                    >
-                        <MessageCopyButton value={copyText} />
-                    </Group>
-                )}
-            </MessageContent>
-        </Message>
+                                <MessageCopyButton value={copyText} />
+                            </Group>
+                        )}
+                </MessageContent>
+            </Message>
+            {isResponding && isLastMessage && isUserMessage && (
+                <AssistantThinkingMarker />
+            )}
+        </MessageScrollerItem>
     )
 }
-
-const ConversationMessage = (props: ConversationMessageProps) =>
-    props.message.role === 'user' ? (
-        <UserMessage message={props.message} />
-    ) : (
-        <AssistantMessage {...props} />
-    )
 
 export default ConversationMessage

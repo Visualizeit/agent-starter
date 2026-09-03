@@ -1,28 +1,44 @@
 import { Textarea, Group, rem } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
-import type { UseChatReturn } from '@tanstack/ai-react'
+import { useMutation } from '@tanstack/react-query'
+import { isNotNil } from 'es-toolkit/predicate'
 import { invariant } from 'es-toolkit/util'
 import type { SubmitEventHandler } from 'react'
 import { useChatSubmit } from 'use-chat-submit'
 
+import chatUiContext from '@/lib/chat-ui-context'
+import orpc from '@/lib/orpc'
 import useModelStore from '@/stores/model-store'
 
 import ModelSelector from './model-selector'
 import SendButton from './send-button'
 import StopButton from './stop-button'
 
-interface PromptInputProps {
-    isResponding: boolean
-    sendMessage: UseChatReturn['sendMessage']
-    stop: () => void
-}
-
-const PromptInput = ({ isResponding, sendMessage, stop }: PromptInputProps) => {
+const PromptInput = () => {
     const [message, setMessage] = useInputState('')
     const selectedModel = useModelStore((state) => state.getSelectedModel())
     const hasSelectedModel = selectedModel !== null
+    const { isLoading, runId, sendMessage, sessionGenerating, stop } =
+        chatUiContext.useChatContext()
+    const isResponding = isLoading || sessionGenerating
+
+    const cancelChatRunMutation = useMutation(
+        orpc.chatRun.cancel.mutationOptions({
+            onError: (cancellationError) => {
+                console.error('Failed to cancel chat run', cancellationError)
+            },
+        })
+    )
 
     const trimmedMessage = message.trim()
+
+    const stopResponse = () => {
+        if (isNotNil(runId)) {
+            cancelChatRunMutation.mutate({ runId })
+        }
+
+        stop()
+    }
 
     const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
         mode: 'mod-enter',
@@ -99,7 +115,7 @@ const PromptInput = ({ isResponding, sendMessage, stop }: PromptInputProps) => {
                     <Group className="w-full" justify="space-between">
                         <ModelSelector disabled={isResponding} />
                         {isResponding ? (
-                            <StopButton stop={stop} />
+                            <StopButton stop={stopResponse} />
                         ) : (
                             <SendButton
                                 disabled={

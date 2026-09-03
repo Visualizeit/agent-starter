@@ -1,18 +1,13 @@
-import { Box, Stack } from '@mantine/core'
 import { useChat } from '@tanstack/ai-react'
-import { useMutation } from '@tanstack/react-query'
 import {
     ClientOnly,
     createFileRoute,
     getRouteApi,
 } from '@tanstack/react-router'
-import { isNotNil } from 'es-toolkit/predicate'
 
-import MessageList from '@/components/chat/message-list'
-import PromptInput from '@/components/chat/prompt-input'
 import { NEW_CHAT_LABEL } from '@/components/conversation/conversation-constants'
-import byok from '@/lib/byok'
-import chatConnection from '@/lib/chat-connection'
+import chatOptions from '@/lib/chat-options'
+import chatUi from '@/lib/chat-ui'
 import orpc from '@/lib/orpc'
 import type { ModelConfiguration } from '@/schemas/model-config-schema'
 import useModelStore from '@/stores/model-store'
@@ -31,60 +26,13 @@ const Conversation = () => {
           }
         : {}
 
-    const cancelChatRunMutation = useMutation(
-        orpc.chatRun.cancel.mutationOptions({
-            onError: (cancellationError) => {
-                console.error('Failed to cancel chat run', cancellationError)
-            },
-        })
-    )
-
-    const {
-        error,
-        isLoading,
-        messages,
-        runId,
-        sendMessage,
-        sessionGenerating,
-        stop,
-    } = useChat({
-        byok,
-        byokProvider: () =>
-            selectedModel ? selectedModel.credentialId : undefined,
-        connection: chatConnection,
+    const chat = useChat({
+        ...chatOptions,
         forwardedProps,
-        persistence: true,
         threadId: conversationId,
     })
 
-    const isResponding = isLoading || sessionGenerating
-
-    const stopResponse = () => {
-        if (isNotNil(runId)) {
-            cancelChatRunMutation.mutate({ runId })
-        }
-
-        stop()
-    }
-
-    return (
-        <Stack className="absolute size-full" gap={0}>
-            <Box className="flex-1 overflow-hidden">
-                <MessageList
-                    error={error}
-                    isResponding={isResponding}
-                    messages={messages}
-                />
-            </Box>
-            <Box className="container mx-auto max-w-3xl px-(--mantine-spacing-md) pb-(--mantine-spacing-md)">
-                <PromptInput
-                    isResponding={isResponding}
-                    sendMessage={sendMessage}
-                    stop={stopResponse}
-                />
-            </Box>
-        </Stack>
-    )
+    return <chatUi.Chat chat={chat} />
 }
 
 const Component = () => (

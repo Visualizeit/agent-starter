@@ -40,7 +40,7 @@
         "@tanstack/ai": "^0.52.2",
         "@tanstack/ai-anthropic": "^0.18.3",
         "@tanstack/ai-client": "^0.30.0",
-        "@tanstack/ai-gemini": "^0.26.4",
+        "@tanstack/ai-gemini": "^0.27.0",
         "@tanstack/ai-openai": "^0.22.3",
         "@tanstack/ai-persistence": "^0.5.4",
         "@tanstack/ai-react": "^0.23.0",

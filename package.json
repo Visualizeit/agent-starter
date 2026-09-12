@@ -49,7 +49,7 @@
         "@tanstack/react-start": "^1.168.51",
         "class-variance-authority": "^0.7.1",
         "cn": "^0.2.6",
-        "drizzle-orm": "1.0.0-rc.4",
+        "drizzle-orm": "1.0.0-rc.5-5935859",
         "elysia": "^1.4.30",
         "es-toolkit": "^1.52.0",
         "files-sdk": "^2.4.1",

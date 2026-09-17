@@ -13,7 +13,6 @@ import {
     Collapse,
     Group,
     Menu,
-    Stack,
     Text,
     UnstyledButton,
 } from '@mantine/core'
@@ -53,7 +52,7 @@ const ProjectConversationList = ({
                 No conversations
             </Text>
         ) : (
-            <Stack component="ul" gap="xxxs">
+            <Box component="ul">
                 {conversations.map((conversation) => (
                     <ConversationListItem
                         conversation={conversation}
@@ -61,7 +60,7 @@ const ProjectConversationList = ({
                         key={conversation.id}
                     />
                 ))}
-            </Stack>
+            </Box>
         )}
     </Box>
 )
@@ -115,11 +114,11 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
     }
 
     return (
-        <Stack component="li" gap="xxxs">
+        <Box component="li">
             <Box
                 className={cn(
                     sidebarListItemClasses.root,
-                    'group/project-menu-item rounded-(--mantine-radius-md)',
+                    'group/project-menu-item rounded-(--mantine-radius-md) border-b border-transparent bg-clip-padding',
                     'hover:bg-(--mantine-color-gray-light-hover)',
                     'has-[[aria-haspopup=menu][aria-expanded=true]]:bg-(--mantine-color-gray-light-hover)'
                 )}
@@ -223,7 +222,7 @@ const ProjectListItem = ({ project }: ProjectListItemProps) => {
                     conversations={project.conversations}
                 />
             </Collapse>
-        </Stack>
+        </Box>
     )
 }
 

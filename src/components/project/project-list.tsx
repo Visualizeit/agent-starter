@@ -2,6 +2,7 @@ import { ChevronRightIcon, FolderAddIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
     ActionIcon,
+    Box,
     Collapse,
     Group,
     Stack,
@@ -111,14 +112,14 @@ const ProjectList = () => {
                         No projects
                     </Text>
                 ) : (
-                    <Stack component="ul" gap="xxxs">
+                    <Box component="ul">
                         {projects.map((project) => (
                             <ProjectListItem
                                 project={project}
                                 key={project.id}
                             />
                         ))}
-                    </Stack>
+                    </Box>
                 )}
             </Collapse>
         </Stack>

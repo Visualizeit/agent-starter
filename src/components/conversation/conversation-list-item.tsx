@@ -106,7 +106,7 @@ const ConversationListItem = ({
             className={cn(
                 sidebarListItemClasses.root,
                 'group/menu-item list-none',
-                'rounded-(--mantine-radius-md)',
+                'rounded-(--mantine-radius-md) border-b border-transparent bg-clip-padding',
                 'hover:bg-(--mantine-color-gray-light-hover) has-focus-visible:bg-(--mantine-color-gray-light-hover)',
                 'has-[[aria-haspopup=menu][aria-expanded=true]]:bg-(--mantine-color-gray-light-hover)',
                 'has-[[aria-current=page]]:bg-(--mantine-color-gray-light-hover)'

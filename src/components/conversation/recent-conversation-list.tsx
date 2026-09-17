@@ -2,6 +2,7 @@ import { PlusSignIcon, ChevronRightIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
     ActionIcon,
+    Box,
     Collapse,
     Group,
     Stack,
@@ -91,14 +92,14 @@ const RecentConversationList = () => {
                         No conversations
                     </Text>
                 ) : (
-                    <Stack component="ul" gap="xxxs">
+                    <Box component="ul">
                         {conversations.map((conversation) => (
                             <ConversationListItem
                                 conversation={conversation}
                                 key={conversation.id}
                             />
                         ))}
-                    </Stack>
+                    </Box>
                 )}
             </Collapse>
         </Stack>

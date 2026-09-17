@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import {
+    Box,
     Collapse,
     Group,
     Stack,
@@ -64,14 +65,14 @@ const PinnedConversationList = () => {
                 </Group>
             </UnstyledButton>
             <Collapse expanded={isExpanded} keepMounted={false}>
-                <Stack component="ul" gap="xxxs">
+                <Box component="ul">
                     {conversations.map((conversation) => (
                         <ConversationListItem
                             conversation={conversation}
                             key={conversation.id}
                         />
                     ))}
-                </Stack>
+                </Box>
             </Collapse>
         </Stack>
     )

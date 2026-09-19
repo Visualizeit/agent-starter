@@ -44,7 +44,7 @@
         "@tanstack/ai-openai": "^0.22.6",
         "@tanstack/ai-persistence": "^0.5.7",
         "@tanstack/ai-react": "^0.24.1",
-        "@tanstack/react-query": "^5.102.8",
+        "@tanstack/react-query": "^5.103.0",
         "@tanstack/react-router": "^1.170.36",
         "@tanstack/react-start": "^1.168.54",
         "class-variance-authority": "^0.7.1",

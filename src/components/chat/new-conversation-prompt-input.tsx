@@ -1,4 +1,4 @@
-import { Group, rem, Textarea } from '@mantine/core'
+import { Group, Paper, Stack } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { EventType } from '@tanstack/ai'
 import { useChat } from '@tanstack/ai-react'
@@ -7,9 +7,8 @@ import { useNavigate, useSearch } from '@tanstack/react-router'
 import { isEmpty } from 'es-toolkit/compat'
 import { invariant } from 'es-toolkit/util'
 import { nanoid } from 'nanoid'
-import { useMemo } from 'react'
-import type { SubmitEventHandler } from 'react'
-import { useChatSubmit } from 'use-chat-submit'
+import { useMemo, useRef } from 'react'
+import type { MouseEventHandler, SubmitEventHandler } from 'react'
 
 import byok from '@/lib/byok'
 import chatConnection from '@/lib/chat-connection'
@@ -18,9 +17,12 @@ import type { NewConversationForwardedProps } from '@/schemas/model-config-schem
 import useModelStore from '@/stores/model-store'
 
 import ModelSelector from './model-selector'
+import ProseKitTextarea from './prosekit-textarea'
+import type { ProseKitTextareaHandle } from './prosekit-textarea'
 import SendButton from './send-button'
 
 const NewConversationPromptInput = () => {
+    const proseKitTextareaRef = useRef<ProseKitTextareaHandle>(null)
     const [message, setMessage] = useInputState('')
     const selectedModel = useModelStore((state) => state.getSelectedModel())
     const hasSelectedModel = selectedModel !== null
@@ -92,90 +94,73 @@ const NewConversationPromptInput = () => {
         disabledDescription = 'Wait for the current message to send.'
     }
 
-    const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
-        mode: 'mod-enter',
-        onSubmit: () => {
-            if (isEmpty(trimmedMessage) || isLoading || !hasSelectedModel) {
-                return
-            }
+    const submitMessage = (value: string) => {
+        const submittedMessage = value.trim()
 
-            if (error) {
-                clear()
-            }
+        if (isEmpty(submittedMessage) || isLoading || !hasSelectedModel) {
+            return
+        }
 
-            void sendMessage(trimmedMessage)
-        },
-    })
+        if (error) {
+            clear()
+        }
+
+        void sendMessage(submittedMessage)
+    }
 
     const handleSubmit: SubmitEventHandler = (event) => {
         event.preventDefault()
 
-        triggerSubmit()
+        submitMessage(message)
+    }
+
+    const handleContainerClick: MouseEventHandler<HTMLFormElement> = (
+        event
+    ) => {
+        const { target } = event
+
+        if (!(target instanceof HTMLElement) || target.closest('button')) {
+            return
+        }
+
+        const proseKitTextarea = proseKitTextareaRef.current
+
+        invariant(proseKitTextarea, 'ProseKit textarea ref is not set')
+
+        proseKitTextarea.focus()
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <Textarea
-                aria-label="Message the assistant"
-                autoFocus
-                {...getTextareaProps({
-                    onChange: setMessage,
-                    value: message,
-                })}
-                styles={{
-                    bottomSection: {
-                        alignItems: 'flex-start',
-                        color: 'var(--mantine-color-text)',
-                        paddingInline: 'var(--mantine-spacing-sm)',
-                    },
-                    wrapper: {
-                        '--input-bd-focus':
-                            'var(--mantine-color-default-border)',
-                        '--input-bottom-section-height': `calc(${rem(34)} + var(--mantine-spacing-sm))`,
-                        '--input-padding-y-md': 'var(--mantine-spacing-sm)',
-                        '--input-radius': 'var(--mantine-radius-3xl)',
-                        cursor: 'text',
-                    },
-                }}
-                wrapperProps={{
-                    onClick: (event) => {
-                        const { target } = event
-
-                        if (
-                            target instanceof HTMLElement &&
-                            target.closest('button')
-                        ) {
-                            return
+        <Paper
+            className="cursor-text"
+            component="form"
+            onClick={handleContainerClick}
+            onSubmit={handleSubmit}
+            radius="3xl"
+            withBorder
+        >
+            <Stack gap="sm" p="sm">
+                <ProseKitTextarea
+                    aria-label="Message the assistant"
+                    autoFocus
+                    onChange={setMessage}
+                    onSubmit={submitMessage}
+                    placeholder="Ask the assistant"
+                    ref={proseKitTextareaRef}
+                />
+                <Group justify="space-between">
+                    <ModelSelector disabled={isLoading} />
+                    <SendButton
+                        disabled={
+                            isEmpty(trimmedMessage) ||
+                            isLoading ||
+                            !hasSelectedModel
                         }
-
-                        const textarea = textareaRef.current
-
-                        invariant(textarea, 'Textarea ref is not set')
-
-                        textarea.focus()
-                    },
-                }}
-                autosize
-                bottomSection={
-                    <Group className="w-full" justify="space-between">
-                        <ModelSelector disabled={isLoading} />
-                        <SendButton
-                            disabled={
-                                isEmpty(trimmedMessage) ||
-                                isLoading ||
-                                !hasSelectedModel
-                            }
-                            disabledDescription={disabledDescription}
-                        />
-                    </Group>
-                }
-                maxRows={10}
-                minRows={1}
-                placeholder="Ask the assistant"
-                rows={1}
-                size="md"
-            />
-        </form>
+                        disabledDescription={disabledDescription}
+                    />
+                </Group>
+            </Stack>
+        </Paper>
     )
 }
 

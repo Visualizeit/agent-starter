@@ -1,20 +1,23 @@
-import { Textarea, Group, rem } from '@mantine/core'
+import { Group, Paper, Stack } from '@mantine/core'
 import { useInputState } from '@mantine/hooks'
 import { useMutation } from '@tanstack/react-query'
 import { isNotNil } from 'es-toolkit/predicate'
 import { invariant } from 'es-toolkit/util'
-import type { SubmitEventHandler } from 'react'
-import { useChatSubmit } from 'use-chat-submit'
+import { useRef } from 'react'
+import type { MouseEventHandler, SubmitEventHandler } from 'react'
 
 import chatUiContext from '@/lib/chat-ui-context'
 import orpc from '@/lib/orpc'
 import useModelStore from '@/stores/model-store'
 
 import ModelSelector from './model-selector'
+import ProseKitTextarea from './prosekit-textarea'
+import type { ProseKitTextareaHandle } from './prosekit-textarea'
 import SendButton from './send-button'
 import StopButton from './stop-button'
 
 const PromptInput = () => {
+    const proseKitTextareaRef = useRef<ProseKitTextareaHandle>(null)
     const [message, setMessage] = useInputState('')
     const selectedModel = useModelStore((state) => state.getSelectedModel())
     const hasSelectedModel = selectedModel !== null
@@ -40,99 +43,84 @@ const PromptInput = () => {
         stop()
     }
 
-    const { textareaRef, getTextareaProps, triggerSubmit } = useChatSubmit({
-        mode: 'mod-enter',
-        onSubmit: () => {
-            if (
-                isResponding ||
-                !hasSelectedModel ||
-                trimmedMessage.length === 0
-            ) {
-                return
-            }
+    const submitMessage = (value: string) => {
+        const submittedMessage = value.trim()
 
-            const submittedMessage = trimmedMessage
-            setMessage('')
-            void sendMessage(submittedMessage)
-        },
-    })
+        if (
+            isResponding ||
+            !hasSelectedModel ||
+            submittedMessage.length === 0
+        ) {
+            return
+        }
+
+        const proseKitTextarea = proseKitTextareaRef.current
+
+        invariant(proseKitTextarea, 'ProseKit textarea ref is not set')
+
+        proseKitTextarea.clear()
+        void sendMessage(submittedMessage)
+    }
 
     const handleSubmit: SubmitEventHandler = (event) => {
         event.preventDefault()
 
-        triggerSubmit()
+        submitMessage(message)
+    }
+
+    const handleContainerClick: MouseEventHandler<HTMLFormElement> = (
+        event
+    ) => {
+        const { target } = event
+
+        if (!(target instanceof HTMLElement) || target.closest('button')) {
+            return
+        }
+
+        const proseKitTextarea = proseKitTextareaRef.current
+
+        invariant(proseKitTextarea, 'ProseKit textarea ref is not set')
+
+        proseKitTextarea.focus()
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <Textarea
-                aria-label="Message the assistant"
-                autoFocus
-                {...getTextareaProps({
-                    onChange: setMessage,
-                    value: message,
-                })}
-                styles={{
-                    bottomSection: {
-                        alignItems: 'flex-start',
-                        color: 'var(--mantine-color-text)',
-                        paddingInline: 'var(--mantine-spacing-sm)',
-                    },
-                    wrapper: {
-                        '--input-bd-focus':
-                            'var(--mantine-color-default-border)',
-                        '--input-bottom-section-height': `calc(${rem(34)} + var(--mantine-spacing-sm))`,
-                        '--input-padding-y-md': 'var(--mantine-spacing-sm)',
-                        '--input-radius': 'var(--mantine-radius-3xl)',
-                        cursor: 'text',
-                    },
-                }}
-                wrapperProps={{
-                    onClick: (event) => {
-                        const { target } = event
-
-                        if (
-                            target instanceof HTMLElement &&
-                            target.closest('button')
-                        ) {
-                            return
-                        }
-
-                        const textarea = textareaRef.current
-
-                        invariant(textarea, 'Textarea ref is not set')
-
-                        textarea.focus()
-                    },
-                }}
-                size="md"
-                autosize
-                minRows={1}
-                rows={1}
-                maxRows={10}
-                placeholder="Ask the assistant"
-                bottomSection={
-                    <Group className="w-full" justify="space-between">
-                        <ModelSelector disabled={isResponding} />
-                        {isResponding ? (
-                            <StopButton stop={stopResponse} />
-                        ) : (
-                            <SendButton
-                                disabled={
-                                    !hasSelectedModel ||
-                                    trimmedMessage.length === 0
-                                }
-                                disabledDescription={
-                                    hasSelectedModel
-                                        ? 'Enter a message to send.'
-                                        : 'Select a model to send.'
-                                }
-                            />
-                        )}
-                    </Group>
-                }
-            />
-        </form>
+        <Paper
+            className="cursor-text"
+            component="form"
+            onClick={handleContainerClick}
+            onSubmit={handleSubmit}
+            radius="3xl"
+            withBorder
+        >
+            <Stack gap="sm" p="sm">
+                <ProseKitTextarea
+                    aria-label="Message the assistant"
+                    autoFocus
+                    onChange={setMessage}
+                    onSubmit={submitMessage}
+                    placeholder="Ask the assistant"
+                    ref={proseKitTextareaRef}
+                />
+                <Group justify="space-between">
+                    <ModelSelector disabled={isResponding} />
+                    {isResponding ? (
+                        <StopButton stop={stopResponse} />
+                    ) : (
+                        <SendButton
+                            disabled={
+                                !hasSelectedModel || trimmedMessage.length === 0
+                            }
+                            disabledDescription={
+                                hasSelectedModel
+                                    ? 'Enter a message to send.'
+                                    : 'Select a model to send.'
+                            }
+                        />
+                    )}
+                </Group>
+            </Stack>
+        </Paper>
     )
 }
 

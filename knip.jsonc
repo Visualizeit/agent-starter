@@ -1,0 +1,19 @@
+{
+    "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+    "includeEntryExports": true,
+    "ignoreExportsUsedInFile": true,
+    // Template scaffolding; remove entries once actually referenced.
+    "ignore": [
+        "src/components/ai-elements/chain-of-thought.tsx",
+        "src/components/ai-elements/task.tsx",
+        "src/components/ui/attachment.tsx",
+        "src/components/ui/badge.tsx",
+        "src/components/ui/collapsible.tsx",
+        "src/components/ui/select.tsx",
+    ],
+    "ignoreDependencies": ["@radix-ui/react-use-controllable-state"],
+    "ignoreIssues": {
+        "src/components/ui/message-scroller.tsx": ["exports"],
+        "src/components/ui/message.tsx": ["exports"],
+    },
+}

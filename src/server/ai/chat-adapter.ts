@@ -30,9 +30,7 @@ const createGeminiAdapter: AdapterFactory = ({ apiKey, baseURL, model }) => {
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion
     const geminiModel = model as (typeof GEMINI_MODELS)[number]
 
-    return createGeminiChat(geminiModel, apiKey, {
-        httpOptions: { baseUrl: baseURL },
-    })
+    return createGeminiChat(geminiModel, apiKey, { baseURL })
 }
 
 const createOpenAIAdapter: AdapterFactory = ({ apiKey, baseURL, model }) =>

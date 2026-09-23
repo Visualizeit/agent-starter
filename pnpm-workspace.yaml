@@ -8,7 +8,7 @@ catalog:
     oxlint: 1.82.0
     vite: npm:@voidzero-dev/vite-plus-core@0.3.2
     vite-plus: 0.3.2
-    vitest: 5.0.0
+    vitest: 5.0.1
 
 minimumReleaseAge: 0
 

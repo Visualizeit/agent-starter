@@ -1,8 +1,27 @@
-import type { ModelMessage } from '@tanstack/ai'
+import type {
+    ModelMessage,
+    RunError,
+    RunStatus,
+    TokenUsage,
+} from '@tanstack/ai'
 import { sql } from 'drizzle-orm'
-import { check, index, integer, snakeCase, text } from 'drizzle-orm/sqlite-core'
+import {
+    check,
+    index,
+    integer,
+    primaryKey,
+    snakeCase,
+    text,
+} from 'drizzle-orm/sqlite-core'
 
 const conversationStatusValues = ['active', 'archived', 'deleted'] as const
+const runStatusValues = [
+    'running',
+    'interrupted',
+    'completed',
+    'failed',
+    'aborted',
+] as const satisfies readonly RunStatus[]
 
 export const projects = snakeCase.table(
     'projects',
@@ -97,6 +116,76 @@ export const aiChatThreads = snakeCase.table(
         check(
             'ai_chat_threads_messages_json_check',
             sql`json_valid(${table.messages}) and json_type(${table.messages}) = 'array'`
+        ),
+    ]
+)
+
+export const aiChatRuns = snakeCase.table(
+    'ai_chat_runs',
+    {
+        cancelRequested: integer({ mode: 'boolean' }),
+        detachedSince: integer(),
+        driverEpoch: integer(),
+        error: text({ mode: 'json' }).$type<RunError>(),
+        finishedAt: integer(),
+        runId: text({ length: 256 }).primaryKey(),
+        sandboxKey: text(),
+        startedAt: integer().notNull(),
+        status: text({ enum: runStatusValues }).notNull().default('running'),
+        threadId: text({ length: 256 })
+            .notNull()
+            .references(() => conversations.id, { onDelete: 'cascade' }),
+        usage: text({ mode: 'json' }).$type<TokenUsage>(),
+    },
+    (table) => [
+        check(
+            'ai_chat_runs_run_id_check',
+            sql`length(${table.runId}) between 1 and 256`
+        ),
+        check(
+            'ai_chat_runs_thread_id_check',
+            sql`length(${table.threadId}) between 1 and 256`
+        ),
+        index('ai_chat_runs_thread_id_status_started_at_idx').on(
+            table.threadId,
+            table.status,
+            table.startedAt
+        ),
+        check(
+            'ai_chat_runs_status_check',
+            sql`${table.status} in ('running', 'interrupted', 'completed', 'failed', 'aborted')`
+        ),
+        check(
+            'ai_chat_runs_error_json_check',
+            sql`${table.error} is null or (json_valid(${table.error}) and json_type(${table.error}) = 'object')`
+        ),
+        check(
+            'ai_chat_runs_usage_json_check',
+            sql`${table.usage} is null or (json_valid(${table.usage}) and json_type(${table.usage}) = 'object')`
+        ),
+    ]
+)
+
+export const aiChatMetadata = snakeCase.table(
+    'ai_chat_metadata',
+    {
+        key: text({ length: 1024 }).notNull(),
+        namespace: text({ length: 256 }).notNull(),
+        value: text({ mode: 'json' }).$type<unknown>().notNull(),
+    },
+    (table) => [
+        primaryKey({ columns: [table.namespace, table.key] }),
+        check(
+            'ai_chat_metadata_namespace_check',
+            sql`length(${table.namespace}) between 1 and 256`
+        ),
+        check(
+            'ai_chat_metadata_key_check',
+            sql`length(${table.key}) between 1 and 1024`
+        ),
+        check(
+            'ai_chat_metadata_value_json_check',
+            sql`json_valid(${table.value})`
         ),
     ]
 )

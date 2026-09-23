@@ -1,0 +1,559 @@
+{
+    "version": "7",
+    "dialect": "sqlite",
+    "id": "be5c6458-49bc-4748-80b6-8eb6a9276dc4",
+    "prevIds": ["5fec5cbb-f3e8-44ea-9564-bad0163f96b3"],
+    "ddl": [
+        {
+            "name": "ai_chat_metadata",
+            "entityType": "tables"
+        },
+        {
+            "name": "ai_chat_runs",
+            "entityType": "tables"
+        },
+        {
+            "name": "ai_chat_threads",
+            "entityType": "tables"
+        },
+        {
+            "name": "conversations",
+            "entityType": "tables"
+        },
+        {
+            "name": "projects",
+            "entityType": "tables"
+        },
+        {
+            "type": "text(1024)",
+            "notNull": true,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "key",
+            "entityType": "columns",
+            "table": "ai_chat_metadata"
+        },
+        {
+            "type": "text(256)",
+            "notNull": true,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "namespace",
+            "entityType": "columns",
+            "table": "ai_chat_metadata"
+        },
+        {
+            "type": "text",
+            "notNull": true,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "value",
+            "entityType": "columns",
+            "table": "ai_chat_metadata"
+        },
+        {
+            "type": "integer",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "cancel_requested",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "integer",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "detached_since",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "integer",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "driver_epoch",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "error",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "integer",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "finished_at",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "text(256)",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "run_id",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "sandbox_key",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "integer",
+            "notNull": true,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "started_at",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "text",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "'running'",
+            "generated": null,
+            "name": "status",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "text(256)",
+            "notNull": true,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "thread_id",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "usage",
+            "entityType": "columns",
+            "table": "ai_chat_runs"
+        },
+        {
+            "type": "text",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "'[]'",
+            "generated": null,
+            "name": "messages",
+            "entityType": "columns",
+            "table": "ai_chat_threads"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "thread_id",
+            "entityType": "columns",
+            "table": "ai_chat_threads"
+        },
+        {
+            "type": "integer",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "(cast(unixepoch('subsec') * 1000 as integer))",
+            "generated": null,
+            "name": "created_at",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "id",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "integer",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "false",
+            "generated": null,
+            "name": "is_pinned",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "'{}'",
+            "generated": null,
+            "name": "metadata",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "model",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "project_id",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "'active'",
+            "generated": null,
+            "name": "status",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "title",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "integer",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "(cast(unixepoch('subsec') * 1000 as integer))",
+            "generated": null,
+            "name": "updated_at",
+            "entityType": "columns",
+            "table": "conversations"
+        },
+        {
+            "type": "integer",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "(cast(unixepoch('subsec') * 1000 as integer))",
+            "generated": null,
+            "name": "created_at",
+            "entityType": "columns",
+            "table": "projects"
+        },
+        {
+            "type": "text",
+            "notNull": false,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "id",
+            "entityType": "columns",
+            "table": "projects"
+        },
+        {
+            "type": "text",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "''",
+            "generated": null,
+            "name": "instructions",
+            "entityType": "columns",
+            "table": "projects"
+        },
+        {
+            "type": "text",
+            "notNull": true,
+            "autoincrement": false,
+            "default": null,
+            "generated": null,
+            "name": "name",
+            "entityType": "columns",
+            "table": "projects"
+        },
+        {
+            "type": "integer",
+            "notNull": true,
+            "autoincrement": false,
+            "default": "(cast(unixepoch('subsec') * 1000 as integer))",
+            "generated": null,
+            "name": "updated_at",
+            "entityType": "columns",
+            "table": "projects"
+        },
+        {
+            "columns": ["thread_id"],
+            "tableTo": "conversations",
+            "columnsTo": ["id"],
+            "onUpdate": "NO ACTION",
+            "onDelete": "CASCADE",
+            "nameExplicit": false,
+            "name": "fk_ai_chat_runs_thread_id_conversations_id_fk",
+            "entityType": "fks",
+            "table": "ai_chat_runs"
+        },
+        {
+            "columns": ["thread_id"],
+            "tableTo": "conversations",
+            "columnsTo": ["id"],
+            "onUpdate": "NO ACTION",
+            "onDelete": "CASCADE",
+            "nameExplicit": false,
+            "name": "fk_ai_chat_threads_thread_id_conversations_id_fk",
+            "entityType": "fks",
+            "table": "ai_chat_threads"
+        },
+        {
+            "columns": ["project_id"],
+            "tableTo": "projects",
+            "columnsTo": ["id"],
+            "onUpdate": "NO ACTION",
+            "onDelete": "CASCADE",
+            "nameExplicit": false,
+            "name": "fk_conversations_project_id_projects_id_fk",
+            "entityType": "fks",
+            "table": "conversations"
+        },
+        {
+            "columns": ["namespace", "key"],
+            "nameExplicit": false,
+            "name": "ai_chat_metadata_pk",
+            "entityType": "pks",
+            "table": "ai_chat_metadata"
+        },
+        {
+            "columns": ["run_id"],
+            "nameExplicit": false,
+            "name": "ai_chat_runs_pk",
+            "table": "ai_chat_runs",
+            "entityType": "pks"
+        },
+        {
+            "columns": ["thread_id"],
+            "nameExplicit": false,
+            "name": "ai_chat_threads_pk",
+            "table": "ai_chat_threads",
+            "entityType": "pks"
+        },
+        {
+            "columns": ["id"],
+            "nameExplicit": false,
+            "name": "conversations_pk",
+            "table": "conversations",
+            "entityType": "pks"
+        },
+        {
+            "columns": ["id"],
+            "nameExplicit": false,
+            "name": "projects_pk",
+            "table": "projects",
+            "entityType": "pks"
+        },
+        {
+            "columns": [
+                {
+                    "value": "thread_id",
+                    "isExpression": false
+                },
+                {
+                    "value": "status",
+                    "isExpression": false
+                },
+                {
+                    "value": "started_at",
+                    "isExpression": false
+                }
+            ],
+            "isUnique": false,
+            "where": null,
+            "origin": "manual",
+            "name": "ai_chat_runs_thread_id_status_started_at_idx",
+            "entityType": "indexes",
+            "table": "ai_chat_runs"
+        },
+        {
+            "columns": [
+                {
+                    "value": "status",
+                    "isExpression": false
+                },
+                {
+                    "value": "is_pinned",
+                    "isExpression": false
+                },
+                {
+                    "value": "updated_at",
+                    "isExpression": false
+                }
+            ],
+            "isUnique": false,
+            "where": null,
+            "origin": "manual",
+            "name": "conversations_status_is_pinned_updated_at_idx",
+            "entityType": "indexes",
+            "table": "conversations"
+        },
+        {
+            "columns": [
+                {
+                    "value": "project_id",
+                    "isExpression": false
+                },
+                {
+                    "value": "status",
+                    "isExpression": false
+                },
+                {
+                    "value": "is_pinned",
+                    "isExpression": false
+                },
+                {
+                    "value": "updated_at",
+                    "isExpression": false
+                }
+            ],
+            "isUnique": false,
+            "where": null,
+            "origin": "manual",
+            "name": "conversations_project_id_status_is_pinned_updated_at_idx",
+            "entityType": "indexes",
+            "table": "conversations"
+        },
+        {
+            "columns": [
+                {
+                    "value": "updated_at",
+                    "isExpression": false
+                }
+            ],
+            "isUnique": false,
+            "where": null,
+            "origin": "manual",
+            "name": "projects_updated_at_idx",
+            "entityType": "indexes",
+            "table": "projects"
+        },
+        {
+            "value": "length(\"namespace\") between 1 and 256",
+            "name": "ai_chat_metadata_namespace_check",
+            "entityType": "checks",
+            "table": "ai_chat_metadata"
+        },
+        {
+            "value": "length(\"key\") between 1 and 1024",
+            "name": "ai_chat_metadata_key_check",
+            "entityType": "checks",
+            "table": "ai_chat_metadata"
+        },
+        {
+            "value": "json_valid(\"value\")",
+            "name": "ai_chat_metadata_value_json_check",
+            "entityType": "checks",
+            "table": "ai_chat_metadata"
+        },
+        {
+            "value": "length(\"run_id\") between 1 and 256",
+            "name": "ai_chat_runs_run_id_check",
+            "entityType": "checks",
+            "table": "ai_chat_runs"
+        },
+        {
+            "value": "length(\"thread_id\") between 1 and 256",
+            "name": "ai_chat_runs_thread_id_check",
+            "entityType": "checks",
+            "table": "ai_chat_runs"
+        },
+        {
+            "value": "\"status\" in ('running', 'interrupted', 'completed', 'failed', 'aborted')",
+            "name": "ai_chat_runs_status_check",
+            "entityType": "checks",
+            "table": "ai_chat_runs"
+        },
+        {
+            "value": "\"error\" is null or (json_valid(\"error\") and json_type(\"error\") = 'object')",
+            "name": "ai_chat_runs_error_json_check",
+            "entityType": "checks",
+            "table": "ai_chat_runs"
+        },
+        {
+            "value": "\"usage\" is null or (json_valid(\"usage\") and json_type(\"usage\") = 'object')",
+            "name": "ai_chat_runs_usage_json_check",
+            "entityType": "checks",
+            "table": "ai_chat_runs"
+        },
+        {
+            "value": "json_valid(\"messages\") and json_type(\"messages\") = 'array'",
+            "name": "ai_chat_threads_messages_json_check",
+            "entityType": "checks",
+            "table": "ai_chat_threads"
+        },
+        {
+            "value": "\"status\" in ('active', 'archived', 'deleted')",
+            "name": "conversations_status_check",
+            "entityType": "checks",
+            "table": "conversations"
+        },
+        {
+            "value": "json_valid(\"metadata\") and json_type(\"metadata\") = 'object'",
+            "name": "conversations_metadata_json_check",
+            "entityType": "checks",
+            "table": "conversations"
+        },
+        {
+            "value": "length(\"instructions\") <= 20000",
+            "name": "projects_instructions_check",
+            "entityType": "checks",
+            "table": "projects"
+        },
+        {
+            "value": "length(\"name\") between 1 and 200",
+            "name": "projects_name_check",
+            "entityType": "checks",
+            "table": "projects"
+        }
+    ],
+    "renames": []
+}

@@ -1,4 +1,3 @@
-import { InMemoryRunStore } from '@tanstack/ai'
 import {
     defineAIPersistence,
     defineMessageStore,
@@ -6,6 +5,9 @@ import {
 
 import database from '@/server/db/client'
 import { aiChatThreads } from '@/server/db/schema'
+
+import createChatMetadataStore from './create-chat-metadata-store'
+import createChatRunStore from './create-chat-run-store'
 
 const messageStore = defineMessageStore({
     loadThread: async (threadId) => {
@@ -39,7 +41,8 @@ const messageStore = defineMessageStore({
 const chatPersistence = defineAIPersistence({
     stores: {
         messages: messageStore,
-        runs: new InMemoryRunStore(),
+        metadata: createChatMetadataStore(database),
+        runs: createChatRunStore(database),
     },
 })
 

@@ -15,7 +15,8 @@
         "typecheck": "tsc --noEmit",
         "check": "vp check",
         "fix": "vp check --fix",
-        "staged": "vp staged"
+        "staged": "vp staged",
+        "test": "vp test run --config vitest.config.ts"
     },
     "dependencies": {
         "@base-ui/react": "^1.8.0",
